@@ -14,9 +14,10 @@ type Subscription struct {
 }
 
 type ProxyGroup struct {
-	Name    string   `yaml:"name,omitempty"`
-	Type    string   `yaml:"type,omitempty"`
-	Proxies []string `yaml:"proxies,omitempty"`
+	Name          string   `yaml:"name,omitempty"`
+	Type          string   `yaml:"type,omitempty"`
+	Proxies       []string `yaml:"proxies,omitempty"`
+	IsCountryGrop bool     `yaml:"-"`
 }
 
 type RuleProvider struct {

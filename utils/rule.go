@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"gopkg.in/yaml.v3"
 	"io"
-	"sub/model"
+	"sub2clash/model"
 )
 
 func AddRulesByUrl(sub *model.Subscription, url string, proxy string) {
-	get, err := GetWithRetry(url)
+	get, err := Get(url)
 	if err != nil {
 		fmt.Println(err)
 		return

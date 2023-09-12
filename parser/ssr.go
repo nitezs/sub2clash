@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-	"sub/model"
+	"sub2clash/model"
 )
 
 func ParseShadowsocksR(proxy string) (model.Proxy, error) {

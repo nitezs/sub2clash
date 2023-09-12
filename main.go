@@ -6,14 +6,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"os"
 	"path/filepath"
-	"sub/api"
-	"sub/config"
+	"strconv"
+	"sub2clash/api"
+	"sub2clash/config"
+	_ "sub2clash/config"
 )
 
-//go:embed templates/template-meta.yaml
+//go:embed templates/template_meta.yaml
 var templateMeta string
 
-//go:embed templates/template-clash.yaml
+//go:embed templates/template_clash.yaml
 var templateClash string
 
 func writeTemplate(path string, template string) error {
@@ -75,7 +77,7 @@ func main() {
 	// 设置路由
 	api.SetRoute(r)
 	fmt.Println("Server is running at 8011")
-	err := r.Run(":8011")
+	err := r.Run(":" + strconv.Itoa(config.Default.Port))
 	if err != nil {
 		fmt.Println(err)
 		return

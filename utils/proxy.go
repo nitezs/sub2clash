@@ -1,23 +1,29 @@
 package utils
 
 import (
-	"sort"
 	"strings"
-	"sub/model"
-	"sub/parser"
+	"sub2clash/model"
+	"sub2clash/parser"
 )
 
-func GetContryCode(proxy model.Proxy) string {
-	keys := make([]string, 0, len(model.CountryKeywords))
-	for k := range model.CountryKeywords {
-		keys = append(keys, k)
+func GetContryName(proxy model.Proxy) string {
+	// 创建一个切片包含所有的国家映射
+	countryMaps := []map[string]string{
+		model.CountryFlag,
+		model.CountryChineseName,
+		model.CountryISO,
+		model.CountryEnglishName,
 	}
-	sort.Strings(keys)
-	for _, k := range keys {
-		if strings.Contains(strings.ToLower(proxy.Name), strings.ToLower(k)) {
-			return model.CountryKeywords[k]
+
+	// 对每一个映射进行检查
+	for _, countryMap := range countryMaps {
+		for k, v := range countryMap {
+			if strings.Contains(proxy.Name, k) {
+				return v
+			}
 		}
 	}
+
 	return "其他地区"
 }
 
@@ -29,17 +35,18 @@ var skipGroups = map[string]bool{
 }
 
 func AddProxy(sub *model.Subscription, proxies ...model.Proxy) {
-	newContryNames := make([]string, 0, len(proxies))
-	for p := range proxies {
-		proxy := proxies[p]
+	newCountryGroupNames := make([]string, 0)
+
+	for _, proxy := range proxies {
 		sub.Proxies = append(sub.Proxies, proxy)
+
 		haveProxyGroup := false
+		countryName := GetContryName(proxy)
+
 		for i := range sub.ProxyGroups {
 			group := &sub.ProxyGroups[i]
-			groupName := []rune(group.Name)
-			proxyName := []rune(proxy.Name)
 
-			if string(groupName[:2]) == string(proxyName[:2]) || GetContryCode(proxy) == group.Name {
+			if group.Name == countryName {
 				group.Proxies = append(group.Proxies, proxy.Name)
 				haveProxyGroup = true
 			}
@@ -48,28 +55,25 @@ func AddProxy(sub *model.Subscription, proxies ...model.Proxy) {
 				group.Proxies = append(group.Proxies, proxy.Name)
 			}
 		}
+
 		if !haveProxyGroup {
-			contryCode := GetContryCode(proxy)
 			newGroup := model.ProxyGroup{
-				Name:    contryCode,
-				Type:    "select",
-				Proxies: []string{proxy.Name},
+				Name:          countryName,
+				Type:          "select",
+				Proxies:       []string{proxy.Name},
+				IsCountryGrop: true,
 			}
-			newContryNames = append(newContryNames, contryCode)
 			sub.ProxyGroups = append(sub.ProxyGroups, newGroup)
+			newCountryGroupNames = append(newCountryGroupNames, countryName)
 		}
 	}
-	newContryNamesMap := make(map[string]bool)
-	for _, n := range newContryNames {
-		newContryNamesMap[n] = true
-	}
+
 	for i := range sub.ProxyGroups {
-		if !skipGroups[sub.ProxyGroups[i].Name] && !newContryNamesMap[sub.ProxyGroups[i].Name] {
-			newProxies := make(
-				[]string, len(newContryNames), len(newContryNames)+len(sub.ProxyGroups[i].Proxies),
-			)
-			copy(newProxies, newContryNames)
-			sub.ProxyGroups[i].Proxies = append(newProxies, sub.ProxyGroups[i].Proxies...)
+		if sub.ProxyGroups[i].IsCountryGrop {
+			continue
+		}
+		if !skipGroups[sub.ProxyGroups[i].Name] {
+			sub.ProxyGroups[i].Proxies = append(newCountryGroupNames, sub.ProxyGroups[i].Proxies...)
 		}
 	}
 }

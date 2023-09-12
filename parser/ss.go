@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-	"sub/model"
+	"sub2clash/model"
 )
 
 // ParseSS 解析 SS（Shadowsocks）URL

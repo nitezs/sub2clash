@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-	"sub/model"
+	"sub2clash/model"
 )
 
 func ParseVless(proxy string) (model.Proxy, error) {
@@ -48,18 +48,22 @@ func ParseVless(proxy string) (model.Proxy, error) {
 		Fingerprint: params.Get("fp"),
 		Alpn:        strings.Split(params.Get("alpn"), ","),
 		Servername:  params.Get("sni"),
-		WSOpts: model.WSOptsStruct{
+		RealityOpts: model.RealityOptsStruct{
+			PublicKey: params.Get("pbk"),
+		},
+	}
+	if params.Get("type") == "ws" {
+		result.WSOpts = model.WSOptsStruct{
 			Path: params.Get("path"),
 			Headers: model.HeaderStruct{
 				Host: params.Get("host"),
 			},
-		},
-		GRPCOpts: model.GRPCOptsStruct{
+		}
+	}
+	if params.Get("type") == "grpc" {
+		result.GRPCOpts = model.GRPCOptsStruct{
 			GRPCServiceName: params.Get("serviceName"),
-		},
-		RealityOpts: model.RealityOptsStruct{
-			PublicKey: params.Get("pbk"),
-		},
+		}
 	}
 	// 如果有节点名称
 	if len(serverInfo) == 2 {

@@ -6,10 +6,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"sub/model"
+	"sub2clash/model"
 )
-
-// vmess://eyJ2IjoiMiIsInBzIjoiXHU4MmYxXHU1NmZkLVx1NGYxOFx1NTMxNjMiLCJhZGQiOiJ0LmNjY2FvLmN5b3UiLCJwb3J0IjoiMTY2NDUiLCJpZCI6ImVmNmNiMGY0LTcwZWYtNDY2ZS04NGUwLWRiNDQwMWRmNmZhZiIsImFpZCI6IjAiLCJuZXQiOiJ3cyIsInR5cGUiOiJub25lIiwiaG9zdCI6IiIsInBhdGgiOiIiLCJ0bHMiOiIifQ==
 
 func ParseVmess(proxy string) (model.Proxy, error) {
 	// 判断是否以 vmess:// 开头
@@ -57,12 +55,14 @@ func ParseVmess(proxy string) (model.Proxy, error) {
 		SkipCertVerify:    true,
 		Servername:        vmess.Add,
 		Network:           vmess.Net,
-		WSOpts: model.WSOptsStruct{
+	}
+	if vmess.Net == "ws" {
+		result.WSOpts = model.WSOptsStruct{
 			Path: vmess.Path,
 			Headers: model.HeaderStruct{
 				Host: vmess.Host,
 			},
-		},
+		}
 	}
 	return result, nil
 }

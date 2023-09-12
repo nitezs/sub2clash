@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"sub/api/controller"
+	"sub2clash/api/controller"
 )
 
 func SetRoute(r *gin.Engine) {

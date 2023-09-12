@@ -1,0 +1,62 @@
+port: 7890
+socks-port: 7891
+allow-lan: true
+mode: Rule
+log-level: info
+proxies:
+proxy-groups:
+  - name: 节点选择
+    type: select
+    proxies:
+      - 手动切换
+      - DIRECT
+  - name: 手动切换
+    type: select
+    proxies:
+  - name: 游戏平台
+    type: select
+    proxies:
+      - 节点选择
+      - 手动切换
+      - DIRECT
+  - name: 巴哈姆特
+    type: select
+    proxies:
+      - 节点选择
+      - 手动切换
+      - DIRECT
+  - name: 哔哩哔哩
+    type: select
+    proxies:
+      - 节点选择
+      - 手动切换
+      - DIRECT
+  - name: 全球直连
+    type: select
+    proxies:
+      - DIRECT
+      - 节点选择
+  - name: 广告拦截
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+  - name: 漏网之鱼
+    type: select
+    proxies:
+      - 节点选择
+      - 手动切换
+      - DIRECT
+rules:
+  - GEOSITE,private,全球直连
+  - GEOIP,private,全球直连
+  - GEOSITE,biliintl,哔哩哔哩
+  - GEOSITE,bilibili,哔哩哔哩
+  - GEOSITE,bahamut,巴哈姆特
+  - GEOSITE,CN,全球直连
+  - GEOIP,CN,全球直连
+  - GEOSITE,category-games,游戏平台
+  - GEOSITE,geolocation-!cn,节点选择
+  - GEOIP,ad,广告拦截
+  - GEOSITE,category-ads-all,广告拦截
+  - MATCH,漏网之鱼
