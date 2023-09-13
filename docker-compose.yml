@@ -1,10 +1,12 @@
-version '3'
+version: '3'
 
 services:
   sub2clash:
     container_name: sub2clash
     restart: unless-stopped
     image: ghcr.io/nitezs/sub2clash:latest
+    ports:
+      - "8011:8011"
     volumes:
       - ./templates:/app/templates
       - ./logs:/app/logs
