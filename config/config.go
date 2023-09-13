@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"github.com/joho/godotenv"
 	"os"
 	"strconv"
@@ -13,6 +12,8 @@ type Config struct {
 	ClashTemplate      string
 	RequestRetryTimes  int
 	RequestMaxFileSize int64
+	CacheExpire        int64
+	LogLevel           string
 }
 
 var Default *Config
@@ -24,6 +25,8 @@ func init() {
 		RequestRetryTimes:  3,
 		RequestMaxFileSize: 1024 * 1024 * 1,
 		Port:               8011,
+		CacheExpire:        60 * 5,
+		LogLevel:           "info",
 	}
 	err := godotenv.Load()
 	if err != nil {
@@ -32,7 +35,7 @@ func init() {
 	if os.Getenv("PORT") != "" {
 		atoi, err := strconv.Atoi(os.Getenv("PORT"))
 		if err != nil {
-			fmt.Println("PORT 不合法")
+			panic("PORT invalid")
 		}
 		Default.Port = atoi
 	}
@@ -45,15 +48,25 @@ func init() {
 	if os.Getenv("REQUEST_RETRY_TIMES") != "" {
 		atoi, err := strconv.Atoi(os.Getenv("REQUEST_RETRY_TIMES"))
 		if err != nil {
-			fmt.Println("REQUEST_RETRY_TIMES 不合法")
+			panic("REQUEST_RETRY_TIMES invalid")
 		}
 		Default.RequestRetryTimes = atoi
 	}
 	if os.Getenv("REQUEST_MAX_FILE_SIZE") != "" {
 		atoi, err := strconv.Atoi(os.Getenv("REQUEST_MAX_FILE_SIZE"))
 		if err != nil {
-			fmt.Println("REQUEST_MAX_FILE_SIZE 不合法")
+			panic("REQUEST_MAX_FILE_SIZE invalid")
 		}
 		Default.RequestMaxFileSize = int64(atoi)
+	}
+	if os.Getenv("CACHE_EXPIRE") != "" {
+		atoi, err := strconv.Atoi(os.Getenv("CACHE_EXPIRE"))
+		if err != nil {
+			panic("CACHE_EXPIRE invalid")
+		}
+		Default.CacheExpire = int64(atoi)
+	}
+	if os.Getenv("LOG_LEVEL") != "" {
+		Default.LogLevel = os.Getenv("LOG_LEVEL")
 	}
 }

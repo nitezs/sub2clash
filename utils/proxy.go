@@ -34,7 +34,7 @@ var skipGroups = map[string]bool{
 	"应用进化": true,
 }
 
-func AddProxy(sub *model.Subscription, proxies ...model.Proxy) {
+func AddProxy(sub *model.Subscription, autotest bool, lazy bool, proxies ...model.Proxy) {
 	newCountryGroupNames := make([]string, 0)
 
 	for _, proxy := range proxies {
@@ -57,11 +57,25 @@ func AddProxy(sub *model.Subscription, proxies ...model.Proxy) {
 		}
 
 		if !haveProxyGroup {
-			newGroup := model.ProxyGroup{
-				Name:          countryName,
-				Type:          "select",
-				Proxies:       []string{proxy.Name},
-				IsCountryGrop: true,
+			var newGroup model.ProxyGroup
+			if !autotest {
+				newGroup = model.ProxyGroup{
+					Name:          countryName,
+					Type:          "select",
+					Proxies:       []string{proxy.Name},
+					IsCountryGrop: true,
+				}
+			} else {
+				newGroup = model.ProxyGroup{
+					Name:          countryName,
+					Type:          "url-test",
+					Proxies:       []string{proxy.Name},
+					IsCountryGrop: true,
+					Url:           "http://www.gstatic.com/generate_204",
+					Interval:      300,
+					Tolerance:     50,
+					Lazy:          lazy,
+				}
 			}
 			sub.ProxyGroups = append(sub.ProxyGroups, newGroup)
 			newCountryGroupNames = append(newCountryGroupNames, countryName)

@@ -11,12 +11,12 @@ import (
 func ParseVless(proxy string) (model.Proxy, error) {
 	// 判断是否以 vless:// 开头
 	if !strings.HasPrefix(proxy, "vless://") {
-		return model.Proxy{}, fmt.Errorf("无效的 vless URL")
+		return model.Proxy{}, fmt.Errorf("无效的 vless Url")
 	}
 	// 分割
 	parts := strings.SplitN(strings.TrimPrefix(proxy, "vless://"), "@", 2)
 	if len(parts) != 2 {
-		return model.Proxy{}, fmt.Errorf("无效的 vless URL")
+		return model.Proxy{}, fmt.Errorf("无效的 vless Url")
 	}
 	// 分割
 	serverInfo := strings.SplitN(parts[1], "#", 2)
@@ -46,11 +46,13 @@ func ParseVless(proxy string) (model.Proxy, error) {
 		TLS:         params.Get("security") == "tls",
 		Flow:        params.Get("flow"),
 		Fingerprint: params.Get("fp"),
-		Alpn:        strings.Split(params.Get("alpn"), ","),
 		Servername:  params.Get("sni"),
 		RealityOpts: model.RealityOptsStruct{
 			PublicKey: params.Get("pbk"),
 		},
+	}
+	if params.Get("alpn") != "" {
+		result.Alpn = strings.Split(params.Get("alpn"), ",")
 	}
 	if params.Get("type") == "ws" {
 		result.WSOpts = model.WSOptsStruct{

@@ -2,53 +2,49 @@ package utils
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v3"
-	"io"
+	"strings"
 	"sub2clash/model"
 )
 
-func AddRulesByUrl(sub *model.Subscription, url string, proxy string) {
-	get, err := Get(url)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Println(err)
-		}
-	}(get.Body)
-	bytes, err := io.ReadAll(get.Body)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	var payload model.Payload
-	err = yaml.Unmarshal(bytes, &payload)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	for i := range payload.Rules {
-		payload.Rules[i] = payload.Rules[i] + "," + proxy
-	}
-	AddRules(sub, payload.Rules...)
-}
-
-func AddRuleProvider(
-	sub *model.Subscription, providerName string, proxy string, provider model.RuleProvider,
+func PrependRuleProvider(
+	sub *model.Subscription, providerName string, group string, provider model.RuleProvider,
 ) {
 	if sub.RuleProviders == nil {
 		sub.RuleProviders = make(map[string]model.RuleProvider)
 	}
 	sub.RuleProviders[providerName] = provider
-	AddRules(
+	PrependRules(
 		sub,
-		fmt.Sprintf("RULE-SET,%s,%s", providerName, proxy),
+		fmt.Sprintf("RULE-SET,%s,%s", providerName, group),
 	)
 }
 
-func AddRules(sub *model.Subscription, rules ...string) {
+func AppenddRuleProvider(
+	sub *model.Subscription, providerName string, group string, provider model.RuleProvider,
+) {
+	if sub.RuleProviders == nil {
+		sub.RuleProviders = make(map[string]model.RuleProvider)
+	}
+	sub.RuleProviders[providerName] = provider
+	AppendRules(sub, fmt.Sprintf("RULE-SET,%s,%s", providerName, group))
+}
+
+func PrependRules(sub *model.Subscription, rules ...string) {
+	if sub.Rules == nil {
+		sub.Rules = make([]string, 0)
+	}
 	sub.Rules = append(rules, sub.Rules...)
+}
+
+func AppendRules(sub *model.Subscription, rules ...string) {
+	if sub.Rules == nil {
+		sub.Rules = make([]string, 0)
+	}
+	matchRule := sub.Rules[len(sub.Rules)-1]
+	if strings.Contains(matchRule, "MATCH") {
+		sub.Rules = append(sub.Rules[:len(sub.Rules)-1], rules...)
+		sub.Rules = append(sub.Rules, matchRule)
+		return
+	}
+	sub.Rules = append(sub.Rules, rules...)
 }

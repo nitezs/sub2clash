@@ -8,16 +8,16 @@ import (
 	"sub2clash/model"
 )
 
-// ParseSS 解析 SS（Shadowsocks）URL
+// ParseSS 解析 SS（Shadowsocks）Url
 func ParseSS(proxy string) (model.Proxy, error) {
 	// 判断是否以 ss:// 开头
 	if !strings.HasPrefix(proxy, "ss://") {
-		return model.Proxy{}, fmt.Errorf("无效的 ss URL")
+		return model.Proxy{}, fmt.Errorf("无效的 ss Url")
 	}
 	// 分割
 	parts := strings.SplitN(strings.TrimPrefix(proxy, "ss://"), "@", 2)
 	if len(parts) != 2 {
-		return model.Proxy{}, fmt.Errorf("无效的 ss URL")
+		return model.Proxy{}, fmt.Errorf("无效的 ss Url")
 	}
 	if !strings.Contains(parts[0], ":") {
 		// 解码

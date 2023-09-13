@@ -11,7 +11,7 @@ import (
 func ParseShadowsocksR(proxy string) (model.Proxy, error) {
 	// 判断是否以 ssr:// 开头
 	if !strings.HasPrefix(proxy, "ssr://") {
-		return model.Proxy{}, fmt.Errorf("无效的 ssr URL")
+		return model.Proxy{}, fmt.Errorf("无效的 ssr Url")
 	}
 	var err error
 	if !strings.Contains(proxy, ":") {

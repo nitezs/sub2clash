@@ -3,9 +3,9 @@ package model
 type Subscription struct {
 	Port               int                     `yaml:"port,omitempty"`
 	SocksPort          int                     `yaml:"socks-port,omitempty"`
-	AllowLan           bool                    `yaml:"allow-lan,omitempty"`
+	AllowLan           bool                    `yaml:"allow-lan"`
 	Mode               string                  `yaml:"mode,omitempty"`
-	LogLevel           string                  `yaml:"log-level,omitempty"`
+	LogLevel           string                  `yaml:"logger-level,omitempty"`
 	ExternalController string                  `yaml:"external-controller,omitempty"`
 	Proxies            []Proxy                 `yaml:"proxies,omitempty"`
 	ProxyGroups        []ProxyGroup            `yaml:"proxy-groups,omitempty"`
@@ -18,12 +18,16 @@ type ProxyGroup struct {
 	Type          string   `yaml:"type,omitempty"`
 	Proxies       []string `yaml:"proxies,omitempty"`
 	IsCountryGrop bool     `yaml:"-"`
+	Url           string   `yaml:"url,omitempty"`
+	Interval      int      `yaml:"interval,omitempty"`
+	Tolerance     int      `yaml:"tolerance,omitempty"`
+	Lazy          bool     `yaml:"lazy"`
 }
 
 type RuleProvider struct {
 	Type     string `yaml:"type,omitempty"`
 	Behavior string `yaml:"behavior,omitempty"`
-	URL      string `yaml:"url,omitempty"`
+	Url      string `yaml:"url,omitempty"`
 	Path     string `yaml:"path,omitempty"`
 	Interval int    `yaml:"interval,omitempty"`
 }

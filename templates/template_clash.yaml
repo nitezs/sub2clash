@@ -999,8 +999,8 @@ rules:
   - DOMAIN-SUFFIX,itsdata.map.baidu.com,应用净化
   - DOMAIN-SUFFIX,j.br.baidu.com,应用净化
   - DOMAIN-SUFFIX,kstj.baidu.com,应用净化
-  - DOMAIN-SUFFIX,log.music.baidu.com,应用净化
-  - DOMAIN-SUFFIX,log.nuomi.com,应用净化
+  - DOMAIN-SUFFIX,logger.music.baidu.com,应用净化
+  - DOMAIN-SUFFIX,logger.nuomi.com,应用净化
   - DOMAIN-SUFFIX,m1.baidu.com,应用净化
   - DOMAIN-SUFFIX,ma.baidu.cn,应用净化
   - DOMAIN-SUFFIX,ma.baidu.com,应用净化
@@ -1130,7 +1130,7 @@ rules:
   - DOMAIN-SUFFIX,ad.toutiao.com,应用净化
   - DOMAIN-SUFFIX,dsp.toutiao.com,应用净化
   - DOMAIN-SUFFIX,ic.snssdk.com,应用净化
-  - DOMAIN-SUFFIX,log.snssdk.com,应用净化
+  - DOMAIN-SUFFIX,logger.snssdk.com,应用净化
   - DOMAIN-SUFFIX,nativeapp.toutiao.com,应用净化
   - DOMAIN-SUFFIX,pangolin-sdk-toutiao-b.com,应用净化
   - DOMAIN-SUFFIX,pangolin-sdk-toutiao.com,应用净化
@@ -1192,8 +1192,8 @@ rules:
   - DOMAIN-SUFFIX,install2.kugou.com,应用净化
   - DOMAIN-SUFFIX,kgmobilestat.kugou.com,应用净化
   - DOMAIN-SUFFIX,kuaikaiapp.com,应用净化
-  - DOMAIN-SUFFIX,log.stat.kugou.com,应用净化
-  - DOMAIN-SUFFIX,log.web.kugou.com,应用净化
+  - DOMAIN-SUFFIX,logger.stat.kugou.com,应用净化
+  - DOMAIN-SUFFIX,logger.web.kugou.com,应用净化
   - DOMAIN-SUFFIX,minidcsc.kugou.com,应用净化
   - DOMAIN-SUFFIX,mo.kugou.com,应用净化
   - DOMAIN-SUFFIX,mobilelog.kugou.com,应用净化
@@ -1210,7 +1210,7 @@ rules:
   - DOMAIN-SUFFIX,g.koowo.com,应用净化
   - DOMAIN-SUFFIX,g.kuwo.cn,应用净化
   - DOMAIN-SUFFIX,kwmsg.kuwo.cn,应用净化
-  - DOMAIN-SUFFIX,log.kuwo.cn,应用净化
+  - DOMAIN-SUFFIX,logger.kuwo.cn,应用净化
   - DOMAIN-SUFFIX,mobilead.kuwo.cn,应用净化
   - DOMAIN-SUFFIX,msclick2.kuwo.cn,应用净化
   - DOMAIN-SUFFIX,msphoneclick.kuwo.cn,应用净化
@@ -1279,7 +1279,7 @@ rules:
   - DOMAIN-SUFFIX,cdn.moji002.com,应用净化
   - DOMAIN-SUFFIX,cdn2.moji002.com,应用净化
   - DOMAIN-SUFFIX,fds.api.moji.com,应用净化
-  - DOMAIN-SUFFIX,log.moji.com,应用净化
+  - DOMAIN-SUFFIX,logger.moji.com,应用净化
   - DOMAIN-SUFFIX,stat.moji.com,应用净化
   - DOMAIN-SUFFIX,ugc.moji001.com,应用净化
   - DOMAIN-SUFFIX,ad.qingting.fm,应用净化
@@ -1331,7 +1331,7 @@ rules:
   - DOMAIN-SUFFIX,game.weibo.com.cn,应用净化
   - DOMAIN-SUFFIX,gw5.push.mcp.weibo.cn,应用净化
   - DOMAIN-SUFFIX,leju.sina.com.cn,应用净化
-  - DOMAIN-SUFFIX,log.mix.sina.com.cn,应用净化
+  - DOMAIN-SUFFIX,logger.mix.sina.com.cn,应用净化
   - DOMAIN-SUFFIX,mobileads.dx.cn,应用净化
   - DOMAIN-SUFFIX,newspush.sinajs.cn,应用净化
   - DOMAIN-SUFFIX,pay.mobile.sina.cn,应用净化
@@ -1391,7 +1391,7 @@ rules:
   - DOMAIN-SUFFIX,cms.ucweb.com,应用净化
   - DOMAIN-SUFFIX,dispatcher.upmc.uc.cn,应用净化
   - DOMAIN-SUFFIX,huichuan.sm.cn,应用净化
-  - DOMAIN-SUFFIX,log.cs.pp.cn,应用净化
+  - DOMAIN-SUFFIX,logger.cs.pp.cn,应用净化
   - DOMAIN-SUFFIX,m.uczzd.cn,应用净化
   - DOMAIN-SUFFIX,patriot.cs.pp.cn,应用净化
   - DOMAIN-SUFFIX,puds.ucweb.com,应用净化
@@ -1531,8 +1531,8 @@ rules:
   - DOMAIN-SUFFIX,click.hunantv.com,应用净化
   - DOMAIN-SUFFIX,da.hunantv.com,应用净化
   - DOMAIN-SUFFIX,da.mgtv.com,应用净化
-  - DOMAIN-SUFFIX,log.hunantv.com,应用净化
-  - DOMAIN-SUFFIX,log.v2.hunantv.com,应用净化
+  - DOMAIN-SUFFIX,logger.hunantv.com,应用净化
+  - DOMAIN-SUFFIX,logger.v2.hunantv.com,应用净化
   - DOMAIN-SUFFIX,p2.hunantv.com,应用净化
   - DOMAIN-SUFFIX,res.hunantv.com,应用净化
   - DOMAIN-SUFFIX,888.tv.sohu.com,应用净化
@@ -1616,10 +1616,10 @@ rules:
   - DOMAIN-SUFFIX,msg.youku.com,应用净化
   - DOMAIN-SUFFIX,myes.youku.com,应用净化
   - DOMAIN-SUFFIX,nstat.tudou.com,应用净化
-  - DOMAIN-SUFFIX,p-log.ykimg.com,应用净化
+  - DOMAIN-SUFFIX,p-logger.ykimg.com,应用净化
   - DOMAIN-SUFFIX,p.l.ykimg.com,应用净化
   - DOMAIN-SUFFIX,p.l.youku.com,应用净化
-  - DOMAIN-SUFFIX,passport-log.youku.com,应用净化
+  - DOMAIN-SUFFIX,passport-logger.youku.com,应用净化
   - DOMAIN-SUFFIX,push.m.youku.com,应用净化
   - DOMAIN-SUFFIX,r.l.youku.com,应用净化
   - DOMAIN-SUFFIX,s.p.youku.com,应用净化
@@ -1746,7 +1746,7 @@ rules:
   - DOMAIN-SUFFIX,iadsdk.apple.com,应用净化
   - DOMAIN-SUFFIX,image.gentags.com,应用净化
   - DOMAIN-SUFFIX,its-dori.tumblr.com,应用净化
-  - DOMAIN-SUFFIX,log.outbrain.com,应用净化
+  - DOMAIN-SUFFIX,logger.outbrain.com,应用净化
   - DOMAIN-SUFFIX,m.12306media.com,应用净化
   - DOMAIN-SUFFIX,media.cheshi-img.com,应用净化
   - DOMAIN-SUFFIX,media.cheshi.com,应用净化

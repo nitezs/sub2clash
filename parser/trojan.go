@@ -11,12 +11,12 @@ import (
 func ParseTrojan(proxy string) (model.Proxy, error) {
 	// 判断是否以 trojan:// 开头
 	if !strings.HasPrefix(proxy, "trojan://") {
-		return model.Proxy{}, fmt.Errorf("无效的 trojan URL")
+		return model.Proxy{}, fmt.Errorf("无效的 trojan Url")
 	}
 	// 分割
 	parts := strings.SplitN(strings.TrimPrefix(proxy, "trojan://"), "@", 2)
 	if len(parts) != 2 {
-		return model.Proxy{}, fmt.Errorf("无效的 trojan URL")
+		return model.Proxy{}, fmt.Errorf("无效的 trojan Url")
 	}
 	// 分割
 	serverInfo := strings.SplitN(parts[1], "#", 2)

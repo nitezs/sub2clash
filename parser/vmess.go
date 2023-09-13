@@ -12,23 +12,23 @@ import (
 func ParseVmess(proxy string) (model.Proxy, error) {
 	// 判断是否以 vmess:// 开头
 	if !strings.HasPrefix(proxy, "vmess://") {
-		return model.Proxy{}, fmt.Errorf("无效的 vmess URL")
+		return model.Proxy{}, fmt.Errorf("无效的 vmess Url")
 	}
 	// 解码
 	base64, err := DecodeBase64(strings.TrimPrefix(proxy, "vmess://"))
 	if err != nil {
-		return model.Proxy{}, errors.New("无效的 vmess URL")
+		return model.Proxy{}, errors.New("无效的 vmess Url")
 	}
 	// 解析
 	var vmess model.Vmess
 	err = json.Unmarshal([]byte(base64), &vmess)
 	if err != nil {
-		return model.Proxy{}, errors.New("无效的 vmess URL")
+		return model.Proxy{}, errors.New("无效的 vmess Url")
 	}
 	// 处理端口
 	port, err := strconv.Atoi(strings.TrimSpace(vmess.Port))
 	if err != nil {
-		return model.Proxy{}, errors.New("无效的 vmess URL")
+		return model.Proxy{}, errors.New("无效的 vmess Url")
 	}
 	if vmess.Scy == "" {
 		vmess.Scy = "auto"

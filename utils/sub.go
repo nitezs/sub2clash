@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"sub2clash/config"
 	"sync"
 	"time"
 )
@@ -20,7 +21,6 @@ func LoadSubscription(url string, refresh bool) ([]byte, error) {
 	}
 	hash := md5.Sum([]byte(url))
 	fileName := filepath.Join(subsDir, hex.EncodeToString(hash[:]))
-	const refreshInterval = 500 * 60 // 5分钟
 	stat, err := os.Stat(fileName)
 	if err != nil {
 		if !os.IsNotExist(err) {
@@ -29,16 +29,13 @@ func LoadSubscription(url string, refresh bool) ([]byte, error) {
 		return FetchSubscriptionFromAPI(url)
 	}
 	lastGetTime := stat.ModTime().Unix() // 单位是秒
-	if lastGetTime+refreshInterval > time.Now().Unix() {
+	if lastGetTime+config.Default.CacheExpire > time.Now().Unix() {
 		file, err := os.Open(fileName)
 		if err != nil {
 			return nil, err
 		}
 		defer func(file *os.File) {
-			err := file.Close()
-			if err != nil {
-				fmt.Println(err)
-			}
+			_ = file.Close()
 		}(file)
 		fileLock.RLock()
 		defer fileLock.RUnlock()
@@ -58,7 +55,9 @@ func FetchSubscriptionFromAPI(url string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(resp.Body)
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read response body: %w", err)
@@ -68,10 +67,7 @@ func FetchSubscriptionFromAPI(url string) ([]byte, error) {
 		return nil, err
 	}
 	defer func(file *os.File) {
-		err := file.Close()
-		if err != nil {
-			fmt.Println(err)
-		}
+		_ = file.Close()
 	}(file)
 	fileLock.Lock()
 	defer fileLock.Unlock()
