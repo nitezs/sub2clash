@@ -31,7 +31,7 @@ var skipGroups = map[string]bool{
 	"手动切换": true,
 	"全球直连": true,
 	"广告拦截": true,
-	"应用进化": true,
+	"应用净化": true,
 }
 
 func AddProxy(sub *model.Subscription, autotest bool, lazy bool, proxies ...model.Proxy) {
@@ -87,7 +87,10 @@ func AddProxy(sub *model.Subscription, autotest bool, lazy bool, proxies ...mode
 			continue
 		}
 		if !skipGroups[sub.ProxyGroups[i].Name] {
-			sub.ProxyGroups[i].Proxies = append(newCountryGroupNames, sub.ProxyGroups[i].Proxies...)
+			combined := make([]string, len(newCountryGroupNames)+len(sub.ProxyGroups[i].Proxies))
+			copy(combined, newCountryGroupNames)
+			copy(combined[len(newCountryGroupNames):], sub.ProxyGroups[i].Proxies)
+			sub.ProxyGroups[i].Proxies = combined
 		}
 	}
 }
