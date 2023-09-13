@@ -1,0 +1,11 @@
+version '3'
+
+services:
+  sub2clash:
+    container_name: sub2clash
+    restart: unless-stopped
+    image: ghcr.io/nitezs/sub2clash:latest
+    volumes:
+      - ./templates:/app/templates
+      - ./logs:/app/logs
+      - .env:/app/.env
