@@ -25,17 +25,17 @@ jobs:
           LDFLAGS="-s -w"
   
           # Linux
-          GOOS=linux GOARCH=amd64 go build -ldflags="$LDFLAGS" -o output/sub2clash-linux-amd64 main.go
-          GOOS=linux GOARCH=arm go build -ldflags="$LDFLAGS" -o output/sub2clash-linux-arm main.go
-          GOOS=linux GOARCH=arm64 go build -ldflags="$LDFLAGS" -o output/sub2clash-linux-arm64 main.go
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="$LDFLAGS" -o output/sub2clash-linux-amd64 main.go
+          CGO_ENABLED=0 GOOS=linux GOARCH=arm go build -ldflags="$LDFLAGS" -o output/sub2clash-linux-arm main.go
+          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags="$LDFLAGS" -o output/sub2clash-linux-arm64 main.go
   
           # Darwin
-          GOOS=darwin GOARCH=amd64 go build -ldflags="$LDFLAGS" -o output/sub2clash-darwin-amd64 main.go
-          GOOS=darwin GOARCH=arm64 go build -ldflags="$LDFLAGS" -o output/sub2clash-darwin-arm64 main.go  # For Apple Silicon
+          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -ldflags="$LDFLAGS" -o output/sub2clash-darwin-amd64 main.go
+          CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -ldflags="$LDFLAGS" -o output/sub2clash-darwin-arm64 main.go  # For Apple Silicon
   
           # Windows
-          GOOS=windows GOARCH=amd64 go build -ldflags="$LDFLAGS" -o output/sub2clash-windows-amd64.exe main.go
-          GOOS=windows GOARCH=arm go build -ldflags="$LDFLAGS" -o output/sub2clash-windows-arm.exe main.go
+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags="$LDFLAGS" -o output/sub2clash-windows-amd64.exe main.go
+          CGO_ENABLED=0 GOOS=windows GOARCH=arm go build -ldflags="$LDFLAGS" -o output/sub2clash-windows-arm.exe main.go
 
     - name: Create Release
       id: create_release
