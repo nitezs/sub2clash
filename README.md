@@ -17,6 +17,20 @@
     -   [ ] TUIC
     -   [ ] WireGuard
 
+## 配置
+
+可以通过编辑 .env 文件来修改默认配置
+
+| 变量名                   | 说明                                               |
+|-----------------------|--------------------------------------------------|
+| PORT                  | 端口，默认 `8011`                                     |
+| META_TEMPLATE         | meta 模板文件名，默认 `template_meta.yaml`               |
+| CLASH_TEMPLATE        | clash 模板文件名，默认 `template_clash.yaml`             |
+| REQUEST_RETRY_TIMES   | Get 请求重试次数，默认 `3`                                |
+| REQUEST_MAX_FILE_SIZE | Get 请求订阅文件最大大小（byte），默认 `1048576`                |
+| CACHE_EXPIRE          | 订阅缓存时间（秒），默认 `300`                               |
+| LOG_LEVEL             | 日志等级，可选值 `debug`,`info`,`warn`,'error'，默认 `info` |
+
 ## API
 
 ### `/clash`,`/meta`
