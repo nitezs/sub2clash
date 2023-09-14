@@ -1,6 +1,8 @@
 package validator
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"net/url"
@@ -21,6 +23,7 @@ type SubQuery struct {
 	Rules         []RuleStruct         `form:"-" binding:""`
 	AutoTest      bool                 `form:"autoTest,default=false" binding:""`
 	Lazy          bool                 `form:"lazy,default=false" binding:""`
+	Sort          string               `form:"sort" binding:""`
 }
 
 type RuleProviderStruct struct {
@@ -28,6 +31,7 @@ type RuleProviderStruct struct {
 	Url      string
 	Group    string
 	Prepend  bool
+	Name     string
 }
 
 type RuleStruct struct {
@@ -87,7 +91,7 @@ func ParseQuery(c *gin.Context) (SubQuery, error) {
 		for i := range ruleProviders {
 			length := len(ruleProviders)
 			parts := strings.Split(ruleProviders[length-i-1][1], ",")
-			if len(parts) != 4 {
+			if len(parts) < 4 {
 				return SubQuery{}, errors.New("参数错误: ruleProvider 格式错误")
 			}
 			u := parts[1]
@@ -100,12 +104,17 @@ func ParseQuery(c *gin.Context) (SubQuery, error) {
 			if err != nil {
 				return SubQuery{}, errors.New("参数错误: " + err.Error())
 			}
+			if len(parts) == 4 {
+				hash := md5.Sum([]byte(u))
+				parts = append(parts, hex.EncodeToString(hash[:]))
+			}
 			query.RuleProviders = append(
 				query.RuleProviders, RuleProviderStruct{
 					Behavior: parts[0],
 					Url:      u,
 					Group:    parts[2],
 					Prepend:  parts[3] == "true",
+					Name:     parts[4],
 				},
 			)
 		}

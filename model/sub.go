@@ -13,17 +13,6 @@ type Subscription struct {
 	RuleProviders      map[string]RuleProvider `yaml:"rule-providers,omitempty,omitempty"`
 }
 
-type ProxyGroup struct {
-	Name          string   `yaml:"name,omitempty"`
-	Type          string   `yaml:"type,omitempty"`
-	Proxies       []string `yaml:"proxies,omitempty"`
-	IsCountryGrop bool     `yaml:"-"`
-	Url           string   `yaml:"url,omitempty"`
-	Interval      int      `yaml:"interval,omitempty"`
-	Tolerance     int      `yaml:"tolerance,omitempty"`
-	Lazy          bool     `yaml:"lazy"`
-}
-
 type RuleProvider struct {
 	Type     string `yaml:"type,omitempty"`
 	Behavior string `yaml:"behavior,omitempty"`

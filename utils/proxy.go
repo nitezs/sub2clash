@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"sort"
 	"strings"
 	"sub2clash/model"
 	"sub2clash/parser"
@@ -27,35 +28,30 @@ func GetContryName(proxy model.Proxy) string {
 	return "其他地区"
 }
 
-var skipGroups = map[string]bool{
-	"手动切换": true,
-	"全球直连": true,
-	"广告拦截": true,
-	"应用净化": true,
-}
-
-func AddProxy(sub *model.Subscription, autotest bool, lazy bool, proxies ...model.Proxy) {
+func AddProxy(
+	sub *model.Subscription, autotest bool, lazy bool, sortStrategy string,
+	proxies ...model.Proxy,
+) {
 	newCountryGroupNames := make([]string, 0)
-
+	// 添加节点
 	for _, proxy := range proxies {
 		sub.Proxies = append(sub.Proxies, proxy)
-
 		haveProxyGroup := false
 		countryName := GetContryName(proxy)
-
 		for i := range sub.ProxyGroups {
 			group := &sub.ProxyGroups[i]
 
 			if group.Name == countryName {
 				group.Proxies = append(group.Proxies, proxy.Name)
+				group.Size++
 				haveProxyGroup = true
 			}
 
 			if group.Name == "手动切换" {
 				group.Proxies = append(group.Proxies, proxy.Name)
+				group.Size++
 			}
 		}
-
 		if !haveProxyGroup {
 			var newGroup model.ProxyGroup
 			if !autotest {
@@ -64,6 +60,7 @@ func AddProxy(sub *model.Subscription, autotest bool, lazy bool, proxies ...mode
 					Type:          "select",
 					Proxies:       []string{proxy.Name},
 					IsCountryGrop: true,
+					Size:          1,
 				}
 			} else {
 				newGroup = model.ProxyGroup{
@@ -75,23 +72,32 @@ func AddProxy(sub *model.Subscription, autotest bool, lazy bool, proxies ...mode
 					Interval:      300,
 					Tolerance:     50,
 					Lazy:          lazy,
+					Size:          1,
 				}
 			}
 			sub.ProxyGroups = append(sub.ProxyGroups, newGroup)
 			newCountryGroupNames = append(newCountryGroupNames, countryName)
 		}
 	}
-
+	// 统计国家策略组数量
+	countryGroupCount := 0
 	for i := range sub.ProxyGroups {
 		if sub.ProxyGroups[i].IsCountryGrop {
-			continue
+			countryGroupCount++
 		}
-		if !skipGroups[sub.ProxyGroups[i].Name] {
-			combined := make([]string, len(newCountryGroupNames)+len(sub.ProxyGroups[i].Proxies))
-			copy(combined, newCountryGroupNames)
-			copy(combined[len(newCountryGroupNames):], sub.ProxyGroups[i].Proxies)
-			sub.ProxyGroups[i].Proxies = combined
-		}
+	}
+	// 对国家策略组进行排序
+	switch sortStrategy {
+	case "sizeasc":
+		sort.Sort(model.ProxyGroupsSortBySize(sub.ProxyGroups[:countryGroupCount]))
+	case "sizedesc":
+		sort.Sort(sort.Reverse(model.ProxyGroupsSortBySize(sub.ProxyGroups[:countryGroupCount])))
+	case "nameasc":
+		sort.Sort(model.ProxyGroupsSortByName(sub.ProxyGroups[:countryGroupCount]))
+	case "namedesc":
+		sort.Sort(sort.Reverse(model.ProxyGroupsSortByName(sub.ProxyGroups[:countryGroupCount])))
+	default:
+		sort.Sort(model.ProxyGroupsSortByName(sub.ProxyGroups[:countryGroupCount]))
 	}
 }
 

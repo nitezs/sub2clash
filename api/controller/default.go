@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"gopkg.in/yaml.v3"
+	"net/url"
 	"regexp"
 	"strings"
 	"sub2clash/model"
@@ -17,13 +18,13 @@ func BuildSub(query validator.SubQuery, template string) (
 	*model.Subscription, error,
 ) {
 	// 定义变量
-	var externalTemplate = query.Template != ""
 	var temp *model.Subscription
 	var sub *model.Subscription
 	var err error
 	var templateBytes []byte
 	// 加载模板
-	if !externalTemplate {
+	_, err = url.ParseRequestURI(template)
+	if err != nil {
 		templateBytes, err = utils.LoadTemplate(template)
 		if err != nil {
 			return nil, errors.New("加载模板失败: " + err.Error())
@@ -63,10 +64,14 @@ func BuildSub(query validator.SubQuery, template string) (
 		} else {
 			proxyList = sub.Proxies
 		}
-		utils.AddProxy(temp, query.AutoTest, query.Lazy, proxyList...)
+		utils.AddProxy(sub, query.AutoTest, query.Lazy, query.Sort, proxyList...)
 	}
 	// 处理自定义代理
-	utils.AddProxy(temp, query.AutoTest, query.Lazy, utils.ParseProxy(query.Proxies...)...)
+	utils.AddProxy(
+		sub, query.AutoTest, query.Lazy, query.Sort,
+		utils.ParseProxy(query.Proxies...)...,
+	)
+	MergeSubAndTemplate(temp, sub)
 	// 处理自定义规则
 	for _, v := range query.Rules {
 		if v.Prepend {
@@ -88,13 +93,34 @@ func BuildSub(query validator.SubQuery, template string) (
 		}
 		if v.Prepend {
 			utils.PrependRuleProvider(
-				temp, name, v.Group, provider,
+				temp, v.Name, v.Group, provider,
 			)
 		} else {
 			utils.AppenddRuleProvider(
-				temp, name, v.Group, provider,
+				temp, v.Name, v.Group, provider,
 			)
 		}
 	}
 	return temp, nil
+}
+
+func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription) {
+	// 只合并节点、策略组
+	// 统计所有国家策略组名称
+	var newCountryGroupNames []string
+	for _, proxyGroup := range sub.ProxyGroups {
+		if proxyGroup.IsCountryGrop {
+			newCountryGroupNames = append(
+				newCountryGroupNames, proxyGroup.Name,
+			)
+		}
+	}
+	// 将订阅中的节点添加到模板中
+	temp.Proxies = append(temp.Proxies, sub.Proxies...)
+	// 将订阅中的策略组添加到模板中
+	for i := range temp.ProxyGroups {
+		temp.ProxyGroups[i].Proxies = append(temp.ProxyGroups[i].Proxies, newCountryGroupNames...)
+	}
+	temp.ProxyGroups = append(temp.ProxyGroups, sub.ProxyGroups...)
+	temp.Rules = append(temp.Rules, sub.Rules...)
 }

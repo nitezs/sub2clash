@@ -57,6 +57,5 @@ rules:
   - GEOIP,CN,全球直连
   - GEOSITE,category-games,游戏平台
   - GEOSITE,geolocation-!cn,节点选择
-  - GEOIP,ad,广告拦截
   - GEOSITE,category-ads-all,广告拦截
   - MATCH,漏网之鱼
