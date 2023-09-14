@@ -19,7 +19,7 @@
 ### 运行
 
 - [docker compose](./docker-compose.yml)
-- 运行[二进制文件](./releases/latest)
+- 运行[二进制文件](https://github.com/nitezs/sub2clash/releases/latest)
 
 ### 配置
 
