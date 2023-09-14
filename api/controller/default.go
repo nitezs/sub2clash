@@ -107,11 +107,11 @@ func BuildSub(query validator.SubQuery, template string) (
 func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription) {
 	// 只合并节点、策略组
 	// 统计所有国家策略组名称
-	var newCountryGroupNames []string
+	var countryGroupNames []string
 	for _, proxyGroup := range sub.ProxyGroups {
 		if proxyGroup.IsCountryGrop {
-			newCountryGroupNames = append(
-				newCountryGroupNames, proxyGroup.Name,
+			countryGroupNames = append(
+				countryGroupNames, proxyGroup.Name,
 			)
 		}
 	}
@@ -119,8 +119,7 @@ func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription) {
 	temp.Proxies = append(temp.Proxies, sub.Proxies...)
 	// 将订阅中的策略组添加到模板中
 	for i := range temp.ProxyGroups {
-		temp.ProxyGroups[i].Proxies = append(temp.ProxyGroups[i].Proxies, newCountryGroupNames...)
+		temp.ProxyGroups[i].Proxies = append(temp.ProxyGroups[i].Proxies, countryGroupNames...)
 	}
 	temp.ProxyGroups = append(temp.ProxyGroups, sub.ProxyGroups...)
-	temp.Rules = append(temp.Rules, sub.Rules...)
 }

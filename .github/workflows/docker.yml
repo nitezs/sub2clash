@@ -2,8 +2,8 @@ name: Build and Push to GHCR
 
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - dev
   workflow_dispatch:
 
 jobs:
