@@ -3,3 +3,4 @@ dist
 subs
 test
 logs
+dist/

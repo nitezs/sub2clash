@@ -10,4 +10,11 @@ services:
     volumes:
       - ./templates:/app/templates
       - ./logs:/app/logs
-      - .env:/app/.env
+    # environment:
+    #   - PORT=8011
+    #   - META_TEMPLATE=template_meta.yaml
+    #   - PROXY_TEMPLATE=template_clash.yaml
+    #   - REQUEST_RETRY_TIMES=3
+    #   - REQUEST_MAX_FILE_SIZE=1048576
+    #   - CACHE_EXPIRE=300
+    #   - LOG_LEVEL=info
