@@ -117,7 +117,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.up
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./output/sub2clash-windows-386.exe
           asset_name: sub2clash-windows-386.exe
           asset_content_type: application/octet-stream
@@ -147,7 +147,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.up
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./output/sub2clash-windows-arm64.exe
           asset_name: sub2clash-windows-arm64.exe
           asset_content_type: application/octet-stream
