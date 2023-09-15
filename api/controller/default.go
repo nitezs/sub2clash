@@ -121,8 +121,25 @@ func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription) {
 	// 将订阅中的节点添加到模板中
 	temp.Proxies = append(temp.Proxies, sub.Proxies...)
 	// 将订阅中的策略组添加到模板中
+	skipGroups := []string{"全球直连", "广告拦截", "手动切换"}
 	for i := range temp.ProxyGroups {
-		temp.ProxyGroups[i].Proxies = append(temp.ProxyGroups[i].Proxies, countryGroupNames...)
+		skip := false
+		for _, v := range skipGroups {
+			if strings.Contains(temp.ProxyGroups[i].Name, v) {
+				if v == "手动切换" {
+					proxies := make([]string, 0, len(sub.Proxies))
+					for _, p := range sub.Proxies {
+						proxies = append(proxies, p.Name)
+					}
+					temp.ProxyGroups[i].Proxies = proxies
+				}
+				skip = true
+				continue
+			}
+		}
+		if !skip {
+			temp.ProxyGroups[i].Proxies = append(temp.ProxyGroups[i].Proxies, countryGroupNames...)
+		}
 	}
 	temp.ProxyGroups = append(temp.ProxyGroups, sub.ProxyGroups...)
 }
