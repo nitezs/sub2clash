@@ -50,13 +50,12 @@ proxy-groups:
 rules:
   - GEOSITE,private,全球直连
   - GEOIP,private,全球直连
+  - GEOSITE,category-ads-all,广告拦截
+  - GEOSITE,CN,全球直连
+  - GEOIP,CN,全球直连
   - GEOSITE,biliintl,哔哩哔哩
   - GEOSITE,bilibili,哔哩哔哩
   - GEOSITE,bahamut,巴哈姆特
-  - GEOSITE,CN,全球直连
-  - GEOIP,CN,全球直连
   - GEOSITE,category-games,游戏平台
   - GEOSITE,geolocation-!cn,节点选择
-  - GEOIP,ad,广告拦截
-  - GEOSITE,category-ads-all,广告拦截
   - MATCH,漏网之鱼

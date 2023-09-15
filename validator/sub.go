@@ -1,9 +1,12 @@
 package validator
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"net/url"
+	"os"
 	"regexp"
 	"strings"
 )
@@ -21,6 +24,7 @@ type SubQuery struct {
 	Rules         []RuleStruct         `form:"-" binding:""`
 	AutoTest      bool                 `form:"autoTest,default=false" binding:""`
 	Lazy          bool                 `form:"lazy,default=false" binding:""`
+	Sort          string               `form:"sort" binding:""`
 }
 
 type RuleProviderStruct struct {
@@ -28,6 +32,7 @@ type RuleProviderStruct struct {
 	Url      string
 	Group    string
 	Prepend  bool
+	Name     string
 }
 
 type RuleStruct struct {
@@ -46,7 +51,6 @@ func ParseQuery(c *gin.Context) (SubQuery, error) {
 	if query.Sub != "" {
 		query.Subs = strings.Split(query.Sub, ",")
 		for i := range query.Subs {
-			query.Subs[i], _ = url.QueryUnescape(query.Subs[i])
 			if _, err := url.ParseRequestURI(query.Subs[i]); err != nil {
 				return SubQuery{}, errors.New("参数错误: " + err.Error())
 			}
@@ -56,49 +60,36 @@ func ParseQuery(c *gin.Context) (SubQuery, error) {
 	}
 	if query.Proxy != "" {
 		query.Proxies = strings.Split(query.Proxy, ",")
-		for i := range query.Proxies {
-			query.Proxies[i], _ = url.QueryUnescape(query.Proxies[i])
-			if _, err := url.ParseRequestURI(query.Proxies[i]); err != nil {
-				return SubQuery{}, errors.New("参数错误: " + err.Error())
-			}
-		}
 	} else {
 		query.Proxies = nil
 	}
 	if query.Template != "" {
-		unescape, err := url.QueryUnescape(query.Template)
+		uri, err := url.ParseRequestURI(query.Template)
 		if err != nil {
-			return SubQuery{}, errors.New("参数错误: " + err.Error())
+			if strings.Contains(query.Template, string(os.PathSeparator)) {
+				return SubQuery{}, err
+			}
 		}
-		uri, err := url.ParseRequestURI(unescape)
 		query.Template = uri.String()
-		if err != nil {
-			return SubQuery{}, errors.New("参数错误: " + err.Error())
-		}
 	}
 	if query.RuleProvider != "" {
-		var err error
-		query.RuleProvider, err = url.QueryUnescape(query.RuleProvider)
-		if err != nil {
-			return SubQuery{}, errors.New("参数错误: " + err.Error())
-		}
 		reg := regexp.MustCompile(`\[(.*?)\]`)
 		ruleProviders := reg.FindAllStringSubmatch(query.RuleProvider, -1)
 		for i := range ruleProviders {
 			length := len(ruleProviders)
 			parts := strings.Split(ruleProviders[length-i-1][1], ",")
-			if len(parts) != 4 {
+			if len(parts) < 4 {
 				return SubQuery{}, errors.New("参数错误: ruleProvider 格式错误")
 			}
 			u := parts[1]
-			u, err = url.QueryUnescape(u)
+			uri, err := url.ParseRequestURI(u)
 			if err != nil {
 				return SubQuery{}, errors.New("参数错误: " + err.Error())
 			}
-			uri, err := url.ParseRequestURI(u)
 			u = uri.String()
-			if err != nil {
-				return SubQuery{}, errors.New("参数错误: " + err.Error())
+			if len(parts) == 4 {
+				hash := md5.Sum([]byte(u))
+				parts = append(parts, hex.EncodeToString(hash[:]))
 			}
 			query.RuleProviders = append(
 				query.RuleProviders, RuleProviderStruct{
@@ -106,6 +97,7 @@ func ParseQuery(c *gin.Context) (SubQuery, error) {
 					Url:      u,
 					Group:    parts[2],
 					Prepend:  parts[3] == "true",
+					Name:     parts[4],
 				},
 			)
 		}
