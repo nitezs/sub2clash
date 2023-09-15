@@ -23,6 +23,9 @@ func BuildSub(query validator.SubQuery, template string) (
 	var err error
 	var templateBytes []byte
 	// 加载模板
+	if query.Template != "" {
+		template = query.Template
+	}
 	_, err = url.ParseRequestURI(template)
 	if err != nil {
 		templateBytes, err = utils.LoadTemplate(template)

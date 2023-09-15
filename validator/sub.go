@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"net/url"
+	"os"
 	"regexp"
 	"strings"
 )
@@ -50,7 +51,6 @@ func ParseQuery(c *gin.Context) (SubQuery, error) {
 	if query.Sub != "" {
 		query.Subs = strings.Split(query.Sub, ",")
 		for i := range query.Subs {
-			query.Subs[i], _ = url.QueryUnescape(query.Subs[i])
 			if _, err := url.ParseRequestURI(query.Subs[i]); err != nil {
 				return SubQuery{}, errors.New("参数错误: " + err.Error())
 			}
@@ -60,32 +60,19 @@ func ParseQuery(c *gin.Context) (SubQuery, error) {
 	}
 	if query.Proxy != "" {
 		query.Proxies = strings.Split(query.Proxy, ",")
-		for i := range query.Proxies {
-			query.Proxies[i], _ = url.QueryUnescape(query.Proxies[i])
-			if _, err := url.ParseRequestURI(query.Proxies[i]); err != nil {
-				return SubQuery{}, errors.New("参数错误: " + err.Error())
-			}
-		}
 	} else {
 		query.Proxies = nil
 	}
 	if query.Template != "" {
-		unescape, err := url.QueryUnescape(query.Template)
+		uri, err := url.ParseRequestURI(query.Template)
 		if err != nil {
-			return SubQuery{}, errors.New("参数错误: " + err.Error())
+			if strings.Contains(query.Template, string(os.PathSeparator)) {
+				return SubQuery{}, err
+			}
 		}
-		uri, err := url.ParseRequestURI(unescape)
 		query.Template = uri.String()
-		if err != nil {
-			return SubQuery{}, errors.New("参数错误: " + err.Error())
-		}
 	}
 	if query.RuleProvider != "" {
-		var err error
-		query.RuleProvider, err = url.QueryUnescape(query.RuleProvider)
-		if err != nil {
-			return SubQuery{}, errors.New("参数错误: " + err.Error())
-		}
 		reg := regexp.MustCompile(`\[(.*?)\]`)
 		ruleProviders := reg.FindAllStringSubmatch(query.RuleProvider, -1)
 		for i := range ruleProviders {
@@ -95,15 +82,11 @@ func ParseQuery(c *gin.Context) (SubQuery, error) {
 				return SubQuery{}, errors.New("参数错误: ruleProvider 格式错误")
 			}
 			u := parts[1]
-			u, err = url.QueryUnescape(u)
-			if err != nil {
-				return SubQuery{}, errors.New("参数错误: " + err.Error())
-			}
 			uri, err := url.ParseRequestURI(u)
-			u = uri.String()
 			if err != nil {
 				return SubQuery{}, errors.New("参数错误: " + err.Error())
 			}
+			u = uri.String()
 			if len(parts) == 4 {
 				hash := md5.Sum([]byte(u))
 				parts = append(parts, hex.EncodeToString(hash[:]))
