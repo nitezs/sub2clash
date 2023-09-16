@@ -29,12 +29,18 @@ func GetContryName(proxy model.Proxy) string {
 }
 
 func AddProxy(
-	sub *model.Subscription, autotest bool, lazy bool, sortStrategy string,
-	proxies ...model.Proxy,
+	sub *model.Subscription, autotest bool,
+	lazy bool, sortStrategy string,
+	clashType model.ClashType, proxies ...model.Proxy,
 ) {
 	newCountryGroupNames := make([]string, 0)
+	proxyTypes := model.GetSupportProxyTypes(clashType)
+
 	// 添加节点
 	for _, proxy := range proxies {
+		if !proxyTypes[proxy.Type] {
+			continue
+		}
 		sub.Proxies = append(sub.Proxies, proxy)
 		haveProxyGroup := false
 		countryName := GetContryName(proxy)

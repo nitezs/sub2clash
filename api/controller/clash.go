@@ -5,6 +5,7 @@ import (
 	"gopkg.in/yaml.v3"
 	"net/http"
 	"sub2clash/config"
+	"sub2clash/model"
 	"sub2clash/validator"
 )
 
@@ -15,7 +16,7 @@ func SubmodHandler(c *gin.Context) {
 		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
-	sub, err := BuildSub(query, config.Default.ClashTemplate)
+	sub, err := BuildSub(model.Clash, query, config.Default.ClashTemplate)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return

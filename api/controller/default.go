@@ -14,7 +14,7 @@ import (
 	"sub2clash/validator"
 )
 
-func BuildSub(query validator.SubQuery, template string) (
+func BuildSub(clashType model.ClashType, query validator.SubQuery, template string) (
 	*model.Subscription, error,
 ) {
 	// 定义变量
@@ -67,11 +67,11 @@ func BuildSub(query validator.SubQuery, template string) (
 		} else {
 			proxyList = sub.Proxies
 		}
-		utils.AddProxy(sub, query.AutoTest, query.Lazy, query.Sort, proxyList...)
+		utils.AddProxy(sub, query.AutoTest, query.Lazy, query.Sort, clashType, proxyList...)
 	}
 	// 处理自定义代理
 	utils.AddProxy(
-		sub, query.AutoTest, query.Lazy, query.Sort,
+		sub, query.AutoTest, query.Lazy, query.Sort, clashType,
 		utils.ParseProxy(query.Proxies...)...,
 	)
 	MergeSubAndTemplate(temp, sub)
