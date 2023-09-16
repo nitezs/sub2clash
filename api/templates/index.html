@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sub2clash</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+
+    <style>
+        .container {
+            max-width: 800px;
+        }
+
+        .btn-xs {
+            padding: 2px 2px; /* 调整内边距以减小按钮大小 */
+            font-size: 10px; /* 设置字体大小 */
+            line-height: 1.2; /* 调整行高 */
+            border-radius: 3px; /* 可选的边框半径调整 */
+            height: 25px;
+            width: 25px;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="mb-4">
+        <h2>sub2clash</h2>
+        <span class="text-muted fst-italic">通用订阅链接转 Clash(Meta) 配置工具 <a
+                href="https://github.com/nitezs/sub2clash#clash-meta" target="_blank">使用文档</a></span>
+    </div>
+
+    <form id="apiForm">
+
+        <!-- API Endpoint -->
+        <div class="form-group mb-3">
+            <label for="endpoint">客户端类型:</label>
+            <select class="form-control" id="endpoint" name="endpoint">
+                <option value="clash">Clash</option>
+                <option value="meta">Clash.Meta</option>
+            </select>
+        </div>
+
+        <!-- Subscription Link -->
+        <div class="form-group mb-3">
+            <label for="sub">订阅链接:</label>
+            <textarea class="form-control" id="sub" name="sub" rows="5" placeholder="每行输入一个订阅链接"></textarea>
+        </div>
+
+        <!-- Proxy Link -->
+        <div class="form-group mb-3">
+            <label for="proxy">节点分享链接:</label>
+            <textarea class="form-control" id="proxy" name="proxy" rows="5"
+                      placeholder="每行输入一个节点分享链接"></textarea>
+        </div>
+
+        <!-- Refresh -->
+        <div class="form-check mb-3">
+            <input type="checkbox" class="form-check-input" id="refresh" name="refresh">
+            <label class="form-check-label" for="refresh">强制刷新配置</label>
+        </div>
+
+        <!-- Template -->
+        <div class="form-group mb-3">
+            <label for="template">模板链接或名称（可选）:</label>
+            <input type="text" class="form-control" id="template" name="template"
+                   placeholder="输入外部模板链接或内部模板名称">
+        </div>
+
+        <!-- Rule Provider -->
+        <div class="form-group mb-3" id="ruleProviderGroup">
+            <label>Rule Provider:</label>
+            <button type="button" class="btn btn-primary mb-1 btn-xs" onclick="addRuleProvider()">+</button>
+        </div>
+
+        <!-- Rule -->
+        <div class="form-group mb-3" id="ruleGroup">
+            <label>规则:</label>
+            <button type="button" class="btn btn-primary mb-1 btn-xs" onclick="addRule()">+</button>
+        </div>
+
+        <!-- Auto Test -->
+        <div class="form-check mb-3">
+            <input type="checkbox" class="form-check-input" id="autoTest" name="autoTest">
+            <label class="form-check-label" for="autoTest">指定国家策略组是否自动测速</label>
+        </div>
+
+        <!-- Lazy -->
+        <div class="form-check mb-3">
+            <input type="checkbox" class="form-check-input" id="lazy" name="lazy">
+            <label class="form-check-label" for="lazy">自动测速是否启用 lazy</label>
+        </div>
+
+        <!-- Sort -->
+        <div class="form-group mb-3">
+            <label for="sort">国家策略组排序策略:</label>
+            <select class="form-control" id="sort" name="sort">
+                <option value="nameasc">名称（升序）</option>
+                <option value="namedesc">名称（降序）</option>
+                <option value="sizeasc">节点数量（升序）</option>
+                <option value="sizedesc">节点数量（降序）</option>
+            </select>
+        </div>
+
+        <!-- Click to Get API Link -->
+        <button type="button" class="btn btn-primary mb-3" onclick="generateAPIRequest()">获取API链接</button>
+    </form>
+
+    <!-- Display the API Link -->
+    <div class="form-group mb-5">
+        <label for="apiLink">API 链接:</label>
+        <div class="input-group">
+            <input type="text" class="form-control" id="apiLink" readonly>
+            <button class="btn btn-primary" type="button" onclick="copyToClipboard()">复制链接</button>
+        </div>
+    </div>
+
+    <!-- footer-->
+    <footer>
+        <p class="text-center">Powered by <a class="link-primary"
+                                             href="https://github.com/nitezs/sub2clash">sub2clash</a></p>
+    </footer>
+
+</div>
+
+<script>
+    async function copyToClipboard() {
+        const apiLinkInput = document.getElementById("apiLink").value;
+
+        try {
+            await navigator.clipboard.writeText(apiLinkInput);
+            alert("API链接已复制到剪贴板!");
+        } catch (err) {
+            console.error('复制到剪贴板失败:', err);
+        }
+    }
+
+    function createRuleProvider() {
+        const div = document.createElement('div');
+        div.classList.add('input-group', 'mb-2');
+        div.innerHTML = `
+            <input type="text" class="form-control" name="ruleProvider" placeholder="Behavior">
+            <input type="text" class="form-control" name="ruleProvider" placeholder="Url">
+            <input type="text" class="form-control" name="ruleProvider" placeholder="Group">
+            <input type="text" class="form-control" name="ruleProvider" placeholder="Prepend">
+            <input type="text" class="form-control" name="ruleProvider" placeholder="Name">
+            <button type="button" class="btn btn-danger" onclick="removeElement(this)">删除</button>
+        `;
+        return div;
+    }
+
+    function createRule() {
+        const div = document.createElement('div');
+        div.classList.add('input-group', 'mb-2');
+        div.innerHTML = `
+            <input type="text" class="form-control" name="rule" placeholder="Rule">
+            <input type="text" class="form-control" name="rule" placeholder="Prepend">
+            <input type="text" class="form-control" name="rule" placeholder="Group">
+            <button type="button" class="btn btn-danger" onclick="removeElement(this)">删除</button>
+        `;
+        return div;
+    }
+
+    function addRuleProvider() {
+        const div = createRuleProvider();
+        document.getElementById('ruleProviderGroup').appendChild(div);
+    }
+
+    function addRule() {
+        const div = createRule();
+        document.getElementById('ruleGroup').appendChild(div);
+    }
+
+    function removeElement(button) {
+        button.parentElement.remove();
+    }
+
+    function generateAPIRequest() {
+        const queryParams = [];
+
+        // 获取 API Endpoint
+        const endpoint = document.getElementById("endpoint").value;
+
+        // 获取并组合订阅链接
+        let subLines = document.getElementById("sub").value.split('\n').filter(line => line.trim() !== "");
+        // 去除 subLines 中空元素
+        subLines = subLines.map((item) => {
+            if (item !== "") {
+                return item;
+            }
+        });
+        if (subLines.length > 0) {
+            queryParams.push(`sub=${encodeURIComponent(subLines.join(','))}`);
+        }
+
+        // 获取并组合节点分享链接
+        let proxyLines = document.getElementById("proxy").value.split('\n').filter(line => line.trim() !== "");
+        // 去除 proxyLines 中空元素
+        proxyLines = proxyLines.map((item) => {
+            if (item !== "") {
+                return item;
+            }
+        });
+        if (proxyLines.length > 0) {
+            queryParams.push(`proxy=${encodeURIComponent(proxyLines.join(','))}`);
+        }
+
+        // 获取复选框的值
+        const refresh = document.getElementById("refresh").checked;
+        queryParams.push(`refresh=${refresh ? 'true' : 'false'}`);
+        const autoTest = document.getElementById("autoTest").checked;
+        queryParams.push(`autoTest=${autoTest ? 'true' : 'false'}`);
+        const lazy = document.getElementById("lazy").checked;
+        queryParams.push(`lazy=${lazy ? 'true' : 'false'}`);
+
+        // 获取模板链接或名称（如果存在）
+        const template = document.getElementById("template").value;
+        if (template.trim() !== "") {
+            queryParams.push(`template=${encodeURIComponent(template)}`);
+        }
+
+        // 获取Rule Provider和规则
+        const ruleProviders = document.getElementsByName("ruleProvider");
+        const rules = document.getElementsByName("rule");
+        let providers = [];
+        for (let i = 0; i < ruleProviders.length / 5; i++) {
+            let baseIndex = i * 5;
+            let behavior = ruleProviders[baseIndex].value;
+            let url = ruleProviders[baseIndex + 1].value;
+            let group = ruleProviders[baseIndex + 2].value;
+            let prepend = ruleProviders[baseIndex + 3].value;
+            let name = ruleProviders[baseIndex + 4].value;
+            // 是否存在空值
+            if (behavior.trim() === "" || url.trim() === "" || group.trim() === "" || prepend.trim() === "" || name.trim() === "") {
+                alert("Rule Provider 中存在空值，请检查后重试！");
+                return;
+            }
+            providers.push(`[${behavior},${url},${group},${prepend},${name}]`);
+        }
+        queryParams.push(`ruleProvider=${encodeURIComponent(providers.join(','))}`);
+
+        let ruleList = [];
+        for (let i = 0; i < rules.length / 3; i++) {
+            if (rules[i * 3].value.trim() !== "") {
+                let rule = rules[i * 3].value;
+                let prepend = rules[i * 3 + 1].value;
+                let group = rules[i * 3 + 2].value;
+                // 是否存在空值
+                if (rule.trim() === "" || prepend.trim() === "" || group.trim() === "") {
+                    alert("Rule 中存在空值，请检查后重试！");
+                    return;
+                }
+                ruleList.push(`[${rule},${prepend},${group}]`);
+            }
+        }
+        queryParams.push(`rule=${encodeURIComponent(ruleList.join(','))}`);
+
+        // 获取排序策略
+        const sort = document.getElementById("sort").value;
+        queryParams.push(`sort=${sort}`);
+
+        // 组合最终的API链接
+        document.getElementById("apiLink").value = `${window.location.origin}${window.location.pathname}${endpoint}?${queryParams.join('&')}`;
+    }
+
+</script>
+
+</body>
+</html>

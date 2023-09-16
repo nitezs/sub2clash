@@ -17,7 +17,7 @@ type SubQuery struct {
 	Proxy         string               `form:"proxy" binding:""`
 	Proxies       []string             `form:"-" binding:""`
 	Refresh       bool                 `form:"refresh,default=false" binding:""`
-	Template      string               `form:"template" binding:""`
+	Template      string               `form:"templates" binding:""`
 	RuleProvider  string               `form:"ruleProvider" binding:""`
 	RuleProviders []RuleProviderStruct `form:"-" binding:""`
 	Rule          string               `form:"rule" binding:""`
@@ -100,6 +100,14 @@ func ParseQuery(c *gin.Context) (SubQuery, error) {
 					Name:     parts[4],
 				},
 			)
+		}
+		// 校验 Rule-Provider 是否有重名
+		names := make(map[string]bool)
+		for _, ruleProvider := range query.RuleProviders {
+			if _, ok := names[ruleProvider.Name]; ok {
+				return SubQuery{}, errors.New("参数错误: Rule-Provider 名称重复")
+			}
+			names[ruleProvider.Name] = true
 		}
 	} else {
 		query.RuleProviders = nil
