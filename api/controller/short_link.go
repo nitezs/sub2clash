@@ -46,5 +46,5 @@ func ShortLinkGetHandler(c *gin.Context) {
 		c.String(404, "未找到短链接")
 		return
 	}
-	c.Redirect(302, "/"+shortLink.Url)
+	c.Redirect(302, "../"+shortLink.Url)
 }

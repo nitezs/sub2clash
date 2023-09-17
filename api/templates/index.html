@@ -298,7 +298,7 @@
     function generateShortLink() {
         const apiShortLink = document.getElementById("apiShortLink");
 
-        axios.post("/short", {
+        axios.post("./short", {
             "url": generateURI()
         }, {
             headers: {
