@@ -4,6 +4,8 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"sub2clash/config"
 	"sub2clash/model"
 	"sub2clash/utils/database"
 	"sub2clash/validator"
@@ -46,5 +48,6 @@ func ShortLinkGetHandler(c *gin.Context) {
 		c.String(404, "未找到短链接")
 		return
 	}
-	c.Redirect(302, "../"+shortLink.Url)
+	uri := config.Default.BasePath + shortLink.Url
+	c.Redirect(http.StatusTemporaryRedirect, uri)
 }

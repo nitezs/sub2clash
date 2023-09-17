@@ -14,6 +14,7 @@ type Config struct {
 	RequestMaxFileSize int64
 	CacheExpire        int64
 	LogLevel           string
+	BasePath           string
 }
 
 var Default *Config
@@ -27,6 +28,7 @@ func init() {
 		Port:               8011,
 		CacheExpire:        60 * 5,
 		LogLevel:           "info",
+		BasePath:           "/",
 	}
 	err := godotenv.Load()
 	if err != nil {
@@ -68,5 +70,11 @@ func init() {
 	}
 	if os.Getenv("LOG_LEVEL") != "" {
 		Default.LogLevel = os.Getenv("LOG_LEVEL")
+	}
+	if os.Getenv("BASE_PATH") != "" {
+		Default.BasePath = os.Getenv("BASE_PATH")
+		if Default.BasePath[len(Default.BasePath)-1] != '/' {
+			Default.BasePath += "/"
+		}
 	}
 }
