@@ -17,7 +17,7 @@ type SubQuery struct {
 	Proxy         string               `form:"proxy" binding:""`
 	Proxies       []string             `form:"-" binding:""`
 	Refresh       bool                 `form:"refresh,default=false" binding:""`
-	Template      string               `form:"templates" binding:""`
+	Template      string               `form:"template" binding:""`
 	RuleProvider  string               `form:"ruleProvider" binding:""`
 	RuleProviders []RuleProviderStruct `form:"-" binding:""`
 	Rule          string               `form:"rule" binding:""`
