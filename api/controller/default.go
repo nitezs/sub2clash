@@ -18,8 +18,8 @@ func BuildSub(clashType model.ClashType, query validator.SubQuery, template stri
 	*model.Subscription, error,
 ) {
 	// 定义变量
-	var temp *model.Subscription
-	var sub *model.Subscription
+	var temp = &model.Subscription{}
+	var sub = &model.Subscription{}
 	var err error
 	var templateBytes []byte
 	// 加载模板

@@ -14,6 +14,7 @@ func ParseShadowsocksR(proxy string) (model.Proxy, error) {
 		return model.Proxy{}, fmt.Errorf("无效的 ssr Url")
 	}
 	var err error
+	proxy = strings.TrimPrefix(proxy, "ssr://")
 	if !strings.Contains(proxy, ":") {
 		proxy, err = DecodeBase64(strings.TrimPrefix(proxy, "ssr://"))
 		if err != nil {
@@ -21,7 +22,7 @@ func ParseShadowsocksR(proxy string) (model.Proxy, error) {
 		}
 	}
 	// 分割
-	detailsAndParams := strings.SplitN(strings.TrimPrefix(proxy, "ssr://"), "/?", 2)
+	detailsAndParams := strings.SplitN(proxy, "/?", 2)
 	parts := strings.Split(detailsAndParams[0], ":")
 	params, err := url.ParseQuery(detailsAndParams[1])
 	if err != nil {
@@ -32,7 +33,21 @@ func ParseShadowsocksR(proxy string) (model.Proxy, error) {
 	if err != nil {
 		return model.Proxy{}, err
 	}
+	var obfsParam string
+	var protoParam string
+	var remarks string
+	if params.Get("obfsparam") != "" {
+		obfsParam, err = DecodeBase64(params.Get("obfsparam"))
+	}
+	if params.Get("protoparam") != "" {
+		protoParam, err = DecodeBase64(params.Get("protoparam"))
+	}
+	if params.Get("remarks") != "" {
+		remarks, err = DecodeBase64(params.Get("remarks"))
+	}
+
 	result := model.Proxy{
+		Name:          remarks,
 		Type:          "ssr",
 		Server:        parts[0],
 		Port:          port,
@@ -40,8 +55,13 @@ func ParseShadowsocksR(proxy string) (model.Proxy, error) {
 		Cipher:        parts[3],
 		Obfs:          parts[4],
 		Password:      parts[5],
-		ObfsParam:     params.Get("obfsparam"),
-		ProtocolParam: params.Get("protoparam"),
+		ObfsParam:     obfsParam,
+		ProtocolParam: protoParam,
 	}
+
+	if result.Name == "" {
+		result.Name = result.Server
+	}
+
 	return result, nil
 }
