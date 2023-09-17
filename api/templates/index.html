@@ -15,6 +15,9 @@
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"></script>
 
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <style>
         .container {
             max-width: 800px;
@@ -111,17 +114,21 @@
                 <option value="sizedesc">节点数量（降序）</option>
             </select>
         </div>
-
-        <!-- Click to Get API Link -->
-        <button type="button" class="btn btn-primary mb-3" onclick="generateAPIRequest()">获取API链接</button>
     </form>
 
     <!-- Display the API Link -->
     <div class="form-group mb-5">
-        <label for="apiLink">API 链接:</label>
-        <div class="input-group">
+        <label for="apiLink">配置链接:</label>
+        <div class="input-group mb-2">
             <input type="text" class="form-control" id="apiLink" readonly>
-            <button class="btn btn-primary" type="button" onclick="copyToClipboard()">复制链接</button>
+            <button class="btn btn-primary" type="button" onclick="generateURL()">生成链接</button>
+            <button class="btn btn-primary" type="button" onclick="copyToClipboard('apiLink',this)">复制链接</button>
+        </div>
+        <div class="input-group">
+            <input type="text" class="form-control" id="apiShortLink" readonly>
+            <button class="btn btn-primary" type="button" onclick="generateShortLink()">生成短链</button>
+            <button class="btn btn-primary" type="button" onclick="copyToClipboard('apiShortLink',this)">复制短链
+            </button>
         </div>
     </div>
 
@@ -134,12 +141,15 @@
 </div>
 
 <script>
-    async function copyToClipboard() {
-        const apiLinkInput = document.getElementById("apiLink").value;
-
+    async function copyToClipboard(elem, e) {
+        const apiLinkInput = document.querySelector(`#${elem}`).value;
         try {
             await navigator.clipboard.writeText(apiLinkInput);
-            alert("API链接已复制到剪贴板!");
+            let text = e.textContent;
+            e.addEventListener("mouseout", function () {
+                e.textContent = text;
+            });
+            e.textContent = "复制成功";
         } catch (err) {
             console.error('复制到剪贴板失败:', err);
         }
@@ -185,7 +195,7 @@
         button.parentElement.remove();
     }
 
-    function generateAPIRequest() {
+    function generateURI() {
         const queryParams = [];
 
         // 获取 API Endpoint
@@ -193,6 +203,7 @@
 
         // 获取并组合订阅链接
         let subLines = document.getElementById("sub").value.split('\n').filter(line => line.trim() !== "");
+        let noSub = false
         // 去除 subLines 中空元素
         subLines = subLines.map((item) => {
             if (item !== "") {
@@ -201,10 +212,13 @@
         });
         if (subLines.length > 0) {
             queryParams.push(`sub=${encodeURIComponent(subLines.join(','))}`);
+        } else {
+            noSub = true
         }
 
         // 获取并组合节点分享链接
         let proxyLines = document.getElementById("proxy").value.split('\n').filter(line => line.trim() !== "");
+        let noProxy = false
         // 去除 proxyLines 中空元素
         proxyLines = proxyLines.map((item) => {
             if (item !== "") {
@@ -213,8 +227,13 @@
         });
         if (proxyLines.length > 0) {
             queryParams.push(`proxy=${encodeURIComponent(proxyLines.join(','))}`);
+        } else {
+            noProxy = true
         }
-
+        if (noSub && noProxy) {
+            alert("订阅链接和节点分享链接不能同时为空！")
+            return
+        }
         // 获取复选框的值
         const refresh = document.getElementById("refresh").checked;
         queryParams.push(`refresh=${refresh ? 'true' : 'false'}`);
@@ -268,11 +287,30 @@
         // 获取排序策略
         const sort = document.getElementById("sort").value;
         queryParams.push(`sort=${sort}`);
-
-        // 组合最终的API链接
-        document.getElementById("apiLink").value = `${window.location.origin}${window.location.pathname}${endpoint}?${queryParams.join('&')}`;
+        return `${endpoint}?${queryParams.join('&')}`;
     }
 
+    function generateURL() {
+        const apiLink = document.getElementById("apiLink");
+        apiLink.value = `${window.location.origin}${window.location.pathname}${generateURI()}`;
+    }
+
+    function generateShortLink() {
+        const apiShortLink = document.getElementById("apiShortLink");
+
+        axios.post("/short", {
+            "url": generateURI()
+        }, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then((response) => {
+            apiShortLink.value = `${window.location.origin}${window.location.pathname}s/${response.data}`;
+        }).catch((error) => {
+            console.log(error);
+            alert("生成短链失败，请重试！");
+        })
+    }
 </script>
 
 </body>

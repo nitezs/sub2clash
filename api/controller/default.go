@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"crypto/md5"
+	"crypto/sha256"
 	"encoding/hex"
 	"errors"
 	"gopkg.in/yaml.v3"
@@ -14,7 +14,7 @@ import (
 	"sub2clash/validator"
 )
 
-func BuildSub(clashType model.ClashType, query validator.SubQuery, template string) (
+func BuildSub(clashType model.ClashType, query validator.SubValidator, template string) (
 	*model.Subscription, error,
 ) {
 	// 定义变量
@@ -85,7 +85,7 @@ func BuildSub(clashType model.ClashType, query validator.SubQuery, template stri
 	}
 	// 处理自定义 ruleProvider
 	for _, v := range query.RuleProviders {
-		hash := md5.Sum([]byte(v.Url))
+		hash := sha256.Sum224([]byte(v.Url))
 		name := hex.EncodeToString(hash[:])
 		provider := model.RuleProvider{
 			Type:     "http",

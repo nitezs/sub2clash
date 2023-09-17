@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"crypto/md5"
+	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
 	"io"
@@ -19,7 +19,7 @@ func LoadSubscription(url string, refresh bool) ([]byte, error) {
 	if refresh {
 		return FetchSubscriptionFromAPI(url)
 	}
-	hash := md5.Sum([]byte(url))
+	hash := sha256.Sum224([]byte(url))
 	fileName := filepath.Join(subsDir, hex.EncodeToString(hash[:]))
 	stat, err := os.Stat(fileName)
 	if err != nil {
@@ -49,7 +49,7 @@ func LoadSubscription(url string, refresh bool) ([]byte, error) {
 }
 
 func FetchSubscriptionFromAPI(url string) ([]byte, error) {
-	hash := md5.Sum([]byte(url))
+	hash := sha256.Sum224([]byte(url))
 	fileName := filepath.Join(subsDir, hex.EncodeToString(hash[:]))
 	resp, err := Get(url)
 	if err != nil {

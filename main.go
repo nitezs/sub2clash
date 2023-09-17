@@ -12,6 +12,7 @@ import (
 	"sub2clash/config"
 	"sub2clash/logger"
 	"sub2clash/utils"
+	"sub2clash/utils/database"
 )
 
 //go:embed templates/template_meta.yaml
@@ -52,6 +53,10 @@ func init() {
 	}
 	if err := writeTemplate(config.Default.ClashTemplate, templateClash); err != nil {
 		os.Exit(1)
+	}
+	err := database.ConnectDB()
+	if err != nil {
+		panic(err)
 	}
 }
 

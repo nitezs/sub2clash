@@ -1,7 +1,7 @@
 package validator
 
 import (
-	"crypto/md5"
+	"crypto/sha256"
 	"encoding/hex"
 	"errors"
 	"github.com/gin-gonic/gin"
@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-type SubQuery struct {
+type SubValidator struct {
 	Sub           string               `form:"sub" binding:""`
 	Subs          []string             `form:"-" binding:""`
 	Proxy         string               `form:"proxy" binding:""`
@@ -40,19 +40,22 @@ type RuleStruct struct {
 	Prepend bool
 }
 
-func ParseQuery(c *gin.Context) (SubQuery, error) {
-	var query SubQuery
+func ParseQuery(c *gin.Context) (SubValidator, error) {
+	var query SubValidator
 	if err := c.ShouldBind(&query); err != nil {
-		return SubQuery{}, errors.New("参数错误: " + err.Error())
+		return SubValidator{}, errors.New("参数错误: " + err.Error())
 	}
 	if query.Sub == "" && query.Proxy == "" {
-		return SubQuery{}, errors.New("参数错误: sub 和 proxy 不能同时为空")
+		return SubValidator{}, errors.New("参数错误: sub 和 proxy 不能同时为空")
 	}
 	if query.Sub != "" {
 		query.Subs = strings.Split(query.Sub, ",")
 		for i := range query.Subs {
+			if !strings.HasPrefix(query.Subs[i], "http") {
+				return SubValidator{}, errors.New("参数错误: sub 格式错误")
+			}
 			if _, err := url.ParseRequestURI(query.Subs[i]); err != nil {
-				return SubQuery{}, errors.New("参数错误: " + err.Error())
+				return SubValidator{}, errors.New("参数错误: " + err.Error())
 			}
 		}
 	} else {
@@ -67,7 +70,7 @@ func ParseQuery(c *gin.Context) (SubQuery, error) {
 		uri, err := url.ParseRequestURI(query.Template)
 		if err != nil {
 			if strings.Contains(query.Template, string(os.PathSeparator)) {
-				return SubQuery{}, err
+				return SubValidator{}, err
 			}
 		}
 		query.Template = uri.String()
@@ -79,16 +82,16 @@ func ParseQuery(c *gin.Context) (SubQuery, error) {
 			length := len(ruleProviders)
 			parts := strings.Split(ruleProviders[length-i-1][1], ",")
 			if len(parts) < 4 {
-				return SubQuery{}, errors.New("参数错误: ruleProvider 格式错误")
+				return SubValidator{}, errors.New("参数错误: ruleProvider 格式错误")
 			}
 			u := parts[1]
 			uri, err := url.ParseRequestURI(u)
 			if err != nil {
-				return SubQuery{}, errors.New("参数错误: " + err.Error())
+				return SubValidator{}, errors.New("参数错误: " + err.Error())
 			}
 			u = uri.String()
 			if len(parts) == 4 {
-				hash := md5.Sum([]byte(u))
+				hash := sha256.Sum224([]byte(u))
 				parts = append(parts, hex.EncodeToString(hash[:]))
 			}
 			query.RuleProviders = append(
@@ -105,7 +108,7 @@ func ParseQuery(c *gin.Context) (SubQuery, error) {
 		names := make(map[string]bool)
 		for _, ruleProvider := range query.RuleProviders {
 			if _, ok := names[ruleProvider.Name]; ok {
-				return SubQuery{}, errors.New("参数错误: Rule-Provider 名称重复")
+				return SubValidator{}, errors.New("参数错误: Rule-Provider 名称重复")
 			}
 			names[ruleProvider.Name] = true
 		}
