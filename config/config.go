@@ -30,10 +30,7 @@ func init() {
 		LogLevel:           "info",
 		BasePath:           "/",
 	}
-	err := godotenv.Load()
-	if err != nil {
-		return
-	}
+	_ = godotenv.Load()
 	if os.Getenv("PORT") != "" {
 		atoi, err := strconv.Atoi(os.Getenv("PORT"))
 		if err != nil {
