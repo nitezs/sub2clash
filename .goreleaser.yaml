@@ -10,10 +10,8 @@ builds:
       - darwin
     goarch:
       - amd64
-      - arm
       - arm64
-      - 386
     ldflags:
-      - -s -w
+      - -s -w -X sub2clash/config.Version={{ .Version }}
     no_unique_dist_dir: true
     binary: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"

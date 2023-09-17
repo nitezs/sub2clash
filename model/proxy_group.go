@@ -39,7 +39,6 @@ func (p ProxyGroupsSortByName) Less(i, j int) bool {
 	bestMatch, _, _ := matcher.Match(language.Make("zh"))
 	// 使用最佳匹配的语言进行排序
 	c := collate.New(bestMatch)
-
 	return c.CompareString(p[i].Name, p[j].Name) < 0
 }
 

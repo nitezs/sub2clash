@@ -23,12 +23,10 @@ jobs:
 
       - name: Build
         run: |
-          LDFLAGS="-s -w"
+          LDFLAGS="-s -w -X config.Version=${{ github.ref_name }}"
           
           # Linux
-          CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -ldflags="$LDFLAGS" -o output/sub2clash-linux-386 main.go
           CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="$LDFLAGS" -o output/sub2clash-linux-amd64 main.go
-          CGO_ENABLED=0 GOOS=linux GOARCH=arm go build -ldflags="$LDFLAGS" -o output/sub2clash-linux-arm main.go
           CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags="$LDFLAGS" -o output/sub2clash-linux-arm64 main.go
           
           # Darwin
@@ -36,9 +34,7 @@ jobs:
           CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -ldflags="$LDFLAGS" -o output/sub2clash-darwin-arm64 main.go
           
           # Windows
-          CGO_ENABLED=0 GOOS=windows GOARCH=386 go build -ldflags="$LDFLAGS" -o output/sub2clash-windows-386.exe main.go
           CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags="$LDFLAGS" -o output/sub2clash-windows-amd64.exe main.go
-          CGO_ENABLED=0 GOOS=windows GOARCH=arm go build -ldflags="$LDFLAGS" -o output/sub2clash-windows-arm.exe main.go
           CGO_ENABLED=0 GOOS=windows GOARCH=arm64 go build -ldflags="$LDFLAGS" -o output/sub2clash-windows-arm64.exe main.go
 
       - name: Create Release
@@ -52,16 +48,6 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload Release Asset (Linux 386)
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./output/sub2clash-linux-386
-          asset_name: sub2clash-linux-386
-          asset_content_type: application/octet-stream
-
       - name: Upload Release Asset (Linux amd64)
         uses: actions/upload-release-asset@v1
         env:
@@ -70,16 +56,6 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./output/sub2clash-linux-amd64
           asset_name: sub2clash-linux-amd64
-          asset_content_type: application/octet-stream
-
-      - name: Upload Release Asset (Linux arm)
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./output/sub2clash-linux-arm
-          asset_name: sub2clash-linux-arm
           asset_content_type: application/octet-stream
 
       - name: Upload Release Asset (Linux arm64)
@@ -112,16 +88,6 @@ jobs:
           asset_name: sub2clash-darwin-arm64
           asset_content_type: application/octet-stream
 
-      - name: Upload Release Asset (Windows 386)
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./output/sub2clash-windows-386.exe
-          asset_name: sub2clash-windows-386.exe
-          asset_content_type: application/octet-stream
-
       - name: Upload Release Asset (Windows amd64)
         uses: actions/upload-release-asset@v1
         env:
@@ -130,16 +96,6 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./output/sub2clash-windows-amd64.exe
           asset_name: sub2clash-windows-amd64.exe
-          asset_content_type: application/octet-stream
-
-      - name: Upload Release Asset (Windows arm)
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./output/sub2clash-windows-arm.exe
-          asset_name: sub2clash-windows-arm.exe
           asset_content_type: application/octet-stream
 
       - name: Upload Release Asset (Windows arm64)

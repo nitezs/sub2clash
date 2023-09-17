@@ -11,12 +11,12 @@ import (
 func ParseVless(proxy string) (model.Proxy, error) {
 	// 判断是否以 vless:// 开头
 	if !strings.HasPrefix(proxy, "vless://") {
-		return model.Proxy{}, fmt.Errorf("无效的 vless Url")
+		return model.Proxy{}, fmt.Errorf("invalid vless Url")
 	}
 	// 分割
 	parts := strings.SplitN(strings.TrimPrefix(proxy, "vless://"), "@", 2)
 	if len(parts) != 2 {
-		return model.Proxy{}, fmt.Errorf("无效的 vless Url")
+		return model.Proxy{}, fmt.Errorf("invalid vless Url")
 	}
 	// 分割
 	serverInfo := strings.SplitN(parts[1], "#", 2)
@@ -27,7 +27,7 @@ func ParseVless(proxy string) (model.Proxy, error) {
 		return model.Proxy{}, err
 	}
 	if len(serverAndPort) != 2 {
-		return model.Proxy{}, fmt.Errorf("无效的 vless 服务器和端口")
+		return model.Proxy{}, fmt.Errorf("invalid vless")
 	}
 	// 处理端口
 	port, err := strconv.Atoi(strings.TrimSpace(serverAndPort[1]))

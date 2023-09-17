@@ -12,12 +12,12 @@ import (
 func ParseSS(proxy string) (model.Proxy, error) {
 	// 判断是否以 ss:// 开头
 	if !strings.HasPrefix(proxy, "ss://") {
-		return model.Proxy{}, fmt.Errorf("无效的 ss Url")
+		return model.Proxy{}, fmt.Errorf("invalid ss Url")
 	}
 	// 分割
 	parts := strings.SplitN(strings.TrimPrefix(proxy, "ss://"), "@", 2)
 	if len(parts) != 2 {
-		return model.Proxy{}, fmt.Errorf("无效的 ss Url")
+		return model.Proxy{}, fmt.Errorf("invalid ss Url")
 	}
 	if !strings.Contains(parts[0], ":") {
 		// 解码
@@ -29,13 +29,13 @@ func ParseSS(proxy string) (model.Proxy, error) {
 	}
 	credentials := strings.SplitN(parts[0], ":", 2)
 	if len(credentials) != 2 {
-		return model.Proxy{}, fmt.Errorf("无效的 ss 凭证")
+		return model.Proxy{}, fmt.Errorf("invalid ss Url")
 	}
 	// 分割
 	serverInfo := strings.SplitN(parts[1], "#", 2)
 	serverAndPort := strings.SplitN(serverInfo[0], ":", 2)
 	if len(serverAndPort) != 2 {
-		return model.Proxy{}, fmt.Errorf("无效的 ss 服务器和端口")
+		return model.Proxy{}, fmt.Errorf("invalid ss Url")
 	}
 	// 转换端口字符串为数字
 	port, err := strconv.Atoi(strings.TrimSpace(serverAndPort[1]))

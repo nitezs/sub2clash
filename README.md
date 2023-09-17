@@ -25,15 +25,17 @@
 
 可以通过编辑 .env 文件来修改默认配置，docker 直接添加环境变量
 
-| 变量名                   | 说明                                     | 默认值                   |
-|-----------------------|----------------------------------------|-----------------------|
-| PORT                  | 端口                                     | `8011`                |
-| META_TEMPLATE         | meta 模板文件名                             | `template_meta.yaml`  |
-| CLASH_TEMPLATE        | clash 模板文件名                            | `template_clash.yaml` |
-| REQUEST_RETRY_TIMES   | Get 请求重试次数                             | `3`                   |
-| REQUEST_MAX_FILE_SIZE | Get 请求订阅文件最大大小（byte）                   | `1048576`             |
-| CACHE_EXPIRE          | 订阅缓存时间（秒）                              | `300`                 |
-| LOG_LEVEL             | 日志等级，可选值 `debug`,`info`,`warn`,`error` | `info`                |
+| 变量名                   | 说明                                                        | 默认值                   |
+|-----------------------|-----------------------------------------------------------|-----------------------|
+| BASE_PATH             | 程序运行子路径，例如将服务反代在 `https://example.com/sub` 则此变量值应为 `/sub` | `/`                   |
+| PORT                  | 端口                                                        | `8011`                |
+| META_TEMPLATE         | meta 模板文件名                                                | `template_meta.yaml`  |
+| CLASH_TEMPLATE        | clash 模板文件名                                               | `template_clash.yaml` |
+| REQUEST_RETRY_TIMES   | Get 请求重试次数                                                | `3`                   |
+| REQUEST_MAX_FILE_SIZE | Get 请求订阅文件最大大小（byte）                                      | `1048576`             |
+| CACHE_EXPIRE          | 订阅缓存时间（秒）                                                 | `300`                 |
+| LOG_LEVEL             | 日志等级，可选值 `debug`,`info`,`warn`,`error`                    | `info`                |
+| SHORT_LINK_LENGTH     | 短链长度                                                      | `6`                   |
 
 ### API
 
@@ -63,5 +65,3 @@
 [代理链接解析](./parser)还没有经过严格测试，可能会出现解析错误的情况，如果出现问题请提交 issue
 
 ## TODO
-
-- [x] 可视化面板

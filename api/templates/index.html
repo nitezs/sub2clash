@@ -95,13 +95,13 @@
         <!-- Auto Test -->
         <div class="form-check mb-3">
             <input type="checkbox" class="form-check-input" id="autoTest" name="autoTest">
-            <label class="form-check-label" for="autoTest">指定国家策略组是否自动测速</label>
+            <label class="form-check-label" for="autoTest">国家策略组自动测速</label>
         </div>
 
         <!-- Lazy -->
         <div class="form-check mb-3">
             <input type="checkbox" class="form-check-input" id="lazy" name="lazy">
-            <label class="form-check-label" for="lazy">自动测速是否启用 lazy</label>
+            <label class="form-check-label" for="lazy">自动测速启用 lazy</label>
         </div>
 
         <!-- Sort -->
@@ -136,6 +136,7 @@
     <footer>
         <p class="text-center">Powered by <a class="link-primary"
                                              href="https://github.com/nitezs/sub2clash">sub2clash</a></p>
+        <p class="text-center">Version {{.Version}}</p>
     </footer>
 
 </div>
@@ -298,7 +299,7 @@
     function generateShortLink() {
         const apiShortLink = document.getElementById("apiShortLink");
 
-        axios.post("/short", {
+        axios.post("./short", {
             "url": generateURI()
         }, {
             headers: {
