@@ -33,6 +33,7 @@ func LoadConfig() error {
 		CacheExpire:        60 * 5,
 		LogLevel:           "info",
 		BasePath:           "/",
+		ShortLinkLength:    6,
 	}
 	_ = godotenv.Load()
 	if os.Getenv("PORT") != "" {

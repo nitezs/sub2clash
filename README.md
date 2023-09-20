@@ -8,11 +8,11 @@
 - 自动根据节点名称按国家划分策略组
 - 支持多订阅合并
 - 支持多种协议
-  - Shadowsocks
-  - ShadowsocksR
-  - Vmess
-  - Vless
-  - Trojan
+    - Shadowsocks
+    - ShadowsocksR
+    - Vmess
+    - Vless
+    - Trojan
 
 ## 使用
 
