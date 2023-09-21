@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
+	"strings"
 	"sub2clash/config"
 	"sub2clash/model"
 	"sub2clash/utils"
@@ -19,11 +20,15 @@ func ShortLinkGenHandler(c *gin.Context) {
 	if err := c.ShouldBind(&params); err != nil {
 		c.String(400, "参数错误: "+err.Error())
 	}
+	if strings.TrimSpace(params.Url) == "" {
+		c.String(400, "参数错误")
+		return
+	}
 	// 生成hash
 	hash := utils.RandomString(config.Default.ShortLinkLength)
 	// 存入数据库
 	var item model.ShortLink
-	result := database.DB.Model(&model.ShortLink{}).Where("url = ?", params.Url).First(&item)
+	result := database.FindShortLinkByUrl(params.Url, &item)
 	if result.Error == nil {
 		c.String(200, item.Hash)
 		return
@@ -34,13 +39,13 @@ func ShortLinkGenHandler(c *gin.Context) {
 		}
 	}
 	// 如果记录存在则重新生成hash，直到记录不存在
-	result = database.DB.Model(&model.ShortLink{}).Where("hash = ?", hash).First(&item)
+	result = database.FindShortLinkByHash(hash, &item)
 	for result.Error == nil {
 		hash = utils.RandomString(config.Default.ShortLinkLength)
-		result = database.DB.Model(&model.ShortLink{}).Where("hash = ?", hash).First(&item)
+		result = database.FindShortLinkByHash(hash, &item)
 	}
 	// 创建记录
-	database.DB.FirstOrCreate(
+	database.FirstOrCreateShortLink(
 		&model.ShortLink{
 			Hash:            hash,
 			Url:             params.Url,
@@ -54,9 +59,13 @@ func ShortLinkGenHandler(c *gin.Context) {
 func ShortLinkGetHandler(c *gin.Context) {
 	// 获取动态路由
 	hash := c.Param("hash")
+	if strings.TrimSpace(hash) == "" {
+		c.String(400, "参数错误")
+		return
+	}
 	// 查询数据库
 	var shortLink model.ShortLink
-	result := database.DB.Where("hash = ?", hash).First(&shortLink)
+	result := database.FindShortLinkByHash(hash, &shortLink)
 	// 重定向
 	if result.Error != nil {
 		c.String(404, "未找到短链接")
@@ -64,7 +73,7 @@ func ShortLinkGetHandler(c *gin.Context) {
 	}
 	// 更新最后访问时间
 	shortLink.LastRequestTime = time.Now().Unix()
-	database.DB.Save(&shortLink)
+	database.SaveShortLink(&shortLink)
 	uri := config.Default.BasePath + shortLink.Url
 	c.Redirect(http.StatusTemporaryRedirect, uri)
 }
