@@ -4,11 +4,13 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
+	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 	"net/url"
 	"regexp"
 	"sort"
 	"strings"
+	"sub2clash/logger"
 	"sub2clash/model"
 	"sub2clash/parser"
 	"sub2clash/utils"
@@ -31,17 +33,24 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	if err != nil {
 		templateBytes, err = utils.LoadTemplate(template)
 		if err != nil {
+			logger.Logger.Debug(
+				"load template failed", zap.String("template", template), zap.Error(err),
+			)
 			return nil, errors.New("加载模板失败: " + err.Error())
 		}
 	} else {
 		templateBytes, err = utils.LoadSubscription(template, query.Refresh)
 		if err != nil {
+			logger.Logger.Debug(
+				"load template failed", zap.String("template", template), zap.Error(err),
+			)
 			return nil, errors.New("加载模板失败: " + err.Error())
 		}
 	}
 	// 解析模板
 	err = yaml.Unmarshal(templateBytes, &temp)
 	if err != nil {
+		logger.Logger.Debug("parse template failed", zap.Error(err))
 		return nil, errors.New("解析模板失败: " + err.Error())
 	}
 	var proxyList []model.Proxy
@@ -49,10 +58,12 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	for i := range query.Subs {
 		data, err := utils.LoadSubscription(query.Subs[i], query.Refresh)
 		if err != nil {
+			logger.Logger.Debug(
+				"load subscription failed", zap.String("url", query.Subs[i]), zap.Error(err),
+			)
 			return nil, errors.New("加载订阅失败: " + err.Error())
 		}
 		// 解析订阅
-
 		err = yaml.Unmarshal(data, &sub)
 		if err != nil {
 			reg, _ := regexp.Compile("(ssr|ss|vmess|trojan|http|https)://")
@@ -63,6 +74,11 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 				// 如果无法直接解析，尝试Base64解码
 				base64, err := parser.DecodeBase64(string(data))
 				if err != nil {
+					logger.Logger.Debug(
+						"parse subscription failed", zap.String("url", query.Subs[i]),
+						zap.String("data", string(data)),
+						zap.Error(err),
+					)
 					return nil, errors.New("加载订阅失败: " + err.Error())
 				}
 				p := utils.ParseProxy(strings.Split(base64, "\n")...)
