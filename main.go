@@ -5,8 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"io"
-	"os"
-	"path/filepath"
 	"strconv"
 	"sub2clash/api"
 	"sub2clash/config"
@@ -21,43 +19,44 @@ var templateMeta string
 //go:embed templates/template_clash.yaml
 var templateClash string
 
-func writeTemplate(path string, template string) error {
-	tPath := filepath.Join(
-		"templates", path,
-	)
-	if _, err := os.Stat(tPath); os.IsNotExist(err) {
-		file, err := os.Create(tPath)
-		if err != nil {
-			return err
-		}
-		defer func(file *os.File) {
-			_ = file.Close()
-		}(file)
-		_, err = file.WriteString(template)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func init() {
-	if err := utils.MKDir("subs"); err != nil {
-		os.Exit(1)
-	}
-	if err := utils.MKDir("templates"); err != nil {
-		os.Exit(1)
-	}
-	if err := writeTemplate(config.Default.MetaTemplate, templateMeta); err != nil {
-		os.Exit(1)
-	}
-	if err := writeTemplate(config.Default.ClashTemplate, templateClash); err != nil {
-		os.Exit(1)
-	}
-	err := database.ConnectDB()
+	// 加载配置
+	err := config.LoadConfig()
+	// 初始化日志
+	logger.InitLogger(config.Default.LogLevel)
 	if err != nil {
-		panic(err)
+		logger.Logger.Panic("load config failed", zap.Error(err))
 	}
+	// 检查更新
+	if config.Dev != "true" {
+		go func() {
+			update, newVersion, err := utils.CheckUpdate()
+			if err != nil {
+				logger.Logger.Warn("check update failed", zap.Error(err))
+			}
+			if update {
+				logger.Logger.Info("new version is available", zap.String("version", newVersion))
+			}
+		}()
+	} else {
+		logger.Logger.Info("running in dev mode")
+	}
+	// 创建文件夹
+	err = utils.MkEssentialDir()
+	if err != nil {
+		logger.Logger.Panic("create essential dir failed", zap.Error(err))
+	}
+	// 写入默认模板
+	err = utils.WriteDefalutTemplate(templateMeta, templateClash)
+	if err != nil {
+		logger.Logger.Panic("write default template failed", zap.Error(err))
+	}
+	// 连接数据库
+	err = database.ConnectDB()
+	if err != nil {
+		logger.Logger.Panic("database connect failed", zap.Error(err))
+	}
+	logger.Logger.Info("database connect success")
 }
 
 func main() {
@@ -69,10 +68,10 @@ func main() {
 	r := gin.Default()
 	// 设置路由
 	api.SetRoute(r)
-	logger.Logger.Info("Server is running at http://localhost:" + strconv.Itoa(config.Default.Port))
+	logger.Logger.Info("server is running at http://localhost:" + strconv.Itoa(config.Default.Port))
 	err := r.Run(":" + strconv.Itoa(config.Default.Port))
 	if err != nil {
-		logger.Logger.Error("Server run error", zap.Error(err))
+		logger.Logger.Error("server running failed", zap.Error(err))
 		return
 	}
 }

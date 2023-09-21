@@ -7,6 +7,7 @@ import (
 	"gopkg.in/yaml.v3"
 	"net/url"
 	"regexp"
+	"sort"
 	"strings"
 	"sub2clash/model"
 	"sub2clash/parser"
@@ -43,6 +44,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	if err != nil {
 		return nil, errors.New("解析模板失败: " + err.Error())
 	}
+	var proxyList []model.Proxy
 	// 加载订阅
 	for i := range query.Subs {
 		data, err := utils.LoadSubscription(query.Subs[i], query.Refresh)
@@ -50,31 +52,49 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 			return nil, errors.New("加载订阅失败: " + err.Error())
 		}
 		// 解析订阅
-		var proxyList []model.Proxy
+
 		err = yaml.Unmarshal(data, &sub)
 		if err != nil {
 			reg, _ := regexp.Compile("(ssr|ss|vmess|trojan|http|https)://")
 			if reg.Match(data) {
-				proxyList = utils.ParseProxy(strings.Split(string(data), "\n")...)
+				p := utils.ParseProxy(strings.Split(string(data), "\n")...)
+				proxyList = append(proxyList, p...)
 			} else {
 				// 如果无法直接解析，尝试Base64解码
 				base64, err := parser.DecodeBase64(string(data))
 				if err != nil {
 					return nil, errors.New("加载订阅失败: " + err.Error())
 				}
-				proxyList = utils.ParseProxy(strings.Split(base64, "\n")...)
+				p := utils.ParseProxy(strings.Split(base64, "\n")...)
+				proxyList = append(proxyList, p...)
 			}
 		} else {
-			proxyList = sub.Proxies
+			proxyList = append(proxyList, sub.Proxies...)
 		}
-		utils.AddProxy(sub, query.AutoTest, query.Lazy, query.Sort, clashType, proxyList...)
 	}
+	// 将新增节点都添加到临时变量 t 中，防止策略组排序错乱
+	var t = &model.Subscription{}
+	utils.AddProxy(t, query.AutoTest, query.Lazy, clashType, proxyList...)
 	// 处理自定义代理
 	utils.AddProxy(
-		sub, query.AutoTest, query.Lazy, query.Sort, clashType,
+		t, query.AutoTest, query.Lazy, clashType,
 		utils.ParseProxy(query.Proxies...)...,
 	)
-	MergeSubAndTemplate(temp, sub)
+	// 排序策略组
+	switch query.Sort {
+	case "sizeasc":
+		sort.Sort(model.ProxyGroupsSortBySize(t.ProxyGroups))
+	case "sizedesc":
+		sort.Sort(sort.Reverse(model.ProxyGroupsSortBySize(t.ProxyGroups)))
+	case "nameasc":
+		sort.Sort(model.ProxyGroupsSortByName(t.ProxyGroups))
+	case "namedesc":
+		sort.Sort(sort.Reverse(model.ProxyGroupsSortByName(t.ProxyGroups)))
+	default:
+		sort.Sort(model.ProxyGroupsSortByName(t.ProxyGroups))
+	}
+	// 合并新节点和模板
+	MergeSubAndTemplate(temp, t)
 	// 处理自定义规则
 	for _, v := range query.Rules {
 		if v.Prepend {

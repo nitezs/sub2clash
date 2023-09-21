@@ -47,6 +47,9 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
+          build-args: |
+            dev=true
+            version=${{ github.sha }}
           push: true
           tags: ghcr.io/${{ github.repository }}:${{ steps.set_tag.outputs.tag }}
 
@@ -56,6 +59,9 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
+          build-args: |
+            dev=false 
+            version=${{ steps.set_tag.outputs.tag }}
           push: true
           tags: |
             ghcr.io/${{ github.repository }}:${{ steps.set_tag.outputs.tag }}

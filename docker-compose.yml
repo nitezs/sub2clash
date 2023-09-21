@@ -9,7 +9,8 @@ services:
       - "8011:8011"
     volumes:
       - ./logs:/app/logs
-      # - ./templates:/app/templates
+      - ./templates:/app/templates
+      - ./data:/app/data
     # environment:
     #   - PORT=8011
     #   - META_TEMPLATE=template_meta.yaml

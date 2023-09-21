@@ -4,3 +4,4 @@ subs
 test
 logs
 sub2clash.db
+.env

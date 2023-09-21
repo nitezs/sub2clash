@@ -35,6 +35,7 @@
 | REQUEST_MAX_FILE_SIZE | Get 请求订阅文件最大大小（byte）                                      | `1048576`             |
 | CACHE_EXPIRE          | 订阅缓存时间（秒）                                                 | `300`                 |
 | LOG_LEVEL             | 日志等级，可选值 `debug`,`info`,`warn`,`error`                    | `info`                |
+| SHORT_LINK_LENGTH     | 短链长度                                                      | `6`                   |
 
 ### API
 

@@ -12,7 +12,7 @@ import (
 func ParseVmess(proxy string) (model.Proxy, error) {
 	// 判断是否以 vmess:// 开头
 	if !strings.HasPrefix(proxy, "vmess://") {
-		return model.Proxy{}, fmt.Errorf("无效的 vmess Url")
+		return model.Proxy{}, fmt.Errorf("invalid vmess Url")
 	}
 	// 解码
 	base64, err := DecodeBase64(strings.TrimPrefix(proxy, "vmess://"))

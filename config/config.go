@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"github.com/joho/godotenv"
 	"os"
 	"strconv"
@@ -15,11 +16,14 @@ type Config struct {
 	CacheExpire        int64
 	LogLevel           string
 	BasePath           string
+	ShortLinkLength    int
 }
 
 var Default *Config
+var Version string
+var Dev string
 
-func init() {
+func LoadConfig() error {
 	Default = &Config{
 		MetaTemplate:       "template_meta.yaml",
 		ClashTemplate:      "template_clash.yaml",
@@ -29,12 +33,13 @@ func init() {
 		CacheExpire:        60 * 5,
 		LogLevel:           "info",
 		BasePath:           "/",
+		ShortLinkLength:    6,
 	}
 	_ = godotenv.Load()
 	if os.Getenv("PORT") != "" {
 		atoi, err := strconv.Atoi(os.Getenv("PORT"))
 		if err != nil {
-			panic("PORT invalid")
+			return errors.New("PORT invalid")
 		}
 		Default.Port = atoi
 	}
@@ -47,21 +52,21 @@ func init() {
 	if os.Getenv("REQUEST_RETRY_TIMES") != "" {
 		atoi, err := strconv.Atoi(os.Getenv("REQUEST_RETRY_TIMES"))
 		if err != nil {
-			panic("REQUEST_RETRY_TIMES invalid")
+			return errors.New("REQUEST_RETRY_TIMES invalid")
 		}
 		Default.RequestRetryTimes = atoi
 	}
 	if os.Getenv("REQUEST_MAX_FILE_SIZE") != "" {
 		atoi, err := strconv.Atoi(os.Getenv("REQUEST_MAX_FILE_SIZE"))
 		if err != nil {
-			panic("REQUEST_MAX_FILE_SIZE invalid")
+			return errors.New("REQUEST_MAX_FILE_SIZE invalid")
 		}
 		Default.RequestMaxFileSize = int64(atoi)
 	}
 	if os.Getenv("CACHE_EXPIRE") != "" {
 		atoi, err := strconv.Atoi(os.Getenv("CACHE_EXPIRE"))
 		if err != nil {
-			panic("CACHE_EXPIRE invalid")
+			return errors.New("CACHE_EXPIRE invalid")
 		}
 		Default.CacheExpire = int64(atoi)
 	}
@@ -74,4 +79,12 @@ func init() {
 			Default.BasePath += "/"
 		}
 	}
+	if os.Getenv("SHORT_LINK_LENGTH") != "" {
+		atoi, err := strconv.Atoi(os.Getenv("SHORT_LINK_LENGTH"))
+		if err != nil {
+			return errors.New("SHORT_LINK_LENGTH invalid")
+		}
+		Default.ShortLinkLength = atoi
+	}
+	return nil
 }

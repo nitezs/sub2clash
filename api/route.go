@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"html/template"
 	"sub2clash/api/controller"
+	"sub2clash/config"
 	"sub2clash/middleware"
 )
 
@@ -17,7 +18,11 @@ func SetRoute(r *gin.Engine) {
 	r.SetHTMLTemplate(template.Must(template.New("").ParseFS(templates, "templates/*")))
 	r.GET(
 		"/", func(c *gin.Context) {
-			c.HTML(200, "index.html", nil)
+			c.HTML(
+				200, "index.html", gin.H{
+					"Version": config.Version,
+				},
+			)
 		},
 	)
 	r.GET(

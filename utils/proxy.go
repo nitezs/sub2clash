@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"sort"
 	"strings"
 	"sub2clash/model"
 	"sub2clash/parser"
@@ -30,12 +29,10 @@ func GetContryName(proxy model.Proxy) string {
 
 func AddProxy(
 	sub *model.Subscription, autotest bool,
-	lazy bool, sortStrategy string,
-	clashType model.ClashType, proxies ...model.Proxy,
+	lazy bool, clashType model.ClashType, proxies ...model.Proxy,
 ) {
 	newCountryGroupNames := make([]string, 0)
 	proxyTypes := model.GetSupportProxyTypes(clashType)
-
 	// 添加节点
 	for _, proxy := range proxies {
 		if !proxyTypes[proxy.Type] {
@@ -84,26 +81,6 @@ func AddProxy(
 			sub.ProxyGroups = append(sub.ProxyGroups, newGroup)
 			newCountryGroupNames = append(newCountryGroupNames, countryName)
 		}
-	}
-	// 统计国家策略组数量
-	countryGroupCount := 0
-	for i := range sub.ProxyGroups {
-		if sub.ProxyGroups[i].IsCountryGrop {
-			countryGroupCount++
-		}
-	}
-	// 对国家策略组进行排序
-	switch sortStrategy {
-	case "sizeasc":
-		sort.Sort(model.ProxyGroupsSortBySize(sub.ProxyGroups[:countryGroupCount]))
-	case "sizedesc":
-		sort.Sort(sort.Reverse(model.ProxyGroupsSortBySize(sub.ProxyGroups[:countryGroupCount])))
-	case "nameasc":
-		sort.Sort(model.ProxyGroupsSortByName(sub.ProxyGroups[:countryGroupCount]))
-	case "namedesc":
-		sort.Sort(sort.Reverse(model.ProxyGroupsSortByName(sub.ProxyGroups[:countryGroupCount])))
-	default:
-		sort.Sort(model.ProxyGroupsSortByName(sub.ProxyGroups[:countryGroupCount]))
 	}
 }
 

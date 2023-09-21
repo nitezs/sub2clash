@@ -2,17 +2,29 @@ package database
 
 import (
 	"github.com/glebarez/sqlite"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
+	"path/filepath"
+	"sub2clash/logger"
 	"sub2clash/model"
+	"sub2clash/utils"
 )
 
 var DB *gorm.DB
 
 func ConnectDB() error {
 	// 用上面的数据库连接初始化 gorm
-	db, err := gorm.Open(sqlite.Open("sub2clash.db"), &gorm.Config{})
+	err := utils.MKDir("data")
 	if err != nil {
-		panic(err)
+		return err
+	}
+	db, err := gorm.Open(
+		sqlite.Open(filepath.Join("data", "sub2clash.db")), &gorm.Config{
+			Logger: nil,
+		},
+	)
+	if err != nil {
+		return err
 	}
 	if err != nil {
 		return err
@@ -23,4 +35,24 @@ func ConnectDB() error {
 		return err
 	}
 	return nil
+}
+
+func FindShortLinkByUrl(url string, shortLink *model.ShortLink) *gorm.DB {
+	logger.Logger.Debug("find short link by url", zap.String("url", url))
+	return DB.Where("url = ?", url).First(&shortLink)
+}
+
+func FindShortLinkByHash(hash string, shortLink *model.ShortLink) *gorm.DB {
+	logger.Logger.Debug("find short link by hash", zap.String("hash", hash))
+	return DB.Where("hash = ?", hash).First(&shortLink)
+}
+
+func SaveShortLink(shortLink *model.ShortLink) {
+	logger.Logger.Debug("save short link", zap.String("hash", shortLink.Hash))
+	DB.Save(shortLink)
+}
+
+func FirstOrCreateShortLink(shortLink *model.ShortLink) {
+	logger.Logger.Debug("first or create short link", zap.String("hash", shortLink.Hash))
+	DB.FirstOrCreate(shortLink)
 }
