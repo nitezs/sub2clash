@@ -168,6 +168,39 @@
             <option value="sizedesc">节点数量（降序）</option>
           </select>
         </div>
+
+        <!-- Remove -->
+        <div class="form-group mb-3">
+          <label for="remove">删除节点:</label>
+          <input
+            class="form-control"
+            type="text"
+            name="remove"
+            id="remove"
+            placeholder="正则表达式"
+          />
+        </div>
+
+        <!-- Rename  -->
+        <div class="form-group mb-3">
+          <label for="replaceKey">替换节点名称:</label>
+          <div class="input-group mb-2">
+            <input
+              class="form-control"
+              type="text"
+              name="replace"
+              id="replaceKey"
+              placeholder="原字符串（正则表达式）"
+            />
+            <input
+              class="form-control"
+              type="text"
+              name="replace"
+              id="replaceTo"
+              placeholder="替换为"
+            />
+          </div>
+        </div>
       </form>
 
       <!-- Display the API Link -->
@@ -188,6 +221,12 @@
         </div>
         <div class="input-group">
           <input class="form-control" id="apiShortLink" readonly type="text" />
+          <input
+            class="form-control"
+            id="password"
+            type="text"
+            placeholder="密码"
+          />
           <button
             class="btn btn-primary"
             onclick="generateShortLink()"
@@ -382,6 +421,24 @@
         // 获取排序策略
         const sort = document.getElementById("sort").value;
         queryParams.push(`sort=${sort}`);
+
+        // 获取删除节点的正则表达式
+        const remove = document.getElementById("remove").value;
+        if (remove.trim() !== "") {
+          queryParams.push(`remove=${encodeURIComponent(remove)}`);
+        }
+
+        // 获取替换节点名称的正则表达式
+        const replaceKey = document.getElementById("replaceKey").value;
+        const replaceTo = document.getElementById("replaceTo").value;
+        if (replaceKey.trim() !== "" && replaceTo.trim() !== "") {
+          queryParams.push(
+            `replace=[${encodeURIComponent(replaceKey)},${encodeURIComponent(
+              replaceTo,
+            )}]`,
+          );
+        }
+
         return `${endpoint}?${queryParams.join("&")}`;
       }
 
@@ -396,6 +453,7 @@
 
       function generateShortLink() {
         const apiShortLink = document.getElementById("apiShortLink");
+        const password = document.getElementById("password");
         let uri = generateURI();
         if (uri === "") {
           return;
@@ -405,6 +463,7 @@
             "./short",
             {
               url: uri,
+              password: password.value.trim(),
             },
             {
               headers: {

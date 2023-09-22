@@ -31,7 +31,6 @@ func AddProxy(
 	sub *model.Subscription, autotest bool,
 	lazy bool, clashType model.ClashType, proxies ...model.Proxy,
 ) {
-	newCountryGroupNames := make([]string, 0)
 	proxyTypes := model.GetSupportProxyTypes(clashType)
 	// 添加节点
 	for _, proxy := range proxies {
@@ -79,7 +78,6 @@ func AddProxy(
 				}
 			}
 			sub.ProxyGroups = append(sub.ProxyGroups, newGroup)
-			newCountryGroupNames = append(newCountryGroupNames, countryName)
 		}
 	}
 }

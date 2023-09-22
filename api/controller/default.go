@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"sub2clash/logger"
 	"sub2clash/model"
@@ -88,6 +89,46 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 			proxyList = append(proxyList, sub.Proxies...)
 		}
 	}
+	// 去重
+	proxies := make(map[string]*model.Proxy)
+	for i := range proxyList {
+		key := proxyList[i].Server + ":" + strconv.Itoa(proxyList[i].Port) + ":" + proxyList[i].Type
+		if _, exist := proxies[key]; exist {
+			proxyList = append(proxyList[:i], proxyList[i+1:]...)
+		}
+	}
+	// 重名检测
+	names := make(map[string]bool)
+	for i := range proxyList {
+		if _, exist := names[proxyList[i].Name]; exist {
+			proxyList[i].Name = proxyList[i].Name + "@" + proxyList[i].Server + ":" + strconv.Itoa(proxyList[i].Port)
+		}
+		names[proxyList[i].Name] = true
+	}
+	// 删除节点、改名
+	if strings.TrimSpace(query.Remove) != "" {
+		removeReg, err := regexp.Compile(query.Remove)
+		if err != nil {
+			logger.Logger.Debug("remove regexp compile failed", zap.Error(err))
+			return nil, errors.New("remove 参数非法: " + err.Error())
+		}
+		replaceReg, err := regexp.Compile(query.ReplaceKey)
+		if err != nil {
+			logger.Logger.Debug("replace regexp compile failed", zap.Error(err))
+			return nil, errors.New("replaceName 参数非法: " + err.Error())
+		}
+		newProxyList := make([]model.Proxy, 0, len(proxyList))
+		for i := range proxyList {
+			if removeReg.MatchString(proxyList[i].Name) {
+				continue // 如果匹配到要删除的元素，跳过该元素，不添加到新切片中
+			}
+			if replaceReg.MatchString(proxyList[i].Name) {
+				proxyList[i].Name = replaceReg.ReplaceAllString(proxyList[i].Name, query.ReplaceTo)
+			}
+			newProxyList = append(newProxyList, proxyList[i]) // 将要保留的元素添加到新切片中
+		}
+		proxyList = newProxyList
+	}
 	// 将新增节点都添加到临时变量 t 中，防止策略组排序错乱
 	var t = &model.Subscription{}
 	utils.AddProxy(t, query.AutoTest, query.Lazy, clashType, proxyList...)
@@ -154,28 +195,28 @@ func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription) {
 			)
 		}
 	}
+	var proxyNames []string
+	for _, proxy := range sub.Proxies {
+		proxyNames = append(proxyNames, proxy.Name)
+	}
 	// 将订阅中的节点添加到模板中
 	temp.Proxies = append(temp.Proxies, sub.Proxies...)
 	// 将订阅中的策略组添加到模板中
-	skipGroups := []string{"全球直连", "广告拦截", "手动切换"}
 	for i := range temp.ProxyGroups {
-		skip := false
-		for _, v := range skipGroups {
-			if strings.Contains(temp.ProxyGroups[i].Name, v) {
-				if v == "手动切换" {
-					proxies := make([]string, 0, len(sub.Proxies))
-					for _, p := range sub.Proxies {
-						proxies = append(proxies, p.Name)
-					}
-					temp.ProxyGroups[i].Proxies = proxies
-				}
-				skip = true
-				continue
+		if temp.ProxyGroups[i].IsCountryGrop {
+			continue
+		}
+		newProxies := make([]string, 0, len(temp.ProxyGroups[i].Proxies))
+		for j := range temp.ProxyGroups[i].Proxies {
+			if temp.ProxyGroups[i].Proxies[j] == "<all>" {
+				newProxies = append(newProxies, proxyNames...)
+			} else if temp.ProxyGroups[i].Proxies[j] == "<countries>" {
+				newProxies = append(newProxies, countryGroupNames...)
+			} else {
+				newProxies = append(newProxies, temp.ProxyGroups[i].Proxies[j])
 			}
 		}
-		if !skip {
-			temp.ProxyGroups[i].Proxies = append(temp.ProxyGroups[i].Proxies, countryGroupNames...)
-		}
+		temp.ProxyGroups[i].Proxies = newProxies
 	}
 	temp.ProxyGroups = append(temp.ProxyGroups, sub.ProxyGroups...)
 }

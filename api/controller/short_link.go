@@ -50,15 +50,20 @@ func ShortLinkGenHandler(c *gin.Context) {
 			Hash:            hash,
 			Url:             params.Url,
 			LastRequestTime: -1,
+			Password:        params.Password,
 		},
 	)
 	// 返回短链接
+	if params.Password != "" {
+		hash += "/?password=" + params.Password
+	}
 	c.String(200, hash)
 }
 
 func ShortLinkGetHandler(c *gin.Context) {
 	// 获取动态路由
 	hash := c.Param("hash")
+	password := c.Query("password")
 	if strings.TrimSpace(hash) == "" {
 		c.String(400, "参数错误")
 		return
@@ -69,6 +74,10 @@ func ShortLinkGetHandler(c *gin.Context) {
 	// 重定向
 	if result.Error != nil {
 		c.String(404, "未找到短链接")
+		return
+	}
+	if shortLink.Password != "" && shortLink.Password != password {
+		c.String(403, "密码错误")
 		return
 	}
 	// 更新最后访问时间

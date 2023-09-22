@@ -39,23 +39,17 @@
 
 ### API
 
-#### `/clash`, `/meta`
+[API文档](./API_README.md)
 
-获取 Clash/Clash.Meta 配置链接
+### 模板
 
-| Query 参数     | 类型     | 是否必须              | 默认值       | 说明                                                                                                                                                                          |
-|--------------|--------|-------------------|-----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| sub          | string | sub/proxy 至少有一项存在 | -         | 订阅链接（可以输入多个，用 `,` 分隔）                                                                                                                                                       |
-| proxy        | string | sub/proxy 至少有一项存在 | -         | 节点分享链接（可以输入多个，用 `,` 分隔）                                                                                                                                                     |
-| refresh      | bool   | 否                 | `false`   | 强制刷新配置（默认缓存 5 分钟）                                                                                                                                                           |
-| template     | string | 否                 | -         | 外部模板链接或内部模板名称                                                                                                                                                               |
-| ruleProvider | string | 否                 | -         | 格式 `[Behavior,Url,Group,Prepend,Name],[Behavior,Url,Group,Prepend,Name]...`，其中 `Group` 是该规则集所走的策略组名，`Prepend` 为 bool 类型，如果为 `true` 规则将被添加到规则列表顶部，否则添加到规则列表底部（会调整到MATCH规则之前） | 
-| rule         | string | 否                 | -         | 格式 `[Rule,Prepend],[Rule,Prepend]...`，其中 `Prepend` 为 bool 类型，如果为 `true` 规则将被添加到规则列表顶部，否则添加到规则列表底部（会调整到MATCH规则之前）                                                            | 
-| autoTest     | bool   | 否                 | `false`   | 国家策略组是否自动测速                                                                                                                                                                 |
-| lazy         | bool   | 否                 | `false`   | 自动测速是否启用 lazy                                                                                                                                                               |
-| sort         | string | 否                 | `nameasc` | 国家策略组排序策略，可选值 `nameasc`、`namedesc`、`sizeasc`、`sizedesc`                                                                                                                     |
+可以通过变脸自定义模板中的策略组代理节点
+解释的不太清楚，可以参考下方默认模板
 
-## 默认模板
+- `<all>` 为添加所有节点
+- `<countries>` 为添加所有国家策略组
+
+#### 默认模板
 
 - [Clash](./templates/template_clash.yaml)
 - [Clash.Meta](./templates/template_meta.yaml)
@@ -63,5 +57,3 @@
 ## 已知问题
 
 [代理链接解析](./parser)还没有经过严格测试，可能会出现解析错误的情况，如果出现问题请提交 issue
-
-## TODO

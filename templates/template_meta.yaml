@@ -8,32 +8,38 @@ proxy-groups:
   - name: 节点选择
     type: select
     proxies:
+      - <countries>
       - 手动切换
       - DIRECT
   - name: 手动切换
     type: select
     proxies:
+      - <all>
   - name: 微软服务
     type: select
     proxies:
+      - <countries>
       - 节点选择
       - 手动切换
       - DIRECT
   - name: 游戏平台
     type: select
     proxies:
+      - <countries>
       - 节点选择
       - 手动切换
       - DIRECT
   - name: 巴哈姆特
     type: select
     proxies:
+      - <countries>
       - 节点选择
       - 手动切换
       - DIRECT
   - name: 哔哩哔哩
     type: select
     proxies:
+      - <countries>
       - 节点选择
       - 手动切换
       - DIRECT
@@ -50,6 +56,7 @@ proxy-groups:
   - name: 漏网之鱼
     type: select
     proxies:
+      - <countries>
       - 节点选择
       - 手动切换
       - DIRECT

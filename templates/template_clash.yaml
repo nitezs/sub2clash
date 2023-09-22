@@ -8,88 +8,104 @@ proxy-groups:
   - name: 节点选择
     type: select
     proxies:
+      - <countries>
       - 手动切换
       - DIRECT
   - name: 手动切换
     type: select
     proxies:
+      - <all>
   - name: 电报消息
     type: select
     proxies:
+      - <countries>
       - 节点选择
       - 手动切换
       - DIRECT
   - name: OpenAi
     type: select
     proxies:
+      - <countries>
       - 节点选择
       - 手动切换
       - DIRECT
   - name: 油管视频
     type: select
     proxies:
+      - <countries>
       - 节点选择
       - 手动切换
       - DIRECT
   - name: 巴哈姆特
     type: select
     proxies:
+      - <countries>
       - 节点选择
       - 手动切换
       - DIRECT
   - name: 哔哩哔哩
     type: select
     proxies:
+      - <countries>
       - 全球直连
   - name: 国外媒体
     type: select
     proxies:
+      - <countries>
       - 节点选择
       - 手动切换
       - DIRECT
   - name: 国内媒体
     type: select
     proxies:
+      - <countries>
       - DIRECT
       - 手动切换
   - name: 谷歌FCM
     type: select
     proxies:
+      - <countries>
       - DIRECT
       - 节点选择
       - 手动切换
   - name: 微软云盘
     type: select
     proxies:
+      - <countries>
       - DIRECT
       - 节点选择
       - 手动切换
   - name: 微软服务
     type: select
     proxies:
+      - <countries>
       - DIRECT
       - 节点选择
       - 手动切换
   - name: 苹果服务
     type: select
     proxies:
+      - <countries>
       - DIRECT
       - 节点选择
       - 手动切换
   - name: 游戏平台
     type: select
     proxies:
+      - <countries>
       - DIRECT
       - 节点选择
       - 手动切换
   - name: 网易音乐
     type: select
     proxies:
+      - <countries>
       - DIRECT
       - 节点选择
   - name: 全球直连
     type: select
     proxies:
+      - <countries>
       - DIRECT
       - 节点选择
   - name: 广告拦截
@@ -105,6 +121,7 @@ proxy-groups:
   - name: 漏网之鱼
     type: select
     proxies:
+      - <countries>
       - 节点选择
       - DIRECT
       - 手动切换

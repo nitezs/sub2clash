@@ -25,6 +25,10 @@ type SubValidator struct {
 	AutoTest      bool                 `form:"autoTest,default=false" binding:""`
 	Lazy          bool                 `form:"lazy,default=false" binding:""`
 	Sort          string               `form:"sort" binding:""`
+	Remove        string               `form:"remove" binding:""`
+	Replace       string               `form:"replace" binding:""`
+	ReplaceKey    string               `form:"replaceKey" binding:""`
+	ReplaceTo     string               `form:"replaceString" binding:""`
 }
 
 type RuleProviderStruct struct {
@@ -134,6 +138,14 @@ func ParseQuery(c *gin.Context) (SubValidator, error) {
 		}
 	} else {
 		query.Rules = nil
+	}
+	if strings.TrimSpace(query.Replace) != "" {
+		replace := strings.Split(strings.Trim(query.Replace, "[]"), ",")
+		if len(replace) != 2 {
+			return SubValidator{}, errors.New("参数错误: replace 格式错误")
+		}
+		query.ReplaceKey = replace[0]
+		query.ReplaceTo = replace[1]
 	}
 	return query, nil
 }
