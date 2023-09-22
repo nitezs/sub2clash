@@ -26,11 +26,16 @@ func ShortLinkGenHandler(c *gin.Context) {
 	}
 	// 生成hash
 	hash := utils.RandomString(config.Default.ShortLinkLength)
-	// 存入数据库
 	var item model.ShortLink
 	result := database.FindShortLinkByUrl(params.Url, &item)
 	if result.Error == nil {
-		c.String(200, item.Hash)
+		if params.Password != "" && item.Password != params.Password {
+			item.Password = params.Password
+			database.SaveShortLink(&item)
+			c.String(200, item.Hash+"?password="+params.Password)
+		} else {
+			c.String(200, item.Hash)
+		}
 		return
 	} else {
 		if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -55,7 +60,7 @@ func ShortLinkGenHandler(c *gin.Context) {
 	)
 	// 返回短链接
 	if params.Password != "" {
-		hash += "/?password=" + params.Password
+		hash += "?password=" + params.Password
 	}
 	c.String(200, hash)
 }
@@ -73,11 +78,11 @@ func ShortLinkGetHandler(c *gin.Context) {
 	result := database.FindShortLinkByHash(hash, &shortLink)
 	// 重定向
 	if result.Error != nil {
-		c.String(404, "未找到短链接")
+		c.String(404, "未找到短链接或密码错误")
 		return
 	}
 	if shortLink.Password != "" && shortLink.Password != password {
-		c.String(403, "密码错误")
+		c.String(404, "未找到短链接或密码错误")
 		return
 	}
 	// 更新最后访问时间
