@@ -16,7 +16,9 @@ func writeTemplate(path string, template string) error {
 			return err
 		}
 		defer func(file *os.File) {
-			_ = file.Close()
+			if file != nil {
+				_ = file.Close()
+			}
 		}(file)
 		_, err = file.WriteString(template)
 		if err != nil {

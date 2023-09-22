@@ -93,7 +93,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	if len(query.Proxies) != 0 {
 		proxyList = append(proxyList, utils.ParseProxy(query.Proxies...)...)
 	}
-	// 去重
+	// 去掉配置相同的节点
 	proxies := make(map[string]*model.Proxy)
 	newProxies := make([]model.Proxy, 0, len(proxyList))
 	for i := range proxyList {
@@ -104,14 +104,6 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 		}
 	}
 	proxyList = newProxies
-	// 重名检测
-	names := make(map[string]bool)
-	for i := range proxyList {
-		if _, exist := names[proxyList[i].Name]; exist {
-			proxyList[i].Name = proxyList[i].Name + "@" + proxyList[i].Server + ":" + strconv.Itoa(proxyList[i].Port)
-		}
-		names[proxyList[i].Name] = true
-	}
 	// 删除节点
 	if strings.TrimSpace(query.Remove) != "" {
 		newProxyList := make([]model.Proxy, 0, len(proxyList))
@@ -155,6 +147,14 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 				}
 			}
 		}
+	}
+	// 重名检测
+	names := make(map[string]int)
+	for i := range proxyList {
+		if _, exist := names[proxyList[i].Name]; exist {
+			proxyList[i].Name = proxyList[i].Name + " " + strconv.Itoa(names[proxyList[i].Name])
+		}
+		names[proxyList[i].Name] = names[proxyList[i].Name] + 1
 	}
 	// trim
 	for i := range proxyList {

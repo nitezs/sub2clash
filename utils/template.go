@@ -17,7 +17,9 @@ func LoadTemplate(template string) ([]byte, error) {
 			return nil, err
 		}
 		defer func(file *os.File) {
-			_ = file.Close()
+			if file != nil {
+				_ = file.Close()
+			}
 		}(file)
 		result, err := io.ReadAll(file)
 		if err != nil {
