@@ -89,6 +89,10 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 			proxyList = append(proxyList, sub.Proxies...)
 		}
 	}
+	// 添加自定义节点
+	if len(query.Proxies) != 0 {
+		proxyList = append(proxyList, utils.ParseProxy(query.Proxies...)...)
+	}
 	// 去重
 	proxies := make(map[string]*model.Proxy)
 	for i := range proxyList {
@@ -105,38 +109,57 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 		}
 		names[proxyList[i].Name] = true
 	}
-	// 删除节点、改名
+	// 删除节点
 	if strings.TrimSpace(query.Remove) != "" {
-		removeReg, err := regexp.Compile(query.Remove)
-		if err != nil {
-			logger.Logger.Debug("remove regexp compile failed", zap.Error(err))
-			return nil, errors.New("remove 参数非法: " + err.Error())
-		}
-		replaceReg, err := regexp.Compile(query.ReplaceKey)
-		if err != nil {
-			logger.Logger.Debug("replace regexp compile failed", zap.Error(err))
-			return nil, errors.New("replaceName 参数非法: " + err.Error())
-		}
 		newProxyList := make([]model.Proxy, 0, len(proxyList))
 		for i := range proxyList {
+			removeReg, err := regexp.Compile(query.Remove)
+			if err != nil {
+				logger.Logger.Debug("remove regexp compile failed", zap.Error(err))
+				return nil, errors.New("remove 参数非法: " + err.Error())
+			}
+			// 删除匹配到的节点
 			if removeReg.MatchString(proxyList[i].Name) {
 				continue // 如果匹配到要删除的元素，跳过该元素，不添加到新切片中
-			}
-			if replaceReg.MatchString(proxyList[i].Name) {
-				proxyList[i].Name = replaceReg.ReplaceAllString(proxyList[i].Name, query.ReplaceTo)
 			}
 			newProxyList = append(newProxyList, proxyList[i]) // 将要保留的元素添加到新切片中
 		}
 		proxyList = newProxyList
 	}
+	// 重命名
+	if len(query.ReplaceKeys) != 0 {
+		// 创建重命名正则表达式
+		replaceRegs := make([]*regexp.Regexp, 0, len(query.ReplaceKeys))
+		for _, v := range query.ReplaceKeys {
+			replaceReg, err := regexp.Compile(v)
+			if err != nil {
+				logger.Logger.Debug("replace regexp compile failed", zap.Error(err))
+				return nil, errors.New("replace 参数非法: " + err.Error())
+			}
+			replaceRegs = append(replaceRegs, replaceReg)
+		}
+		for i := range proxyList {
+			// 重命名匹配到的节点
+			for j, v := range replaceRegs {
+				if err != nil {
+					logger.Logger.Debug("replace regexp compile failed", zap.Error(err))
+					return nil, errors.New("replaceName 参数非法: " + err.Error())
+				}
+				if v.MatchString(proxyList[i].Name) {
+					proxyList[i].Name = v.ReplaceAllString(
+						proxyList[i].Name, query.ReplaceTo[j],
+					)
+				}
+			}
+		}
+	}
+	// trim
+	for i := range proxyList {
+		proxyList[i].Name = strings.TrimSpace(proxyList[i].Name)
+	}
 	// 将新增节点都添加到临时变量 t 中，防止策略组排序错乱
 	var t = &model.Subscription{}
 	utils.AddProxy(t, query.AutoTest, query.Lazy, clashType, proxyList...)
-	// 处理自定义代理
-	utils.AddProxy(
-		t, query.AutoTest, query.Lazy, clashType,
-		utils.ParseProxy(query.Proxies...)...,
-	)
 	// 排序策略组
 	switch query.Sort {
 	case "sizeasc":

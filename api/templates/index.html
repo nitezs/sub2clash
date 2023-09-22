@@ -182,24 +182,15 @@
         </div>
 
         <!-- Rename  -->
-        <div class="form-group mb-3">
-          <label for="replaceKey">替换节点名称:</label>
-          <div class="input-group mb-2">
-            <input
-              class="form-control"
-              type="text"
-              name="replace"
-              id="replaceKey"
-              placeholder="原字符串（正则表达式）"
-            />
-            <input
-              class="form-control"
-              type="text"
-              name="replace"
-              id="replaceTo"
-              placeholder="替换为"
-            />
-          </div>
+        <div class="form-group mb-3" id="replaceGroup">
+          <label>节点名称替换:</label>
+          <button
+            class="btn btn-primary mb-1 btn-xs"
+            onclick="addReplace()"
+            type="button"
+          >
+            +
+          </button>
         </div>
       </form>
 
@@ -285,6 +276,17 @@
         return div;
       }
 
+      function createReplace() {
+        const div = document.createElement("div");
+        div.classList.add("input-group", "mb-2");
+        div.innerHTML = `
+            <input type="text" class="form-control" name="replace" placeholder="原字符串（正则表达式）">
+            <input type="text" class="form-control" name="replace" placeholder="替换为（可为空）">
+            <button type="button" class="btn btn-danger" onclick="removeElement(this)">删除</button>
+        `;
+        return div;
+      }
+
       function createRule() {
         const div = document.createElement("div");
         div.classList.add("input-group", "mb-2");
@@ -305,6 +307,11 @@
       function addRule() {
         const div = createRule();
         document.getElementById("ruleGroup").appendChild(div);
+      }
+
+      function addReplace() {
+        const div = createReplace();
+        document.getElementById("replaceGroup").appendChild(div);
       }
 
       function removeElement(button) {
@@ -429,15 +436,20 @@
         }
 
         // 获取替换节点名称的正则表达式
-        const replaceKey = document.getElementById("replaceKey").value;
-        const replaceTo = document.getElementById("replaceTo").value;
-        if (replaceKey.trim() !== "" && replaceTo.trim() !== "") {
-          queryParams.push(
-            `replace=[${encodeURIComponent(replaceKey)},${encodeURIComponent(
-              replaceTo,
-            )}]`,
-          );
+        let replaceList = [];
+        const replaces = document.getElementsByName("replace");
+        for (let i = 0; i < replaces.length / 2; i++) {
+          let replaceStr = `<${replaces[i * 2].value}>`;
+          let replaceTo = `<${replaces[i * 2 + 1].value}>`;
+          if (replaceStr.trim() === "") {
+            alert("重命名设置中存在空值，请检查后重试！");
+            return "";
+          }
+          replaceList.push(`[${replaceStr},${replaceTo}]`);
         }
+        queryParams.push(
+          `replace=${encodeURIComponent(replaceList.join(","))}`,
+        );
 
         return `${endpoint}?${queryParams.join("&")}`;
       }

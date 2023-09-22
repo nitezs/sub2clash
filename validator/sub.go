@@ -27,8 +27,8 @@ type SubValidator struct {
 	Sort          string               `form:"sort" binding:""`
 	Remove        string               `form:"remove" binding:""`
 	Replace       string               `form:"replace" binding:""`
-	ReplaceKey    string               `form:"replaceKey" binding:""`
-	ReplaceTo     string               `form:"replaceString" binding:""`
+	ReplaceKeys   []string             `form:"-" binding:""`
+	ReplaceTo     []string             `form:"-" binding:""`
 }
 
 type RuleProviderStruct struct {
@@ -140,12 +140,16 @@ func ParseQuery(c *gin.Context) (SubValidator, error) {
 		query.Rules = nil
 	}
 	if strings.TrimSpace(query.Replace) != "" {
-		replace := strings.Split(strings.Trim(query.Replace, "[]"), ",")
-		if len(replace) != 2 {
-			return SubValidator{}, errors.New("参数错误: replace 格式错误")
+		reg := regexp.MustCompile(`\[<(.*?)>,<(.*?)>\]`)
+		replaces := reg.FindAllStringSubmatch(query.Replace, -1)
+		for i := range replaces {
+			length := len(replaces[i])
+			if length != 3 {
+				return SubValidator{}, errors.New("参数错误: replace 格式错误")
+			}
+			query.ReplaceKeys = append(query.ReplaceKeys, replaces[i][1])
+			query.ReplaceTo = append(query.ReplaceTo, replaces[i][2])
 		}
-		query.ReplaceKey = replace[0]
-		query.ReplaceTo = replace[1]
 	}
 	return query, nil
 }
