@@ -95,12 +95,15 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	}
 	// 去重
 	proxies := make(map[string]*model.Proxy)
+	newProxies := make([]model.Proxy, 0, len(proxyList))
 	for i := range proxyList {
 		key := proxyList[i].Server + ":" + strconv.Itoa(proxyList[i].Port) + ":" + proxyList[i].Type
-		if _, exist := proxies[key]; exist {
-			proxyList = append(proxyList[:i], proxyList[i+1:]...)
+		if _, exist := proxies[key]; !exist {
+			proxies[key] = &proxyList[i]
+			newProxies = append(newProxies, proxyList[i])
 		}
 	}
+	proxyList = newProxies
 	// 重名检测
 	names := make(map[string]bool)
 	for i := range proxyList {
