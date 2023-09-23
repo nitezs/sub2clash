@@ -3,10 +3,14 @@ package controller
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
+	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"sub2clash/config"
+	"sub2clash/logger"
 	"sub2clash/model"
 	"sub2clash/utils"
 	"sub2clash/utils/database"
@@ -26,11 +30,16 @@ func ShortLinkGenHandler(c *gin.Context) {
 	}
 	// 生成hash
 	hash := utils.RandomString(config.Default.ShortLinkLength)
-	// 存入数据库
 	var item model.ShortLink
 	result := database.FindShortLinkByUrl(params.Url, &item)
 	if result.Error == nil {
-		c.String(200, item.Hash)
+		if item.Password != params.Password {
+			item.Password = params.Password
+			database.SaveShortLink(&item)
+			c.String(200, item.Hash+"?password="+params.Password)
+		} else {
+			c.String(200, item.Hash)
+		}
 		return
 	} else {
 		if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -50,15 +59,20 @@ func ShortLinkGenHandler(c *gin.Context) {
 			Hash:            hash,
 			Url:             params.Url,
 			LastRequestTime: -1,
+			Password:        params.Password,
 		},
 	)
 	// 返回短链接
+	if params.Password != "" {
+		hash += "?password=" + params.Password
+	}
 	c.String(200, hash)
 }
 
 func ShortLinkGetHandler(c *gin.Context) {
 	// 获取动态路由
 	hash := c.Param("hash")
+	password := c.Query("password")
 	if strings.TrimSpace(hash) == "" {
 		c.String(400, "参数错误")
 		return
@@ -68,12 +82,27 @@ func ShortLinkGetHandler(c *gin.Context) {
 	result := database.FindShortLinkByHash(hash, &shortLink)
 	// 重定向
 	if result.Error != nil {
-		c.String(404, "未找到短链接")
+		c.String(404, "未找到短链接或密码错误")
+		return
+	}
+	if shortLink.Password != "" && shortLink.Password != password {
+		c.String(404, "未找到短链接或密码错误")
 		return
 	}
 	// 更新最后访问时间
 	shortLink.LastRequestTime = time.Now().Unix()
 	database.SaveShortLink(&shortLink)
-	uri := config.Default.BasePath + shortLink.Url
-	c.Redirect(http.StatusTemporaryRedirect, uri)
+	get, err := utils.Get("http://localhost:" + strconv.Itoa(config.Default.Port) + "/" + shortLink.Url)
+	if err != nil {
+		logger.Logger.Debug("get short link data failed", zap.Error(err))
+		c.String(500, "请求错误: "+err.Error())
+		return
+	}
+	all, err := io.ReadAll(get.Body)
+	if err != nil {
+		logger.Logger.Debug("read short link data failed", zap.Error(err))
+		c.String(500, "读取错误: "+err.Error())
+		return
+	}
+	c.String(http.StatusOK, string(all))
 }

@@ -8,40 +8,90 @@ proxy-groups:
   - name: 节点选择
     type: select
     proxies:
+      - <countries>
       - 手动切换
       - DIRECT
   - name: 手动切换
     type: select
     proxies:
-  - name: 微软服务
+      - <all>
+  - name: 游戏平台（中国）
     type: select
     proxies:
       - 节点选择
+      - <countries>
       - 手动切换
       - DIRECT
-  - name: 游戏平台
+  - name: 游戏平台（全球）
     type: select
     proxies:
       - 节点选择
+      - <countries>
       - 手动切换
       - DIRECT
   - name: 巴哈姆特
     type: select
     proxies:
       - 节点选择
+      - <countries>
       - 手动切换
       - DIRECT
   - name: 哔哩哔哩
     type: select
     proxies:
       - 节点选择
+      - <countries>
       - 手动切换
       - DIRECT
-  - name: 全球直连
+  - name: Telegram
     type: select
     proxies:
-      - DIRECT
       - 节点选择
+      - <countries>
+      - 手动切换
+      - DIRECT
+  - name: OpenAI
+    type: select
+    proxies:
+      - 节点选择
+      - <countries>
+      - 手动切换
+      - DIRECT
+  - name: Youtube
+    type: select
+    proxies:
+      - 节点选择
+      - <countries>
+      - 手动切换
+      - DIRECT
+  - name: Microsoft
+    type: select
+    proxies:
+      - 节点选择
+      - <countries>
+      - 手动切换
+      - DIRECT
+  - name: Onedrive
+    type: select
+    proxies:
+      - 节点选择
+      - <countries>
+      - 手动切换
+      - DIRECT
+  - name: Apple
+    type: select
+    proxies:
+      - 节点选择
+      - <countries>
+      - 手动切换
+      - DIRECT
+  - name: Netflix
+    type: select
+    proxies:
+      - 节点选择
+      - <countries>
+      - 手动切换
+      - DIRECT
   - name: 广告拦截
     type: select
     proxies:
@@ -51,17 +101,25 @@ proxy-groups:
     type: select
     proxies:
       - 节点选择
+      - <countries>
       - 手动切换
       - DIRECT
 rules:
-  - GEOSITE,private,全球直连,no-resolve
-  - GEOIP,private,全球直连
+  - GEOSITE,private,DIRECT,no-resolve
+  - GEOIP,private,DIRECT
   - GEOSITE,category-ads-all,广告拦截
-  - GEOSITE,microsoft,微软服务
+  - GEOSITE,microsoft,Microsoft
+  - GEOSITE,apple,Apple
+  - GEOSITE,netflix,Netflix
+  - GEOSITE,onedrive,Onedrive
+  - GEOSITE,youtube,Youtube
+  - GEOSITE,telegram,Telegram
+  - GEOSITE,openai,OpenAI
   - GEOSITE,bilibili,哔哩哔哩
   - GEOSITE,bahamut,巴哈姆特
-  - GEOSITE,category-games,游戏平台
+  - GEOSITE,category-games@cn,游戏平台（中国）
+  - GEOSITE,category-games,游戏平台（全球）
   - GEOSITE,geolocation-!cn,节点选择
-  - GEOSITE,CN,全球直连
-  - GEOIP,CN,全球直连
+  - GEOSITE,CN,DIRECT
+  - GEOIP,CN,DIRECT
   - MATCH,漏网之鱼

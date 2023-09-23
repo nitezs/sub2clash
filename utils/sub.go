@@ -35,7 +35,9 @@ func LoadSubscription(url string, refresh bool) ([]byte, error) {
 			return nil, err
 		}
 		defer func(file *os.File) {
-			_ = file.Close()
+			if file != nil {
+				_ = file.Close()
+			}
 		}(file)
 		fileLock.RLock()
 		defer fileLock.RUnlock()
@@ -56,7 +58,9 @@ func FetchSubscriptionFromAPI(url string) ([]byte, error) {
 		return nil, err
 	}
 	defer func(Body io.ReadCloser) {
-		_ = Body.Close()
+		if Body != nil {
+			_ = Body.Close()
+		}
 	}(resp.Body)
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -67,7 +71,9 @@ func FetchSubscriptionFromAPI(url string) ([]byte, error) {
 		return nil, err
 	}
 	defer func(file *os.File) {
-		_ = file.Close()
+		if file != nil {
+			_ = file.Close()
+		}
 	}(file)
 	fileLock.Lock()
 	defer fileLock.Unlock()

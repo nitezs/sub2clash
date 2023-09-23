@@ -168,6 +168,30 @@
             <option value="sizedesc">节点数量（降序）</option>
           </select>
         </div>
+
+        <!-- Remove -->
+        <div class="form-group mb-3">
+          <label for="remove">删除节点:</label>
+          <input
+            class="form-control"
+            type="text"
+            name="remove"
+            id="remove"
+            placeholder="正则表达式"
+          />
+        </div>
+
+        <!-- Rename  -->
+        <div class="form-group mb-3" id="replaceGroup">
+          <label>节点名称替换:</label>
+          <button
+            class="btn btn-primary mb-1 btn-xs"
+            onclick="addReplace()"
+            type="button"
+          >
+            +
+          </button>
+        </div>
       </form>
 
       <!-- Display the API Link -->
@@ -188,6 +212,12 @@
         </div>
         <div class="input-group">
           <input class="form-control" id="apiShortLink" readonly type="text" />
+          <input
+            class="form-control"
+            id="password"
+            type="text"
+            placeholder="密码"
+          />
           <button
             class="btn btn-primary"
             onclick="generateShortLink()"
@@ -246,6 +276,17 @@
         return div;
       }
 
+      function createReplace() {
+        const div = document.createElement("div");
+        div.classList.add("input-group", "mb-2");
+        div.innerHTML = `
+            <input type="text" class="form-control" name="replace" placeholder="原字符串（正则表达式）">
+            <input type="text" class="form-control" name="replace" placeholder="替换为（可为空）">
+            <button type="button" class="btn btn-danger" onclick="removeElement(this)">删除</button>
+        `;
+        return div;
+      }
+
       function createRule() {
         const div = document.createElement("div");
         div.classList.add("input-group", "mb-2");
@@ -266,6 +307,11 @@
       function addRule() {
         const div = createRule();
         document.getElementById("ruleGroup").appendChild(div);
+      }
+
+      function addReplace() {
+        const div = createReplace();
+        document.getElementById("replaceGroup").appendChild(div);
       }
 
       function removeElement(button) {
@@ -382,6 +428,29 @@
         // 获取排序策略
         const sort = document.getElementById("sort").value;
         queryParams.push(`sort=${sort}`);
+
+        // 获取删除节点的正则表达式
+        const remove = document.getElementById("remove").value;
+        if (remove.trim() !== "") {
+          queryParams.push(`remove=${encodeURIComponent(remove)}`);
+        }
+
+        // 获取替换节点名称的正则表达式
+        let replaceList = [];
+        const replaces = document.getElementsByName("replace");
+        for (let i = 0; i < replaces.length / 2; i++) {
+          let replaceStr = `<${replaces[i * 2].value}>`;
+          let replaceTo = `<${replaces[i * 2 + 1].value}>`;
+          if (replaceStr.trim() === "") {
+            alert("重命名设置中存在空值，请检查后重试！");
+            return "";
+          }
+          replaceList.push(`[${replaceStr},${replaceTo}]`);
+        }
+        queryParams.push(
+          `replace=${encodeURIComponent(replaceList.join(","))}`,
+        );
+
         return `${endpoint}?${queryParams.join("&")}`;
       }
 
@@ -396,6 +465,7 @@
 
       function generateShortLink() {
         const apiShortLink = document.getElementById("apiShortLink");
+        const password = document.getElementById("password");
         let uri = generateURI();
         if (uri === "") {
           return;
@@ -405,6 +475,7 @@
             "./short",
             {
               url: uri,
+              password: password.value.trim(),
             },
             {
               headers: {
