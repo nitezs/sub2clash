@@ -20,8 +20,14 @@ var templateMeta string
 var templateClash string
 
 func init() {
+	var err error
+	// 创建文件夹
+	err = utils.MkEssentialDir()
+	if err != nil {
+		logger.Logger.Panic("create essential dir failed", zap.Error(err))
+	}
 	// 加载配置
-	err := config.LoadConfig()
+	err = config.LoadConfig()
 	// 初始化日志
 	logger.InitLogger(config.Default.LogLevel)
 	if err != nil {
@@ -40,11 +46,6 @@ func init() {
 		}()
 	} else {
 		logger.Logger.Info("running in dev mode")
-	}
-	// 创建文件夹
-	err = utils.MkEssentialDir()
-	if err != nil {
-		logger.Logger.Panic("create essential dir failed", zap.Error(err))
 	}
 	// 写入默认模板
 	err = utils.WriteDefalutTemplate(templateMeta, templateClash)
