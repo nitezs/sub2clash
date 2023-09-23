@@ -3,10 +3,14 @@ package controller
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
+	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"sub2clash/config"
+	"sub2clash/logger"
 	"sub2clash/model"
 	"sub2clash/utils"
 	"sub2clash/utils/database"
@@ -29,7 +33,7 @@ func ShortLinkGenHandler(c *gin.Context) {
 	var item model.ShortLink
 	result := database.FindShortLinkByUrl(params.Url, &item)
 	if result.Error == nil {
-		if params.Password != "" && item.Password != params.Password {
+		if item.Password != params.Password {
 			item.Password = params.Password
 			database.SaveShortLink(&item)
 			c.String(200, item.Hash+"?password="+params.Password)
@@ -88,6 +92,17 @@ func ShortLinkGetHandler(c *gin.Context) {
 	// 更新最后访问时间
 	shortLink.LastRequestTime = time.Now().Unix()
 	database.SaveShortLink(&shortLink)
-	uri := config.Default.BasePath + shortLink.Url
-	c.Redirect(http.StatusTemporaryRedirect, uri)
+	get, err := utils.Get("http://localhost:" + strconv.Itoa(config.Default.Port) + "/" + shortLink.Url)
+	if err != nil {
+		logger.Logger.Debug("get short link data failed", zap.Error(err))
+		c.String(500, "请求错误: "+err.Error())
+		return
+	}
+	all, err := io.ReadAll(get.Body)
+	if err != nil {
+		logger.Logger.Debug("read short link data failed", zap.Error(err))
+		c.String(500, "读取错误: "+err.Error())
+		return
+	}
+	c.String(http.StatusOK, string(all))
 }

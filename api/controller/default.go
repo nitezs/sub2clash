@@ -67,7 +67,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 		// 解析订阅
 		err = yaml.Unmarshal(data, &sub)
 		if err != nil {
-			reg, _ := regexp.Compile("(ssr|ss|vmess|trojan|http|https)://")
+			reg, _ := regexp.Compile("(ssr|ss|vmess|trojan|vless)://")
 			if reg.Match(data) {
 				p := utils.ParseProxy(strings.Split(string(data), "\n")...)
 				proxyList = append(proxyList, p...)
