@@ -54,6 +54,21 @@
       </div>
 
       <form id="apiForm">
+        <!-- Input URL -->
+        <div class="form-group mb-5">
+          <label for="apiLink">解析链接:</label>
+          <div class="input-group mb-2">
+            <input class="form-control" id="urlInput" type="text" />
+            <button
+              class="btn btn-primary"
+              onclick="parseInputURL()"
+              type="button"
+            >
+              解析
+            </button>
+          </div>
+        </div>
+
         <!-- API Endpoint -->
         <div class="form-group mb-3">
           <label for="endpoint">客户端类型:</label>
@@ -248,6 +263,183 @@
     </div>
 
     <script>
+      function clearExistingValues() {
+        // 清除简单输入框和复选框的值
+        document.getElementById("endpoint").value = "clash";
+        document.getElementById("sub").value = "";
+        document.getElementById("proxy").value = "";
+        document.getElementById("refresh").checked = false;
+        document.getElementById("autoTest").checked = false;
+        document.getElementById("lazy").checked = false;
+        document.getElementById("template").value = "";
+        document.getElementById("sort").value = "nameasc";
+        document.getElementById("remove").value = "";
+        document.getElementById("apiLink").value = "";
+        document.getElementById("apiShortLink").value = "";
+        document.getElementById("password").value = "";
+
+        // 清除由 createRuleProvider, createReplace, 和 createRule 创建的所有额外输入组
+        clearInputGroup("ruleProviderGroup");
+        clearInputGroup("replaceGroup");
+        clearInputGroup("ruleGroup");
+      }
+
+      function clearInputGroup(groupId) {
+        // 清空第二个之后的child
+        const group = document.getElementById(groupId);
+        while (group.children.length > 2) {
+          group.removeChild(group.lastChild);
+        }
+      }
+
+      function parseInputURL() {
+        // 获取输入框中的 URL
+        const inputURL = document.getElementById("urlInput").value;
+
+        if (!inputURL) {
+          alert("请输入有效的链接！");
+          return;
+        }
+
+        let url;
+        try {
+          url = new URL(inputURL);
+        } catch (_) {
+          alert("无效的链接！");
+          return;
+        }
+
+        // 清除现有的输入框值
+        clearExistingValues();
+
+        // 获取查询参数
+        const params = new URLSearchParams(url.search);
+
+        // 分配值到对应的输入框
+        const pathSections = url.pathname.split("/");
+        const lastSection = pathSections[pathSections.length - 1];
+        const clientTypeSelect = document.getElementById("endpoint");
+        switch (lastSection.toLowerCase()) {
+          case "meta":
+            clientTypeSelect.value = "meta";
+            break;
+          case "clash":
+          default:
+            clientTypeSelect.value = "clash";
+            break;
+        }
+
+        if (params.has("sub")) {
+          document.getElementById("sub").value = decodeURIComponent(
+            params.get("sub"),
+          )
+            .split(",")
+            .join("\n");
+        }
+
+        if (params.has("proxy")) {
+          document.getElementById("proxy").value = decodeURIComponent(
+            params.get("proxy"),
+          )
+            .split(",")
+            .join("\n");
+        }
+
+        if (params.has("refresh")) {
+          document.getElementById("refresh").checked =
+            params.get("refresh") === "true";
+        }
+
+        if (params.has("autoTest")) {
+          document.getElementById("autoTest").checked =
+            params.get("autoTest") === "true";
+        }
+
+        if (params.has("lazy")) {
+          document.getElementById("lazy").checked =
+            params.get("lazy") === "true";
+        }
+
+        if (params.has("template")) {
+          document.getElementById("template").value = decodeURIComponent(
+            params.get("template"),
+          );
+        }
+
+        if (params.has("sort")) {
+          document.getElementById("sort").value = params.get("sort");
+        }
+
+        if (params.has("remove")) {
+          document.getElementById("remove").value = decodeURIComponent(
+            params.get("remove"),
+          );
+        }
+
+        if (params.has("replace")) {
+          // 这里您需要特别解析 'replace' 参数，并逐一填充到相关的输入框
+          parseAndFillReplaceParams(decodeURIComponent(params.get("replace")));
+        }
+
+        if (params.has("ruleProvider")) {
+          // 这里您需要特别解析 'ruleProvider' 参数，并逐一填充到相关的输入框
+          parseAndFillRuleProviderParams(
+            decodeURIComponent(params.get("ruleProvider")),
+          );
+        }
+
+        if (params.has("rule")) {
+          // 这里您需要特别解析 'rule' 参数，并逐一填充到相关的输入框
+          parseAndFillRuleParams(decodeURIComponent(params.get("rule")));
+        }
+      }
+
+      function parseAndFillReplaceParams(replaceParams) {
+        const replaceGroup = document.getElementById("replaceGroup");
+        let matches;
+        const regex = /\[(<.*?>),(<.*?>)\]/g;
+        const str = decodeURIComponent(replaceParams);
+        while ((matches = regex.exec(str)) !== null) {
+          const div = createReplace();
+          const original = matches[1].slice(1, -1); // Remove < and >
+          const replacement = matches[2].slice(1, -1); // Remove < and >
+
+          div.children[0].value = original;
+          div.children[1].value = replacement;
+          replaceGroup.appendChild(div);
+        }
+      }
+
+      function parseAndFillRuleProviderParams(ruleProviderParams) {
+        const ruleProviderGroup = document.getElementById("ruleProviderGroup");
+        let matches;
+        const regex = /\[(.*?),(.*?),(.*?),(.*?),(.*?)\]/g;
+        const str = decodeURIComponent(ruleProviderParams);
+        while ((matches = regex.exec(str)) !== null) {
+          const div = createRuleProvider();
+          div.children[0].value = matches[1];
+          div.children[1].value = matches[2];
+          div.children[2].value = matches[3];
+          div.children[3].value = matches[4];
+          div.children[4].value = matches[5];
+          ruleProviderGroup.appendChild(div);
+        }
+      }
+
+      function parseAndFillRuleParams(ruleParams) {
+        const ruleGroup = document.getElementById("ruleGroup");
+        let matches;
+        const regex = /\[(.*?),(.*?),(.*?)\]/g;
+        const str = decodeURIComponent(ruleParams);
+        while ((matches = regex.exec(str)) !== null) {
+          const div = createRule();
+          div.children[0].value = matches[1];
+          div.children[1].value = matches[2];
+          div.children[2].value = matches[3];
+          ruleGroup.appendChild(div);
+        }
+      }
+
       async function copyToClipboard(elem, e) {
         const apiLinkInput = document.querySelector(`#${elem}`).value;
         try {
