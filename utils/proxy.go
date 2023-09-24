@@ -16,7 +16,28 @@ func GetContryName(proxy model.Proxy) string {
 	}
 
 	// 对每一个映射进行检查
-	for _, countryMap := range countryMaps {
+	for i, countryMap := range countryMaps {
+		if i == 2 {
+			// 对ISO匹配做特殊处理
+			// 根据常用分割字符分割字符串
+			splitChars := []string{"-", "_", " "}
+			key := make([]string, 0)
+			for _, splitChar := range splitChars {
+				slic := strings.Split(proxy.Name, splitChar)
+				for _, v := range slic {
+					if len(v) == 2 {
+						key = append(key, v)
+					}
+				}
+			}
+			// 对每一个分割后的字符串进行检查
+			for _, v := range key {
+				// 如果匹配到了国家
+				if country, ok := countryMap[strings.ToUpper(v)]; ok {
+					return country
+				}
+			}
+		}
 		for k, v := range countryMap {
 			if strings.Contains(proxy.Name, k) {
 				return v
