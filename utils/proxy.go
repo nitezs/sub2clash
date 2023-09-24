@@ -1,7 +1,9 @@
 package utils
 
 import (
+	"go.uber.org/zap"
 	"strings"
+	"sub2clash/logger"
 	"sub2clash/model"
 	"sub2clash/parser"
 )
@@ -127,6 +129,10 @@ func ParseProxy(proxies ...string) []model.Proxy {
 			}
 			if err == nil {
 				result = append(result, proxyItem)
+			} else {
+				logger.Logger.Debug(
+					"parse proxy failed", zap.String("proxy", proxy), zap.Error(err),
+				)
 			}
 		}
 	}

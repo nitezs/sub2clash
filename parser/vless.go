@@ -47,7 +47,7 @@ func ParseVless(proxy string) (model.Proxy, error) {
 		Flow:        params.Get("flow"),
 		Fingerprint: params.Get("fp"),
 		Servername:  params.Get("sni"),
-		RealityOpts: model.RealityOptsStruct{
+		RealityOpts: model.RealityOptions{
 			PublicKey: params.Get("pbk"),
 		},
 	}
@@ -55,16 +55,16 @@ func ParseVless(proxy string) (model.Proxy, error) {
 		result.Alpn = strings.Split(params.Get("alpn"), ",")
 	}
 	if params.Get("type") == "ws" {
-		result.WSOpts = model.WSOptsStruct{
+		result.WSOpts = model.WSOptions{
 			Path: params.Get("path"),
-			Headers: model.HeaderStruct{
-				Host: params.Get("host"),
+			Headers: map[string]string{
+				"Host": params.Get("host"),
 			},
 		}
 	}
 	if params.Get("type") == "grpc" {
-		result.GRPCOpts = model.GRPCOptsStruct{
-			GRPCServiceName: params.Get("serviceName"),
+		result.GrpcOpts = model.GrpcOptions{
+			GrpcServiceName: params.Get("serviceName"),
 		}
 	}
 	// 如果有节点名称
