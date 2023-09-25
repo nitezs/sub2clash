@@ -19,7 +19,7 @@
 # `/short`
 
 获取短链，Content-Type 为 `application/json`
-具体参考使用可以参考 [api\templates\index.html](./api/templates/index.html)
+具体参考使用可以参考 [api\templates\index.html](api/static/index.html)
 
 | Body 参数  | 类型     | 是否必须 | 默认值 | 说明               |
 |----------|--------|------|-----|------------------|

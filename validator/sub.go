@@ -29,6 +29,7 @@ type SubValidator struct {
 	Replace       string               `form:"replace" binding:""`
 	ReplaceKeys   []string             `form:"-" binding:""`
 	ReplaceTo     []string             `form:"-" binding:""`
+	NodeListMode  bool                 `form:"nodeList,default=false" binding:""`
 }
 
 type RuleProviderStruct struct {

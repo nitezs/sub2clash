@@ -22,6 +22,17 @@ func SubmodHandler(c *gin.Context) {
 		return
 	}
 	// 输出
+	if query.NodeListMode {
+		nodelist := model.NodeList{}
+		nodelist.Proxies = sub.Proxies
+		marshal, err := yaml.Marshal(nodelist)
+		if err != nil {
+			c.String(http.StatusInternalServerError, "YAML序列化失败: "+err.Error())
+			return
+		}
+		c.String(http.StatusOK, string(marshal))
+		return
+	}
 	marshal, err := yaml.Marshal(sub)
 	if err != nil {
 		c.String(http.StatusInternalServerError, "YAML序列化失败: "+err.Error())
