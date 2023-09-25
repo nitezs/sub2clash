@@ -44,6 +44,7 @@ type Proxy struct {
 	AuthenticatedLength bool           `yaml:"authenticated-length,omitempty"`
 	UDPOverTCP          bool           `yaml:"udp-over-tcp,omitempty"`
 	UDPOverTCPVersion   int            `yaml:"udp-over-tcp-version,omitempty"`
+	SubName             string         `yaml:"-"`
 }
 
 func (p Proxy) MarshalYAML() (interface{}, error) {

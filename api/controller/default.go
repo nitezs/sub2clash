@@ -58,6 +58,10 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	// 加载订阅
 	for i := range query.Subs {
 		data, err := utils.LoadSubscription(query.Subs[i], query.Refresh)
+		subName := ""
+		if strings.Contains(query.Subs[i], "#") {
+			subName = query.Subs[i][strings.LastIndex(query.Subs[i], "#")+1:]
+		}
 		if err != nil {
 			logger.Logger.Debug(
 				"load subscription failed", zap.String("url", query.Subs[i]), zap.Error(err),
@@ -66,11 +70,12 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 		}
 		// 解析订阅
 		err = yaml.Unmarshal(data, &sub)
+		newProxies := make([]model.Proxy, 0)
 		if err != nil {
 			reg, _ := regexp.Compile("(ssr|ss|vmess|trojan|vless)://")
 			if reg.Match(data) {
 				p := utils.ParseProxy(strings.Split(string(data), "\n")...)
-				proxyList = append(proxyList, p...)
+				newProxies = p
 			} else {
 				// 如果无法直接解析，尝试Base64解码
 				base64, err := parser.DecodeBase64(string(data))
@@ -83,15 +88,27 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 					return nil, errors.New("加载订阅失败: " + err.Error())
 				}
 				p := utils.ParseProxy(strings.Split(base64, "\n")...)
-				proxyList = append(proxyList, p...)
+				newProxies = p
 			}
 		} else {
-			proxyList = append(proxyList, sub.Proxies...)
+			newProxies = sub.Proxies
 		}
+		if subName != "" {
+			for i := range newProxies {
+				newProxies[i].SubName = subName
+			}
+		}
+		proxyList = append(proxyList, newProxies...)
 	}
 	// 添加自定义节点
 	if len(query.Proxies) != 0 {
 		proxyList = append(proxyList, utils.ParseProxy(query.Proxies...)...)
+	}
+	// 给节点添加订阅名称
+	for i := range proxyList {
+		if proxyList[i].SubName != "" {
+			proxyList[i].Name = strings.TrimSpace(proxyList[i].SubName) + " " + strings.TrimSpace(proxyList[i].Name)
+		}
 	}
 	// 去掉配置相同的节点
 	proxies := make(map[string]*model.Proxy)
@@ -233,11 +250,28 @@ func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription) {
 			continue
 		}
 		newProxies := make([]string, 0, len(temp.ProxyGroups[i].Proxies))
+		countryGroupMap := make(map[string]model.ProxyGroup)
+		for _, v := range sub.ProxyGroups {
+			if v.IsCountryGrop {
+				countryGroupMap[v.Name] = v
+			}
+		}
 		for j := range temp.ProxyGroups[i].Proxies {
-			if temp.ProxyGroups[i].Proxies[j] == "<all>" {
-				newProxies = append(newProxies, proxyNames...)
-			} else if temp.ProxyGroups[i].Proxies[j] == "<countries>" {
-				newProxies = append(newProxies, countryGroupNames...)
+			reg := regexp.MustCompile("<(.*?)>")
+			if reg.Match([]byte(temp.ProxyGroups[i].Proxies[j])) {
+				key := reg.FindStringSubmatch(temp.ProxyGroups[i].Proxies[j])[1]
+				switch key {
+				case "all":
+					newProxies = append(newProxies, proxyNames...)
+				case "countries":
+					newProxies = append(newProxies, countryGroupNames...)
+				default:
+					if len(key) == 2 {
+						newProxies = append(
+							newProxies, countryGroupMap[utils.GetContryName(key)].Proxies...,
+						)
+					}
+				}
 			} else {
 				newProxies = append(newProxies, temp.ProxyGroups[i].Proxies[j])
 			}

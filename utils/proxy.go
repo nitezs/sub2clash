@@ -8,7 +8,7 @@ import (
 	"sub2clash/parser"
 )
 
-func GetContryName(proxy model.Proxy) string {
+func GetContryName(countryKey string) string {
 	// 创建一个切片包含所有的国家映射
 	countryMaps := []map[string]string{
 		model.CountryFlag,
@@ -25,7 +25,7 @@ func GetContryName(proxy model.Proxy) string {
 			splitChars := []string{"-", "_", " "}
 			key := make([]string, 0)
 			for _, splitChar := range splitChars {
-				slic := strings.Split(proxy.Name, splitChar)
+				slic := strings.Split(countryKey, splitChar)
 				for _, v := range slic {
 					if len(v) == 2 {
 						key = append(key, v)
@@ -41,12 +41,11 @@ func GetContryName(proxy model.Proxy) string {
 			}
 		}
 		for k, v := range countryMap {
-			if strings.Contains(proxy.Name, k) {
+			if strings.Contains(countryKey, k) {
 				return v
 			}
 		}
 	}
-
 	return "其他地区"
 }
 
@@ -62,7 +61,7 @@ func AddProxy(
 		}
 		sub.Proxies = append(sub.Proxies, proxy)
 		haveProxyGroup := false
-		countryName := GetContryName(proxy)
+		countryName := GetContryName(proxy.Name)
 		for i := range sub.ProxyGroups {
 			group := &sub.ProxyGroups[i]
 
