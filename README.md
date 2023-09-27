@@ -27,7 +27,6 @@
 
 | 变量名                   | 说明                                                        | 默认值                   |
 |-----------------------|-----------------------------------------------------------|-----------------------|
-| BASE_PATH             | 程序运行子路径，例如将服务反代在 `https://example.com/sub` 则此变量值应为 `/sub` | `/`                   |
 | PORT                  | 端口                                                        | `8011`                |
 | META_TEMPLATE         | meta 模板文件名                                                | `template_meta.yaml`  |
 | CLASH_TEMPLATE        | clash 模板文件名                                               | `template_clash.yaml` |
@@ -37,7 +36,7 @@
 | LOG_LEVEL             | 日志等级，可选值 `debug`,`info`,`warn`,`error`                    | `info`                |
 | SHORT_LINK_LENGTH     | 短链长度                                                      | `6`                   |
 
-### API
+### API                                       
 
 [API文档](./API_README.md)
 

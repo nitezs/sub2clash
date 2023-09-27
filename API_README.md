@@ -15,6 +15,7 @@
 | sort         | string | 否                 | `nameasc` | 国家策略组排序策略，可选值 `nameasc`、`namedesc`、`sizeasc`、`sizedesc`                                                                                                                     |
 | replace      | string | 否                 | -         | 通过正则表达式重命名节点，格式 `[<ReplaceKey>,<ReplaceTo>],[<ReplaceKey>,<ReplaceTo>]...`                                                                                                  |
 | remove       | string | 否                 | -         | 通过正则表达式删除节点                                                                                                                                                                 |
+| nodeList     | bool   | 否                 | `false`   | 只输出节点                                                                                                                                                                       |                                                                                                                                                                       |
 
 # `/short`
 
