@@ -15,8 +15,8 @@ type Config struct {
 	RequestMaxFileSize int64
 	CacheExpire        int64
 	LogLevel           string
-	BasePath           string
-	ShortLinkLength    int
+	//BasePath           string
+	ShortLinkLength int
 }
 
 var Default *Config
@@ -32,8 +32,8 @@ func LoadConfig() error {
 		Port:               8011,
 		CacheExpire:        60 * 5,
 		LogLevel:           "info",
-		BasePath:           "/",
-		ShortLinkLength:    6,
+		//BasePath:           "/",
+		ShortLinkLength: 6,
 	}
 	_ = godotenv.Load()
 	if os.Getenv("PORT") != "" {
@@ -73,12 +73,12 @@ func LoadConfig() error {
 	if os.Getenv("LOG_LEVEL") != "" {
 		Default.LogLevel = os.Getenv("LOG_LEVEL")
 	}
-	if os.Getenv("BASE_PATH") != "" {
-		Default.BasePath = os.Getenv("BASE_PATH")
-		if Default.BasePath[len(Default.BasePath)-1] != '/' {
-			Default.BasePath += "/"
-		}
-	}
+	//if os.Getenv("BASE_PATH") != "" {
+	//	Default.BasePath = os.Getenv("BASE_PATH")
+	//	if Default.BasePath[len(Default.BasePath)-1] != '/' {
+	//		Default.BasePath += "/"
+	//	}
+	//}
 	if os.Getenv("SHORT_LINK_LENGTH") != "" {
 		atoi, err := strconv.Atoi(os.Getenv("SHORT_LINK_LENGTH"))
 		if err != nil {

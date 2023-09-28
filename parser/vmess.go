@@ -3,7 +3,6 @@ package parser
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 	"sub2clash/model"
@@ -12,24 +11,42 @@ import (
 func ParseVmess(proxy string) (model.Proxy, error) {
 	// 判断是否以 vmess:// 开头
 	if !strings.HasPrefix(proxy, "vmess://") {
-		return model.Proxy{}, fmt.Errorf("invalid vmess Url")
+		return model.Proxy{}, errors.New("invalid vmess url")
 	}
 	// 解码
 	base64, err := DecodeBase64(strings.TrimPrefix(proxy, "vmess://"))
 	if err != nil {
-		return model.Proxy{}, errors.New("无效的 vmess Url")
+		return model.Proxy{}, errors.New("invalid vmess url" + err.Error())
 	}
 	// 解析
-	var vmess model.Vmess
+	var vmess model.VmessJson
 	err = json.Unmarshal([]byte(base64), &vmess)
 	if err != nil {
-		return model.Proxy{}, errors.New("无效的 vmess Url")
+		return model.Proxy{}, errors.New("invalid vmess url" + err.Error())
 	}
-	// 处理端口
-	port, err := strconv.Atoi(strings.TrimSpace(vmess.Port))
-	if err != nil {
-		return model.Proxy{}, errors.New("无效的 vmess Url")
+	// 解析端口
+	port := 0
+	switch vmess.Port.(type) {
+	case string:
+		port, err = strconv.Atoi(vmess.Port.(string))
+		if err != nil {
+			return model.Proxy{}, errors.New("invalid vmess url" + err.Error())
+		}
+	case float64:
+		port = int(vmess.Port.(float64))
 	}
+	// 解析Aid
+	aid := 0
+	switch vmess.Aid.(type) {
+	case string:
+		aid, err = strconv.Atoi(vmess.Aid.(string))
+		if err != nil {
+			return model.Proxy{}, errors.New("invalid vmess url" + err.Error())
+		}
+	case float64:
+		aid = int(vmess.Aid.(float64))
+	}
+	// 设置默认值
 	if vmess.Scy == "" {
 		vmess.Scy = "auto"
 	}
@@ -46,7 +63,7 @@ func ParseVmess(proxy string) (model.Proxy, error) {
 		Server:            vmess.Add,
 		Port:              port,
 		UUID:              vmess.Id,
-		AlterID:           vmess.Aid,
+		AlterID:           aid,
 		Cipher:            vmess.Scy,
 		UDP:               true,
 		TLS:               vmess.Tls == "tls",
@@ -57,10 +74,10 @@ func ParseVmess(proxy string) (model.Proxy, error) {
 		Network:           vmess.Net,
 	}
 	if vmess.Net == "ws" {
-		result.WSOpts = model.WSOptsStruct{
+		result.WSOpts = model.WSOptions{
 			Path: vmess.Path,
-			Headers: model.HeaderStruct{
-				Host: vmess.Host,
+			Headers: map[string]string{
+				"Host": vmess.Host,
 			},
 		}
 	}

@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"fmt"
+	"errors"
 	"net/url"
 	"strconv"
 	"strings"
@@ -12,35 +12,35 @@ import (
 func ParseSS(proxy string) (model.Proxy, error) {
 	// 判断是否以 ss:// 开头
 	if !strings.HasPrefix(proxy, "ss://") {
-		return model.Proxy{}, fmt.Errorf("invalid ss Url")
+		return model.Proxy{}, errors.New("invalid ss Url")
 	}
 	// 分割
 	parts := strings.SplitN(strings.TrimPrefix(proxy, "ss://"), "@", 2)
 	if len(parts) != 2 {
-		return model.Proxy{}, fmt.Errorf("invalid ss Url")
+		return model.Proxy{}, errors.New("invalid ss Url")
 	}
 	if !strings.Contains(parts[0], ":") {
 		// 解码
 		decoded, err := DecodeBase64(parts[0])
 		if err != nil {
-			return model.Proxy{}, err
+			return model.Proxy{}, errors.New("invalid ss Url" + err.Error())
 		}
 		parts[0] = decoded
 	}
 	credentials := strings.SplitN(parts[0], ":", 2)
 	if len(credentials) != 2 {
-		return model.Proxy{}, fmt.Errorf("invalid ss Url")
+		return model.Proxy{}, errors.New("invalid ss Url")
 	}
 	// 分割
 	serverInfo := strings.SplitN(parts[1], "#", 2)
 	serverAndPort := strings.SplitN(serverInfo[0], ":", 2)
 	if len(serverAndPort) != 2 {
-		return model.Proxy{}, fmt.Errorf("invalid ss Url")
+		return model.Proxy{}, errors.New("invalid ss Url")
 	}
 	// 转换端口字符串为数字
 	port, err := strconv.Atoi(strings.TrimSpace(serverAndPort[1]))
 	if err != nil {
-		return model.Proxy{}, err
+		return model.Proxy{}, errors.New("invalid ss Url" + err.Error())
 	}
 	// 返回结果
 	result := model.Proxy{
@@ -56,7 +56,7 @@ func ParseSS(proxy string) (model.Proxy, error) {
 	if len(serverInfo) == 2 {
 		unescape, err := url.QueryUnescape(serverInfo[1])
 		if err != nil {
-			return model.Proxy{}, err
+			return model.Proxy{}, errors.New("invalid ss Url" + err.Error())
 		}
 		result.Name = strings.TrimSpace(unescape)
 	} else {

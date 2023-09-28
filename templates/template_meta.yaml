@@ -111,9 +111,11 @@ rules:
   - GEOSITE,microsoft,Microsoft
   - GEOSITE,apple,Apple
   - GEOSITE,netflix,Netflix
+  - GEOIP,netflix,Netflix
   - GEOSITE,onedrive,Onedrive
   - GEOSITE,youtube,Youtube
   - GEOSITE,telegram,Telegram
+  - GEOIP,telegram,Telegram
   - GEOSITE,openai,OpenAI
   - GEOSITE,bilibili,哔哩哔哩
   - GEOSITE,bahamut,巴哈姆特

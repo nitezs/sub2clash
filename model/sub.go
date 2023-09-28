@@ -12,3 +12,7 @@ type Subscription struct {
 	Rules              []string                `yaml:"rules,omitempty"`
 	RuleProviders      map[string]RuleProvider `yaml:"rule-providers,omitempty,omitempty"`
 }
+
+type NodeList struct {
+	Proxies []Proxy `yaml:"proxies,omitempty"`
+}

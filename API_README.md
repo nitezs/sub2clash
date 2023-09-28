@@ -4,7 +4,7 @@
 
 | Query 参数     | 类型     | 是否必须              | 默认值       | 说明                                                                                                                                                                          |
 |--------------|--------|-------------------|-----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| sub          | string | sub/proxy 至少有一项存在 | -         | 订阅链接（可以输入多个，用 `,` 分隔）                                                                                                                                                       |
+| sub          | string | sub/proxy 至少有一项存在 | -         | 订阅链接，可以在链接结尾加上`#名称`，来给订阅中的节点加上统一前缀（可以输入多个，用 `,` 分隔）                                                                                                                         |
 | proxy        | string | sub/proxy 至少有一项存在 | -         | 节点分享链接（可以输入多个，用 `,` 分隔）                                                                                                                                                     |
 | refresh      | bool   | 否                 | `false`   | 强制刷新配置（默认缓存 5 分钟）                                                                                                                                                           |
 | template     | string | 否                 | -         | 外部模板链接或内部模板名称                                                                                                                                                               |
@@ -15,11 +15,12 @@
 | sort         | string | 否                 | `nameasc` | 国家策略组排序策略，可选值 `nameasc`、`namedesc`、`sizeasc`、`sizedesc`                                                                                                                     |
 | replace      | string | 否                 | -         | 通过正则表达式重命名节点，格式 `[<ReplaceKey>,<ReplaceTo>],[<ReplaceKey>,<ReplaceTo>]...`                                                                                                  |
 | remove       | string | 否                 | -         | 通过正则表达式删除节点                                                                                                                                                                 |
+| nodeList     | bool   | 否                 | `false`   | 只输出节点                                                                                                                                                                       |                                                                                                                                                                       |
 
 # `/short`
 
 获取短链，Content-Type 为 `application/json`
-具体参考使用可以参考 [api\templates\index.html](./api/templates/index.html)
+具体参考使用可以参考 [api\templates\index.html](api/static/index.html)
 
 | Body 参数  | 类型     | 是否必须 | 默认值 | 说明               |
 |----------|--------|------|-----|------------------|

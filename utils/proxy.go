@@ -1,12 +1,14 @@
 package utils
 
 import (
+	"go.uber.org/zap"
 	"strings"
+	"sub2clash/logger"
 	"sub2clash/model"
 	"sub2clash/parser"
 )
 
-func GetContryName(proxy model.Proxy) string {
+func GetContryName(countryKey string) string {
 	// 创建一个切片包含所有的国家映射
 	countryMaps := []map[string]string{
 		model.CountryFlag,
@@ -16,14 +18,34 @@ func GetContryName(proxy model.Proxy) string {
 	}
 
 	// 对每一个映射进行检查
-	for _, countryMap := range countryMaps {
+	for i, countryMap := range countryMaps {
+		if i == 2 {
+			// 对ISO匹配做特殊处理
+			// 根据常用分割字符分割字符串
+			splitChars := []string{"-", "_", " "}
+			key := make([]string, 0)
+			for _, splitChar := range splitChars {
+				slic := strings.Split(countryKey, splitChar)
+				for _, v := range slic {
+					if len(v) == 2 {
+						key = append(key, v)
+					}
+				}
+			}
+			// 对每一个分割后的字符串进行检查
+			for _, v := range key {
+				// 如果匹配到了国家
+				if country, ok := countryMap[strings.ToUpper(v)]; ok {
+					return country
+				}
+			}
+		}
 		for k, v := range countryMap {
-			if strings.Contains(proxy.Name, k) {
+			if strings.Contains(countryKey, k) {
 				return v
 			}
 		}
 	}
-
 	return "其他地区"
 }
 
@@ -39,7 +61,7 @@ func AddProxy(
 		}
 		sub.Proxies = append(sub.Proxies, proxy)
 		haveProxyGroup := false
-		countryName := GetContryName(proxy)
+		countryName := GetContryName(proxy.Name)
 		for i := range sub.ProxyGroups {
 			group := &sub.ProxyGroups[i]
 
@@ -106,6 +128,10 @@ func ParseProxy(proxies ...string) []model.Proxy {
 			}
 			if err == nil {
 				result = append(result, proxyItem)
+			} else {
+				logger.Logger.Debug(
+					"parse proxy failed", zap.String("proxy", proxy), zap.Error(err),
+				)
 			}
 		}
 	}
