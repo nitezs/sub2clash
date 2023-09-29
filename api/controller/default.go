@@ -249,7 +249,7 @@ func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription) {
 		if temp.ProxyGroups[i].IsCountryGrop {
 			continue
 		}
-		newProxies := make([]string, 0, len(temp.ProxyGroups[i].Proxies))
+		newProxies := make([]string, 0)
 		countryGroupMap := make(map[string]model.ProxyGroup)
 		for _, v := range sub.ProxyGroups {
 			if v.IsCountryGrop {

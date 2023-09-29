@@ -15,44 +15,89 @@ type ProxyGroup struct {
 	Tolerance     int      `yaml:"tolerance,omitempty"`
 	Lazy          bool     `yaml:"lazy"`
 	Size          int      `yaml:"-"`
+	DisableUDP    bool     `yaml:"disable-udp,omitempty"`
+	Strategy      string   `yaml:"strategy,omitempty"`
 }
 
 type SelectProxyGroup struct {
-	Name    string   `yaml:"name,omitempty"`
-	Type    string   `yaml:"type,omitempty"`
-	Proxies []string `yaml:"proxies,omitempty"`
+	Name       string   `yaml:"name,omitempty"`
+	Type       string   `yaml:"type,omitempty"`
+	Proxies    []string `yaml:"proxies,omitempty"`
+	DisableUDP bool     `yaml:"disable-udp,omitempty"`
 }
 
 type UrlTestProxyGroup struct {
-	Name      string   `yaml:"name,omitempty"`
-	Type      string   `yaml:"type,omitempty"`
-	Proxies   []string `yaml:"proxies,omitempty"`
-	Url       string   `yaml:"url,omitempty"`
-	Interval  int      `yaml:"interval,omitempty"`
-	Tolerance int      `yaml:"tolerance,omitempty"`
-	Lazy      bool     `yaml:"lazy"`
+	Name       string   `yaml:"name,omitempty"`
+	Type       string   `yaml:"type,omitempty"`
+	Proxies    []string `yaml:"proxies,omitempty"`
+	Url        string   `yaml:"url,omitempty"`
+	Interval   int      `yaml:"interval,omitempty"`
+	Tolerance  int      `yaml:"tolerance,omitempty"`
+	Lazy       bool     `yaml:"lazy"`
+	DisableUDP bool     `yaml:"disable-udp,omitempty"`
+}
+
+type LoadBalanceProxyGroup struct {
+	Name       string   `yaml:"name,omitempty"`
+	Type       string   `yaml:"type,omitempty"`
+	Proxies    []string `yaml:"proxies,omitempty"`
+	DisableUDP bool     `yaml:"disable-udp,omitempty"`
+	Url        string   `yaml:"url,omitempty"`
+	Interval   int      `yaml:"interval,omitempty"`
+	Lazy       bool     `yaml:"lazy"`
+	Strategy   string   `yaml:"strategy,omitempty"`
+}
+
+type RelayProxyGroup struct {
+	Name    string   `yaml:"name,omitempty"`
+	Type    string   `yaml:"type,omitempty"`
+	Proxies []string `yaml:"proxies,omitempty"`
 }
 
 func (p ProxyGroup) MarshalYAML() (interface{}, error) {
 	switch p.Type {
 	case "select":
 		return SelectProxyGroup{
+			Name:       p.Name,
+			Type:       p.Type,
+			Proxies:    p.Proxies,
+			DisableUDP: p.DisableUDP,
+		}, nil
+	case "url-test", "fallback":
+		return UrlTestProxyGroup{
+			Name:       p.Name,
+			Type:       p.Type,
+			Proxies:    p.Proxies,
+			Url:        p.Url,
+			Interval:   p.Interval,
+			Tolerance:  p.Tolerance,
+			Lazy:       p.Lazy,
+			DisableUDP: p.DisableUDP,
+		}, nil
+	case "load-balance":
+		return LoadBalanceProxyGroup{
+			Name:       p.Name,
+			Type:       p.Type,
+			Proxies:    p.Proxies,
+			DisableUDP: p.DisableUDP,
+			Url:        p.Url,
+			Interval:   p.Interval,
+			Lazy:       p.Lazy,
+			Strategy:   p.Strategy,
+		}, nil
+	case "relay":
+		return RelayProxyGroup{
 			Name:    p.Name,
 			Type:    p.Type,
 			Proxies: p.Proxies,
 		}, nil
-	case "url-test":
-		return UrlTestProxyGroup{
-			Name:      p.Name,
-			Type:      p.Type,
-			Proxies:   p.Proxies,
-			Url:       p.Url,
-			Interval:  p.Interval,
-			Tolerance: p.Tolerance,
-			Lazy:      p.Lazy,
+	default:
+		return SelectProxyGroup{
+			Name:    p.Name,
+			Type:    p.Type,
+			Proxies: p.Proxies,
 		}, nil
 	}
-	return nil, nil
 }
 
 type ProxyGroupsSortByName []ProxyGroup
