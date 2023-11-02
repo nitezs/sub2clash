@@ -1,21 +1,21 @@
-version: '3'
+version: "3"
 
 services:
-  sub2clash:
-    container_name: sub2clash
-    restart: unless-stopped
-    image: ghcr.io/nitezs/sub2clash:latest
-    ports:
-      - "8011:8011"
-    volumes:
-      - ./logs:/app/logs
-      - ./templates:/app/templates
-      - ./data:/app/data
-    # environment:
-    #   - PORT=8011
-    #   - META_TEMPLATE=template_meta.yaml
-    #   - PROXY_TEMPLATE=template_clash.yaml
-    #   - REQUEST_RETRY_TIMES=3
-    #   - REQUEST_MAX_FILE_SIZE=1048576
-    #   - CACHE_EXPIRE=300
-    #   - LOG_LEVEL=info
+    sub2clash:
+        container_name: sub2clash
+        restart: unless-stopped
+        image: ghcr.io/nitezs/sub2clash:latest
+        ports:
+            - "8011:8011"
+        volumes:
+            - ./logs:/app/logs
+            - ./templates:/app/templates
+            - ./data:/app/data
+        # environment:
+        #   - PORT=8011
+        #   - META_TEMPLATE=template_meta.yaml
+        #   - PROXY_TEMPLATE=template_clash.yaml
+        #   - REQUEST_RETRY_TIMES=3
+        #   - REQUEST_MAX_FILE_SIZE=1048576
+        #   - CACHE_EXPIRE=300
+        #   - LOG_LEVEL=info

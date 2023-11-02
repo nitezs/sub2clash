@@ -4,8 +4,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
-	"go.uber.org/zap"
-	"gopkg.in/yaml.v3"
 	"net/url"
 	"regexp"
 	"sort"
@@ -16,6 +14,9 @@ import (
 	"sub2clash/parser"
 	"sub2clash/utils"
 	"sub2clash/validator"
+
+	"go.uber.org/zap"
+	"gopkg.in/yaml.v3"
 )
 
 func BuildSub(clashType model.ClashType, query validator.SubValidator, template string) (

@@ -37,14 +37,15 @@ func ParseHysteria2(proxy string) (model.Proxy, error) {
 	}
 	// 返回结果
 	result := model.Proxy{
-		Type:      "hysteria2",
-		Name:      params.Get("name"),
-		Server:    serverAndPort[0],
-		Port:      port,
-		Password:  parts[0],
-		Obfs:      params.Get("obfs"),
-		ObfsParam: params.Get("obfs-password"),
-		Sni:       params.Get("sni"),
+		Type:           "hysteria2",
+		Name:           params.Get("name"),
+		Server:         serverAndPort[0],
+		Port:           port,
+		Password:       parts[0],
+		Obfs:           params.Get("obfs"),
+		ObfsParam:      params.Get("obfs-password"),
+		Sni:            params.Get("sni"),
+		SkipCertVerify: params.Get("insecure") == "1",
 	}
 	return result, nil
 }

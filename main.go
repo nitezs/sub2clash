@@ -2,8 +2,6 @@ package main
 
 import (
 	_ "embed"
-	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 	"io"
 	"strconv"
 	"sub2clash/api"
@@ -11,6 +9,9 @@ import (
 	"sub2clash/logger"
 	"sub2clash/utils"
 	"sub2clash/utils/database"
+
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 //go:embed templates/template_meta.yaml

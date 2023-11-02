@@ -1,258 +1,283 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>sub2clash</title>
-    <!-- Bootstrap CSS -->
-    <link
-      crossorigin="anonymous"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-      rel="stylesheet"
-    />
-    <!-- Bootstrap JS -->
-    <script
-      crossorigin="anonymous"
-      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-    ></script>
-    <!-- Axios -->
-    <script src="https://cdn.jsdelivr.net/npm/axios@latest/dist/axios.min.js"></script>
-    <script src="./static/index.js"></script>
-    <style>
-      .container {
-        max-width: 800px;
-      }
+    <head>
+        <meta charset="UTF-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>sub2clash</title>
+        <!-- Bootstrap CSS -->
+        <link
+            crossorigin="anonymous"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            rel="stylesheet"
+        />
+        <!-- Bootstrap JS -->
+        <script
+            crossorigin="anonymous"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        ></script>
+        <!-- Axios -->
+        <script src="https://cdn.jsdelivr.net/npm/axios@latest/dist/axios.min.js"></script>
+        <script src="./static/index.js"></script>
+        <style>
+            .container {
+                max-width: 800px;
+            }
 
-      .btn-xs {
-        padding: 2px 2px; /* 调整内边距以减小按钮大小 */
-        font-size: 10px; /* 设置字体大小 */
-        line-height: 1.2; /* 调整行高 */
-        border-radius: 3px; /* 可选的边框半径调整 */
-        height: 25px;
-        width: 25px;
-      }
-    </style>
-  </head>
-  <body class="bg-light">
-    <div class="container mt-5">
-      <div class="mb-4">
-        <h2>sub2clash</h2>
-        <span class="text-muted fst-italic"
-          >通用订阅链接转 Clash(Meta) 配置工具
-          <a
-            href="https://github.com/nitezs/sub2clash#clash-meta"
-            target="_blank"
-            >使用文档</a
-          ></span
-        >
-      </div>
+            .btn-xs {
+                padding: 2px 2px; /* 调整内边距以减小按钮大小 */
+                font-size: 10px; /* 设置字体大小 */
+                line-height: 1.2; /* 调整行高 */
+                border-radius: 3px; /* 可选的边框半径调整 */
+                height: 25px;
+                width: 25px;
+            }
+        </style>
+    </head>
+    <body class="bg-light">
+        <div class="container mt-5">
+            <div class="mb-4">
+                <h2>sub2clash</h2>
+                <span class="text-muted fst-italic"
+                    >通用订阅链接转 Clash(Meta) 配置工具
+                    <a
+                        href="https://github.com/nitezs/sub2clash#clash-meta"
+                        target="_blank"
+                        >使用文档</a
+                    ></span
+                >
+            </div>
 
-      <!-- Input URL -->
-      <div class="form-group mb-5">
-        <label for="apiLink">解析链接:</label>
-        <div class="input-group mb-2">
-          <input
-            class="form-control"
-            id="urlInput"
-            type="text"
-            placeholder="通过生成的链接重新填写下方设置"
-          />
-          <button
-            class="btn btn-primary"
-            onclick="parseInputURL()"
-            type="button"
-          >
-            解析
-          </button>
-        </div>
-      </div>
-      <!-- API Endpoint -->
-      <div class="form-group mb-3">
-        <label for="endpoint">客户端类型:</label>
-        <select class="form-control" id="endpoint" name="endpoint">
-          <option value="clash">Clash</option>
-          <option value="meta">Clash.Meta</option>
-        </select>
-      </div>
-      <!-- Template -->
-      <div class="form-group mb-3">
-        <label for="template">模板链接或名称:</label>
-        <input
-          class="form-control"
-          id="template"
-          name="template"
-          placeholder="输入外部模板链接或内部模板名称（可选）"
-          type="text"
-        />
-      </div>
-      <!-- Subscription Link -->
-      <div class="form-group mb-3">
-        <label for="sub">订阅链接:</label>
-        <textarea
-          class="form-control"
-          id="sub"
-          name="sub"
-          placeholder="每行输入一个订阅链接"
-          rows="5"
-        ></textarea>
-      </div>
-      <!-- Proxy Link -->
-      <div class="form-group mb-3">
-        <label for="proxy">节点分享链接:</label>
-        <textarea
-          class="form-control"
-          id="proxy"
-          name="proxy"
-          placeholder="每行输入一个节点分享链接"
-          rows="5"
-        ></textarea>
-      </div>
-      <!-- Refresh -->
-      <div class="form-check mb-3">
-        <input
-          class="form-check-input"
-          id="refresh"
-          name="refresh"
-          type="checkbox"
-        />
-        <label class="form-check-label" for="refresh">强制重新获取订阅</label>
-      </div>
-      <!-- Node List -->
-      <div class="form-check mb-3">
-        <input
-          class="form-check-input"
-          id="nodeList"
-          name="nodeList"
-          type="checkbox"
-        />
-        <label class="form-check-label" for="nodeList">输出为 Node List</label>
-      </div>
-      <!-- Auto Test -->
-      <div class="form-check mb-3">
-        <input
-          class="form-check-input"
-          id="autoTest"
-          name="autoTest"
-          type="checkbox"
-        />
-        <label class="form-check-label" for="autoTest"
-          >国家策略组自动测速</label
-        >
-      </div>
-      <!-- Lazy -->
-      <div class="form-check mb-3">
-        <input class="form-check-input" id="lazy" name="lazy" type="checkbox" />
-        <label class="form-check-label" for="lazy"
-          >自动测速启用 lazy 模式</label
-        >
-      </div>
-      <!-- Rule Provider -->
-      <div class="form-group mb-3" id="ruleProviderGroup">
-        <label>Rule Provider:</label>
-        <button
-          class="btn btn-primary mb-1 btn-xs"
-          onclick="addRuleProvider()"
-          type="button"
-        >
-          +
-        </button>
-      </div>
-      <!-- Rule -->
-      <div class="form-group mb-3" id="ruleGroup">
-        <label>规则:</label>
-        <button
-          class="btn btn-primary mb-1 btn-xs"
-          onclick="addRule()"
-          type="button"
-        >
-          +
-        </button>
-      </div>
-      <!-- Sort -->
-      <div class="form-group mb-3">
-        <label for="sort">国家策略组排序规则:</label>
-        <select class="form-control" id="sort" name="sort">
-          <option value="nameasc">名称（升序）</option>
-          <option value="namedesc">名称（降序）</option>
-          <option value="sizeasc">节点数量（升序）</option>
-          <option value="sizedesc">节点数量（降序）</option>
-        </select>
-      </div>
-      <!-- Remove -->
-      <div class="form-group mb-3">
-        <label for="remove">排除节点:</label>
-        <input
-          class="form-control"
-          type="text"
-          name="remove"
-          id="remove"
-          placeholder="正则表达式"
-        />
-      </div>
-      <!-- Rename  -->
-      <div class="form-group mb-3" id="replaceGroup">
-        <label>节点名称替换:</label>
-        <button
-          class="btn btn-primary mb-1 btn-xs"
-          onclick="addReplace()"
-          type="button"
-        >
-          +
-        </button>
-      </div>
+            <!-- Input URL -->
+            <div class="form-group mb-5">
+                <label for="apiLink">解析链接:</label>
+                <div class="input-group mb-2">
+                    <input
+                        class="form-control"
+                        id="urlInput"
+                        type="text"
+                        placeholder="通过生成的链接重新填写下方设置"
+                    />
+                    <button
+                        class="btn btn-primary"
+                        onclick="parseInputURL()"
+                        type="button"
+                    >
+                        解析
+                    </button>
+                </div>
+            </div>
+            <!-- API Endpoint -->
+            <div class="form-group mb-3">
+                <label for="endpoint">客户端类型:</label>
+                <select class="form-control" id="endpoint" name="endpoint">
+                    <option value="clash">Clash</option>
+                    <option value="meta">Clash.Meta</option>
+                </select>
+            </div>
+            <!-- Template -->
+            <div class="form-group mb-3">
+                <label for="template">模板链接或名称:</label>
+                <input
+                    class="form-control"
+                    id="template"
+                    name="template"
+                    placeholder="输入外部模板链接或内部模板名称（可选）"
+                    type="text"
+                />
+            </div>
+            <!-- Subscription Link -->
+            <div class="form-group mb-3">
+                <label for="sub">订阅链接:</label>
+                <textarea
+                    class="form-control"
+                    id="sub"
+                    name="sub"
+                    placeholder="每行输入一个订阅链接"
+                    rows="5"
+                ></textarea>
+            </div>
+            <!-- Proxy Link -->
+            <div class="form-group mb-3">
+                <label for="proxy">节点分享链接:</label>
+                <textarea
+                    class="form-control"
+                    id="proxy"
+                    name="proxy"
+                    placeholder="每行输入一个节点分享链接"
+                    rows="5"
+                ></textarea>
+            </div>
+            <!-- Refresh -->
+            <div class="form-check mb-3">
+                <input
+                    class="form-check-input"
+                    id="refresh"
+                    name="refresh"
+                    type="checkbox"
+                />
+                <label class="form-check-label" for="refresh"
+                    >强制重新获取订阅</label
+                >
+            </div>
+            <!-- Node List -->
+            <div class="form-check mb-3">
+                <input
+                    class="form-check-input"
+                    id="nodeList"
+                    name="nodeList"
+                    type="checkbox"
+                />
+                <label class="form-check-label" for="nodeList"
+                    >输出为 Node List</label
+                >
+            </div>
+            <!-- Auto Test -->
+            <div class="form-check mb-3">
+                <input
+                    class="form-check-input"
+                    id="autoTest"
+                    name="autoTest"
+                    type="checkbox"
+                />
+                <label class="form-check-label" for="autoTest"
+                    >国家策略组自动测速</label
+                >
+            </div>
+            <!-- Lazy -->
+            <div class="form-check mb-3">
+                <input
+                    class="form-check-input"
+                    id="lazy"
+                    name="lazy"
+                    type="checkbox"
+                />
+                <label class="form-check-label" for="lazy"
+                    >自动测速启用 lazy 模式</label
+                >
+            </div>
+            <!-- Rule Provider -->
+            <div class="form-group mb-3" id="ruleProviderGroup">
+                <label>Rule Provider:</label>
+                <button
+                    class="btn btn-primary mb-1 btn-xs"
+                    onclick="addRuleProvider()"
+                    type="button"
+                >
+                    +
+                </button>
+            </div>
+            <!-- Rule -->
+            <div class="form-group mb-3" id="ruleGroup">
+                <label>规则:</label>
+                <button
+                    class="btn btn-primary mb-1 btn-xs"
+                    onclick="addRule()"
+                    type="button"
+                >
+                    +
+                </button>
+            </div>
+            <!-- Sort -->
+            <div class="form-group mb-3">
+                <label for="sort">国家策略组排序规则:</label>
+                <select class="form-control" id="sort" name="sort">
+                    <option value="nameasc">名称（升序）</option>
+                    <option value="namedesc">名称（降序）</option>
+                    <option value="sizeasc">节点数量（升序）</option>
+                    <option value="sizedesc">节点数量（降序）</option>
+                </select>
+            </div>
+            <!-- Remove -->
+            <div class="form-group mb-3">
+                <label for="remove">排除节点:</label>
+                <input
+                    class="form-control"
+                    type="text"
+                    name="remove"
+                    id="remove"
+                    placeholder="正则表达式"
+                />
+            </div>
+            <!-- Rename  -->
+            <div class="form-group mb-3" id="replaceGroup">
+                <label>节点名称替换:</label>
+                <button
+                    class="btn btn-primary mb-1 btn-xs"
+                    onclick="addReplace()"
+                    type="button"
+                >
+                    +
+                </button>
+            </div>
 
-      <!-- Display the API Link -->
-      <div class="form-group mb-5">
-        <label for="apiLink">配置链接:</label>
-        <div class="input-group mb-2">
-          <input class="form-control" id="apiLink" readonly type="text" />
-          <button class="btn btn-primary" onclick="generateURL()" type="button">
-            生成链接
-          </button>
-          <button
-            class="btn btn-primary"
-            onclick="copyToClipboard('apiLink',this)"
-            type="button"
-          >
-            复制链接
-          </button>
+            <!-- Display the API Link -->
+            <div class="form-group mb-5">
+                <label for="apiLink">配置链接:</label>
+                <div class="input-group mb-2">
+                    <input
+                        class="form-control"
+                        id="apiLink"
+                        readonly
+                        type="text"
+                    />
+                    <button
+                        class="btn btn-primary"
+                        onclick="generateURL()"
+                        type="button"
+                    >
+                        生成链接
+                    </button>
+                    <button
+                        class="btn btn-primary"
+                        onclick="copyToClipboard('apiLink',this)"
+                        type="button"
+                    >
+                        复制链接
+                    </button>
+                </div>
+                <div class="input-group">
+                    <input
+                        class="form-control"
+                        id="apiShortLink"
+                        readonly
+                        type="text"
+                    />
+                    <input
+                        class="form-control"
+                        id="password"
+                        type="text"
+                        placeholder="密码"
+                    />
+                    <button
+                        class="btn btn-primary"
+                        onclick="generateShortLink()"
+                        type="button"
+                    >
+                        生成短链
+                    </button>
+                    <button
+                        class="btn btn-primary"
+                        onclick="copyToClipboard('apiShortLink',this)"
+                        type="button"
+                    >
+                        复制短链
+                    </button>
+                </div>
+            </div>
+            <!-- footer-->
+            <footer>
+                <p class="text-center">
+                    Powered by
+                    <a
+                        class="link-primary"
+                        href="https://github.com/nitezs/sub2clash"
+                        >sub2clash</a
+                    >
+                </p>
+                <p class="text-center">Version {{.Version}}</p>
+            </footer>
         </div>
-        <div class="input-group">
-          <input class="form-control" id="apiShortLink" readonly type="text" />
-          <input
-            class="form-control"
-            id="password"
-            type="text"
-            placeholder="密码"
-          />
-          <button
-            class="btn btn-primary"
-            onclick="generateShortLink()"
-            type="button"
-          >
-            生成短链
-          </button>
-          <button
-            class="btn btn-primary"
-            onclick="copyToClipboard('apiShortLink',this)"
-            type="button"
-          >
-            复制短链
-          </button>
-        </div>
-      </div>
-      <!-- footer-->
-      <footer>
-        <p class="text-center">
-          Powered by
-          <a class="link-primary" href="https://github.com/nitezs/sub2clash"
-            >sub2clash</a
-          >
-        </p>
-        <p class="text-center">Version {{.Version}}</p>
-      </footer>
-    </div>
-  </body>
+    </body>
 </html>

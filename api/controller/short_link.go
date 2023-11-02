@@ -2,9 +2,6 @@ package controller
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
-	"gorm.io/gorm"
 	"io"
 	"net/http"
 	"strconv"
@@ -16,6 +13,10 @@ import (
 	"sub2clash/utils/database"
 	"sub2clash/validator"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 func ShortLinkGenHandler(c *gin.Context) {

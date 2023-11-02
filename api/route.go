@@ -2,13 +2,14 @@ package api
 
 import (
 	"embed"
-	"github.com/gin-gonic/gin"
 	"html/template"
 	"log"
 	"net/http"
 	"sub2clash/api/controller"
 	"sub2clash/config"
 	"sub2clash/middleware"
+
+	"github.com/gin-gonic/gin"
 )
 
 //go:embed static

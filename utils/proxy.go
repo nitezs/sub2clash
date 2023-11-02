@@ -1,11 +1,12 @@
 package utils
 
 import (
-	"go.uber.org/zap"
 	"strings"
 	"sub2clash/logger"
 	"sub2clash/model"
 	"sub2clash/parser"
+
+	"go.uber.org/zap"
 )
 
 func GetContryName(countryKey string) string {

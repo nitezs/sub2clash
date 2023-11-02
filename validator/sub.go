@@ -4,11 +4,12 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
-	"github.com/gin-gonic/gin"
 	"net/url"
 	"os"
 	"regexp"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 type SubValidator struct {
