@@ -23,6 +23,7 @@ proxy-groups:
       - 手动切换
       - <countries>
       - <cheaps>
+      - <expensives>
       - DIRECT
       - REJECT
   - name: 油管视频
@@ -30,6 +31,7 @@ proxy-groups:
     proxies:
       - 大流量连接
       - <cheaps>
+      - <expensives>
       - 手动切换
       - 自动测速
       - <countries>
@@ -43,6 +45,7 @@ proxy-groups:
       - DIRECT
       - <countries>
       - <cheaps>
+      - <expensives>
       - REJECT
   - name: 哔哩哔哩
     type: select
@@ -52,12 +55,14 @@ proxy-groups:
       - 自动测速
       - <countries>
       - <cheaps>
+      - <expensives>
       - REJECT
   - name: 国外媒体
     type: select
     proxies:
       - 大流量连接
       - <cheaps>
+      - <expensives>
       - DIRECT
       - 手动切换
       - 自动测速
@@ -68,6 +73,7 @@ proxy-groups:
     proxies:
       - DIRECT
       - <cheaps>
+      - <expensives>
       - 手动切换
       - 自动测速
       - <countries>
@@ -79,6 +85,7 @@ proxy-groups:
       - <countries>
       - 手动切换
       - <cheaps>
+      - <expensives>
       - DIRECT
       - REJECT
   - name: 微软云盘
@@ -87,6 +94,7 @@ proxy-groups:
       - DIRECT
       - 大流量连接
       - <cheaps>
+      - <expensives>
       - <countries>
       - 手动切换
       - 自动测速
@@ -99,6 +107,7 @@ proxy-groups:
       - 手动切换
       - 自动测速
       - <cheaps>
+      - <expensives>
       - REJECT
   - name: 苹果服务
     type: select
@@ -108,6 +117,7 @@ proxy-groups:
       - 手动切换
       - 自动测速
       - <cheaps>
+      - <expensives>
       - REJECT
   - name: 游戏平台
     type: select
@@ -117,12 +127,14 @@ proxy-groups:
       - 自动测速
       - 手动切换
       - <cheaps>
+      - <expensives>
       - REJECT
   - name: 网易音乐
     type: select
     proxies:
       - DIRECT
       - <cheaps>
+      - <expensives>
       - 手动切换
       - 自动测速
       - <countries>
@@ -133,6 +145,7 @@ proxy-groups:
       # 只要欧美国家
       - <countries_UA>
       - <cheaps_UA>
+      - <expensives>
       - 手动切换
       - 自动测速
       - DIRECT
@@ -142,6 +155,7 @@ proxy-groups:
     proxies:
       - <countries_N_CN>
       - <cheaps>
+      - <expensives>
       - 手动切换
       - 自动测速
       - DIRECT
@@ -150,6 +164,7 @@ proxy-groups:
     type: select
     proxies:
       - <cheaps>
+      - <expensives>
       - 手动切换
       - DIRECT
       - 自动测速
@@ -160,6 +175,7 @@ proxy-groups:
     proxies:
       - DIRECT
       - <cheaps>
+      - <expensives>
       - 手动切换
       - 自动测速
       - <countries>
@@ -169,6 +185,7 @@ proxy-groups:
     proxies:
       - REJECT
       - <cheaps>
+      - <expensives>
       - DIRECT
       - 手动切换
       - 自动测速
@@ -178,6 +195,7 @@ proxy-groups:
     proxies:
       - REJECT
       - <cheaps>
+      - <expensives>
       - DIRECT
       - 手动切换
       - 自动测速
@@ -186,6 +204,7 @@ proxy-groups:
     type: select
     proxies:
       - <cheaps>
+      - <expensives>
       - DIRECT
       - 手动切换
       - 自动测速
