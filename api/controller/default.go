@@ -30,7 +30,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	if query.Template != "" {
 		template = query.Template
 	}
-	_, err = url.ParseRequestURI(template)
+	_, err = url.ParseRequestURI(template) // 判断template是不是一个在线http的配置
 	if err != nil {
 		templateBytes, err = utils.LoadTemplate(template)
 		if err != nil {
