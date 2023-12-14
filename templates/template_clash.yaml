@@ -21,6 +21,7 @@ proxy-groups:
       - 手动切换
       - 自动测速
       - <countries>
+      - <cheaps>
       - REJECT
   - name: 油管视频
     type: select
@@ -29,6 +30,7 @@ proxy-groups:
       - 手动切换
       - 自动测速
       - <countries>
+      - <cheaps>
       - REJECT
   - name: 巴哈姆特
     type: select
@@ -37,6 +39,7 @@ proxy-groups:
       - 手动切换
       - 自动测速
       - <countries>
+      - <cheaps>
       - REJECT
   - name: 哔哩哔哩
     type: select
@@ -45,6 +48,7 @@ proxy-groups:
       - 手动切换
       - 自动测速
       - <countries>
+      - <cheaps>
       - REJECT
   - name: 国外媒体
     type: select
@@ -54,6 +58,7 @@ proxy-groups:
       - 手动切换
       - 自动测速
       - <countries>
+      - <cheaps>
       - REJECT
   - name: 中国限制性服务
     type: select
@@ -62,6 +67,7 @@ proxy-groups:
       - 手动切换
       - 自动测速
       - <countries>
+      - <cheaps>
       - REJECT
   - name: 大流量连接
     type: select
@@ -70,6 +76,7 @@ proxy-groups:
       - 手动切换
       - 自动测速
       - <countries>
+      - <cheaps>
       - REJECT
   - name: 国内媒体
     type: select
@@ -78,6 +85,7 @@ proxy-groups:
       - 手动切换
       - 自动测速
       - <countries>
+      - <cheaps>
       - REJECT
   - name: 谷歌FCM
     type: select
@@ -86,6 +94,7 @@ proxy-groups:
       - 手动切换
       - 自动测速
       - <countries>
+      - <cheaps>
       - REJECT
   - name: 微软云盘
     type: select
@@ -94,6 +103,7 @@ proxy-groups:
       - 手动切换
       - 自动测速
       - <countries>
+      - <cheaps>
       - REJECT
   - name: 微软服务
     type: select
@@ -102,6 +112,7 @@ proxy-groups:
       - 手动切换
       - 自动测速
       - <countries>
+      - <cheaps>
       - REJECT
   - name: 苹果服务
     type: select
@@ -110,6 +121,7 @@ proxy-groups:
       - 手动切换
       - 自动测速
       - <countries>
+      - <cheaps>
       - REJECT
   - name: 游戏平台
     type: select
@@ -118,6 +130,7 @@ proxy-groups:
       - 手动切换
       - 自动测速
       - <countries>
+      - <cheaps>
       - REJECT
   - name: 网易音乐
     type: select
@@ -126,6 +139,7 @@ proxy-groups:
       - 手动切换
       - 自动测速
       - <countries>
+      - <cheaps>
       - REJECT
   - name: 全球直连
     type: select
@@ -134,6 +148,7 @@ proxy-groups:
       - 手动切换
       - 自动测速
       - <countries>
+      - <cheaps>
       - REJECT
   - name: 广告拦截
     type: select
@@ -143,6 +158,7 @@ proxy-groups:
       - 手动切换
       - 自动测速
       - <countries>
+      - <cheaps>
   - name: 应用净化
     type: select
     proxies:
@@ -151,6 +167,7 @@ proxy-groups:
       - 手动切换
       - 自动测速
       - <countries>
+      - <cheaps>
   - name: 漏网之鱼
     type: select
     proxies:
@@ -158,12 +175,8 @@ proxy-groups:
       - 手动切换
       - 自动测速
       - <countries>
-      - REJECT
-  - name: 便宜节点
-    type: url-test
-    url: https://www.gstatic.com/generate_204
-    proxies:
       - <cheaps>
+      - REJECT
 rules:
   - DOMAIN-SUFFIX,ai.com,中国限制性服务
   - DOMAIN-SUFFIX,openaicom.imgix.net,中国限制性服务
