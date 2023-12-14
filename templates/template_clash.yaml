@@ -159,6 +159,11 @@ proxy-groups:
       - 自动测速
       - <countries>
       - REJECT
+  - name: 便宜节点
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    proxies:
+      - <cheaps>
 rules:
   - DOMAIN-SUFFIX,ai.com,中国限制性服务
   - DOMAIN-SUFFIX,openaicom.imgix.net,中国限制性服务
