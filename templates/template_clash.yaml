@@ -17,27 +17,28 @@ proxy-groups:
   - name: 电报消息
     type: select
     proxies:
-      - DIRECT
-      - 手动切换
       - 自动测速
+      - 手动切换
       - <countries>
       - <cheaps>
+      - DIRECT
       - REJECT
   - name: 油管视频
     type: select
     proxies:
-      - DIRECT
+      - 大流量连接
+      - <cheaps>
       - 手动切换
       - 自动测速
       - <countries>
-      - <cheaps>
+      - DIRECT
       - REJECT
   - name: 巴哈姆特
     type: select
     proxies:
-      - DIRECT
-      - 手动切换
       - 自动测速
+      - 手动切换
+      - DIRECT
       - <countries>
       - <cheaps>
       - REJECT
@@ -54,148 +55,160 @@ proxy-groups:
     type: select
     proxies:
       - 大流量连接
+      - <cheaps>
       - DIRECT
       - 手动切换
       - 自动测速
       - <countries>
-      - <cheaps>
-      - REJECT
-  - name: 中国限制性服务
-    type: select
-    proxies:
-      - DIRECT
-      - 手动切换
-      - 自动测速
-      - <countries>
-      - <cheaps>
-      - REJECT
-  - name: 大流量连接
-    type: select
-    proxies:
-      - DIRECT
-      - 手动切换
-      - 自动测速
-      - <countries>
-      - <cheaps>
       - REJECT
   - name: 国内媒体
     type: select
     proxies:
       - DIRECT
+      - <cheaps>
       - 手动切换
       - 自动测速
       - <countries>
-      - <cheaps>
       - REJECT
   - name: 谷歌FCM
     type: select
     proxies:
-      - DIRECT
-      - 手动切换
       - 自动测速
       - <countries>
+      - 手动切换
       - <cheaps>
+      - DIRECT
       - REJECT
   - name: 微软云盘
     type: select
     proxies:
       - DIRECT
+      - 大流量连接
+      - <cheaps>
+      - <countries>
       - 手动切换
       - 自动测速
-      - <countries>
-      - <cheaps>
       - REJECT
   - name: 微软服务
     type: select
     proxies:
       - DIRECT
+      - <countries>
       - 手动切换
       - 自动测速
-      - <countries>
       - <cheaps>
       - REJECT
   - name: 苹果服务
     type: select
     proxies:
       - DIRECT
+      - <countries>
       - 手动切换
       - 自动测速
-      - <countries>
       - <cheaps>
       - REJECT
   - name: 游戏平台
     type: select
     proxies:
       - DIRECT
-      - 手动切换
-      - 自动测速
       - <countries>
+      - 自动测速
+      - 手动切换
       - <cheaps>
       - REJECT
   - name: 网易音乐
     type: select
     proxies:
       - DIRECT
+      - <cheaps>
       - 手动切换
       - 自动测速
       - <countries>
+      - REJECT
+  - name: 欧美限定服务
+    type: select
+    proxies:
+      # 只要欧美国家
+      - <countries_UA>
+      - <cheaps_UA>
+      - 手动切换
+      - 自动测速
+      - DIRECT
+      - REJECT
+  - name: 中国限制服务
+    type: select
+    proxies:
+      - <countries_N_CN>
       - <cheaps>
+      - 手动切换
+      - 自动测速
+      - DIRECT
+      - REJECT
+  - name: 大流量连接
+    type: select
+    proxies:
+      - <cheaps>
+      - 手动切换
+      - DIRECT
+      - 自动测速
+      - <countries>
       - REJECT
   - name: 全球直连
     type: select
     proxies:
       - DIRECT
+      - <cheaps>
       - 手动切换
       - 自动测速
       - <countries>
-      - <cheaps>
       - REJECT
   - name: 广告拦截
     type: select
     proxies:
       - REJECT
+      - <cheaps>
       - DIRECT
       - 手动切换
       - 自动测速
       - <countries>
-      - <cheaps>
   - name: 应用净化
     type: select
     proxies:
       - REJECT
+      - <cheaps>
       - DIRECT
       - 手动切换
       - 自动测速
       - <countries>
-      - <cheaps>
   - name: 漏网之鱼
     type: select
     proxies:
+      - <cheaps>
       - DIRECT
       - 手动切换
       - 自动测速
       - <countries>
-      - <cheaps>
       - REJECT
 rules:
-  - DOMAIN-SUFFIX,ai.com,中国限制性服务
-  - DOMAIN-SUFFIX,openaicom.imgix.net,中国限制性服务
-  - DOMAIN-SUFFIX,openaicomproductionae4b.blob.core.windows.net,中国限制性服务
-  - DOMAIN-SUFFIX,openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net,中国限制性服务
-  - DOMAIN-SUFFIX,bing.com,中国限制性服务
-  - DOMAIN-KEYWORD,openai,中国限制性服务
-  - DOMAIN-SUFFIX,auth0.com,中国限制性服务
-  - DOMAIN-SUFFIX,challenges.cloudflare.com,中国限制性服务
-  - DOMAIN-SUFFIX,client-api.arkoselabs.com,中国限制性服务
-  - DOMAIN-SUFFIX,events.statsigapi.net,中国限制性服务
-  - DOMAIN-SUFFIX,featuregates.org,中国限制性服务
-  - DOMAIN-SUFFIX,identrust.com,中国限制性服务
-  - DOMAIN-SUFFIX,intercom.io,中国限制性服务
-  - DOMAIN-SUFFIX,intercomcdn.com,中国限制性服务
-  - DOMAIN-SUFFIX,openai.com,中国限制性服务
-  - DOMAIN-SUFFIX,openaiapi-site.azureedge.net,中国限制性服务
-  - DOMAIN-SUFFIX,sentry.io,中国限制性服务
-  - DOMAIN-SUFFIX,stripe.com,中国限制性服务
+  - DOMAIN-SUFFIX,ondemandchina.com,欧美限定服务
+  - DOMAIN-SUFFIX,ai.com,中国限制服务
+  - DOMAIN-SUFFIX,openaicom.imgix.net,中国限制服务
+  - DOMAIN-SUFFIX,openaicomproductionae4b.blob.core.windows.net,中国限制服务
+  - DOMAIN-SUFFIX,openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net,中国限制服务
+  - DOMAIN-SUFFIX,bing.com,中国限制服务
+  - DOMAIN-KEYWORD,openai,中国限制服务
+  - DOMAIN-SUFFIX,auth0.com,中国限制服务
+  - DOMAIN-SUFFIX,challenges.cloudflare.com,中国限制服务
+  - DOMAIN-SUFFIX,client-api.arkoselabs.com,中国限制服务
+  - DOMAIN-SUFFIX,events.statsigapi.net,中国限制服务
+  - DOMAIN-SUFFIX,featuregates.org,中国限制服务
+  - DOMAIN-SUFFIX,identrust.com,中国限制服务
+  - DOMAIN-SUFFIX,intercom.io,中国限制服务
+  - DOMAIN-SUFFIX,intercomcdn.com,中国限制服务
+  - DOMAIN-SUFFIX,openai.com,中国限制服务
+  - DOMAIN-SUFFIX,openaiapi-site.azureedge.net,中国限制服务
+  - DOMAIN-SUFFIX,sentry.io,中国限制服务
+  - DOMAIN-SUFFIX,stripe.com,中国限制服务
   - DOMAIN-SUFFIX,huggingface.co,大流量连接
   - DOMAIN-SUFFIX,huggingface.com,大流量连接
   - DOMAIN-SUFFIX,npmjs.org,大流量连接
