@@ -366,7 +366,6 @@ func matchMapCondition(proxy model.Proxy, condition map[string]interface{}) bool
 					fmt.Println("Error: ", err)
 					// 可能还需要处理错误，例如返回或继续
 				}
-				fmt.Println("Matched: ", matched)
 				if !matched {
 					return false
 				}
