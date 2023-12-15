@@ -371,12 +371,7 @@ func matchMapCondition(proxy model.Proxy, condition map[string]interface{}) bool
 					return false
 				}
 			}
-		}
-	}
-
-	for field, compCond := range condition {
-		if elemMatchMap, ok := compCond.(map[string]interface{}); ok {
-			if elemMatchCond, ok := elemMatchMap["$elemMatch"]; ok {
+			if elemMatchCond, ok := compCondMap["$elemMatch"]; ok {
 				// 提取数组字段
 				fieldValues := getProxyFieldArray(proxy, field)
 				// 检查数组中是否有任何元素符合条件

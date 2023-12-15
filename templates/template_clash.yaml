@@ -16,9 +16,9 @@ proxy-groups:
     type: select
     proxies:
       - <>
+      - <Bywave:{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
       - <便宜机场:{"SubTags":{"$elemMatch":{"$eq":"便宜机场"}}}>
       - <夜煞云:{"SubTags":{"$elemMatch":{"$eq":"夜煞云"}}}>
-      - <Bywave:{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
       - <TG机场:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}}>
   - name: 电报消息
     type: select
