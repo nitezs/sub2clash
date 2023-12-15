@@ -103,48 +103,7 @@ func AddAllNewProxies(
 			continue
 		}
 		sub.Proxies = append(sub.Proxies, proxy)
-
-		var _ = AddToGroup(sub, proxy, "手动切换")
 	}
-
-	// 添加新节点组
-	for _, proxy := range proxies {
-		// 跳过无效类型
-		if !proxyTypes[proxy.Type] {
-			continue
-		}
-
-		// 根据订阅链接的组标记添加组
-		/**
-		例如：https://sub2.download-hiccup.xyz/api/v1/client/subscribe?token=ae13e6d&groups=便宜节点,一元机场,...
-		将会将此订阅链接的所有节点添加groups标记，用于后面整合到一起
-		将会把多个有相同group类型的节点拼到一个组中
-		*/
-		// 解析并处理每个代理节点的组标记
-		for groupName := range proxy.GroupTags {
-			// 将proxy添加到group组，如果添加失败，则新增组
-			var insertSuccess = AddToGroup(sub, proxy, groupName)
-			if !insertSuccess {
-				AddNewGroup(sub, groupName, autotest, lazy)
-				var _ = AddToGroup(sub, proxy, groupName)
-			}
-		}
-
-		// 根据国家新增节点组
-		// 给每个国家的代理节点都添加一个group，如果已经存在，则跳过新增，但需要添加到节点列表
-		countryName := GetContryName(proxy.Name)
-
-		// 遍历节点组，看是否有当前国家的组，如果没有，则新增，同时将
-		var insertSuccess = AddToGroup(sub, proxy, countryName)
-
-		// 如果不存在此节点组，需要新增
-		if !insertSuccess {
-			AddNewGroup(sub, countryName, autotest, lazy)
-			// 同时将新节点插入到组中
-			var _ = AddToGroup(sub, proxy, countryName)
-		}
-	}
-
 }
 
 func ParseProxy(proxies ...string) []model.Proxy {
