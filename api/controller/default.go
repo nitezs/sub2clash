@@ -20,17 +20,24 @@ import (
 func ParseGroupTags(subURL string, newProxies []model.Proxy) {
 	parsedURL, _ := url.Parse(subURL)
 	// 提取groups参数
-	groupsParam := parsedURL.Query().Get("groups")
+	groupsParam := parsedURL.Query().Get("subTags")
 
 	// 分割字符串并创建map, 并插入每个proxy结构中
 	if groupsParam != "" {
-		groups := strings.Split(groupsParam, ",")
+		subTags := strings.Split(groupsParam, ",")
 		for i := range newProxies {
-			newProxies[i].GroupTags = make(map[string]bool)
-			for _, group := range groups {
-				newProxies[i].GroupTags[group] = true
+			newProxies[i].SubTags = []string{}
+			for _, group := range subTags {
+				newProxies[i].SubTags = append(newProxies[i].SubTags, group)
 			}
 		}
+	}
+}
+
+func ParseCountries(newProxies []model.Proxy) {
+	for i := range newProxies {
+		countryName := utils.GetContryName(newProxies[i].Name)
+		newProxies[i].Country = countryName
 	}
 }
 
@@ -86,7 +93,7 @@ func WalkSubsForProxyList(sub *model.Subscription, query validator.SubValidator,
 		//  ...
 		//	UDPOverTCPVersion   int            `yaml:"udp-over-tcp-version,omitempty"`
 		//	SubName             string         `yaml:"-"`
-		//	GroupTags           map[string]bool
+		//	SubTags           	[]string
 		//  ...
 		// 参考代码：
 		//	if subName != "" {
@@ -95,6 +102,8 @@ func WalkSubsForProxyList(sub *model.Subscription, query validator.SubValidator,
 		//	}
 		//}
 		ParseGroupTags(query.Subs[i], newProxies)
+
+		ParseCountries(newProxies)
 
 		*proxyList = append(*proxyList, newProxies...)
 	}

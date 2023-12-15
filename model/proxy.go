@@ -45,7 +45,8 @@ type Proxy struct {
 	UDPOverTCP          bool           `yaml:"udp-over-tcp,omitempty"`
 	UDPOverTCPVersion   int            `yaml:"udp-over-tcp-version,omitempty"`
 	SubName             string         `yaml:"-"`
-	GroupTags           map[string]bool
+	SubTags             []string
+	Country             string
 }
 
 func (p Proxy) MarshalYAML() (interface{}, error) {
