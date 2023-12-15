@@ -16,6 +16,9 @@ proxy-groups:
     type: select
     proxies:
       - <>
+      - <便宜机场:{"SubTags":{"$elemMatch":{"$eq":"便宜机场"}}}>
+      - <夜煞云:{"SubTags":{"$elemMatch":{"$eq":"夜煞云"}}}>
+      - <Bywave:{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
   - name: 电报消息
     type: select
     proxies:
