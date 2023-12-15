@@ -22,7 +22,7 @@ type SubValidator struct {
 	RuleProviders []RuleProviderStruct `form:"-" binding:""`
 	Rule          string               `form:"rule" binding:""`
 	Rules         []RuleStruct         `form:"-" binding:""`
-	AutoTest      bool                 `form:"autoTest,default=false" binding:""`
+	AutoTest      bool                 `form:"autoTest,default=true" binding:""`
 	Lazy          bool                 `form:"lazy,default=false" binding:""`
 	Sort          string               `form:"sort" binding:""`
 	Remove        string               `form:"remove" binding:""`

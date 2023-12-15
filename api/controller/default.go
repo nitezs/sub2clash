@@ -179,7 +179,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	}
 	// 将新增节点都添加到临时变量 t 中，防止策略组排序错乱
 	var t = &model.Subscription{}
-	utils.AddProxy(t, query.AutoTest, query.Lazy, clashType, proxyList...)
+	utils.AddAllNewProxies(t, query.AutoTest, query.Lazy, clashType, proxyList...)
 	// 排序策略组
 	switch query.Sort {
 	case "sizeasc":

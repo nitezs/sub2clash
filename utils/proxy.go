@@ -49,59 +49,93 @@ func GetContryName(countryKey string) string {
 	return "其他地区"
 }
 
-func AddProxy(
+// 添加到某个节点组
+func AddNewGroup(sub *model.Subscription, insertGroup string, autotest bool, lazy bool) {
+	var newGroup model.ProxyGroup
+	if !autotest {
+		newGroup = model.ProxyGroup{
+			Name:          insertGroup,
+			Type:          "select",
+			Proxies:       []string{},
+			IsCountryGrop: true,
+			Size:          1,
+		}
+	} else {
+		newGroup = model.ProxyGroup{
+			Name:          insertGroup,
+			Type:          "url-test",
+			Proxies:       []string{},
+			IsCountryGrop: true,
+			Url:           "https://www.gstatic.com/generate_204",
+			Interval:      300,
+			Tolerance:     50,
+			Lazy:          lazy,
+			Size:          1,
+		}
+	}
+	sub.ProxyGroups = append(sub.ProxyGroups, newGroup)
+}
+
+// 添加到某个节点组
+func AddToGroup(sub *model.Subscription, proxy model.Proxy, insertGroup string) bool {
+	for i := range sub.ProxyGroups {
+		group := &sub.ProxyGroups[i]
+
+		if group.Name == insertGroup {
+			group.Proxies = append(group.Proxies, proxy.Name)
+			group.Size++
+			return true
+		}
+	}
+	return false
+}
+
+func AddAllNewProxies(
 	sub *model.Subscription, autotest bool,
 	lazy bool, clashType model.ClashType, proxies ...model.Proxy,
 ) {
 	proxyTypes := model.GetSupportProxyTypes(clashType)
-	// 添加节点
+
+	// 遍历每个代理节点，添加节点，默认向手动切换中添加所有的新增节点
 	for _, proxy := range proxies {
+		// 跳过无效类型
 		if !proxyTypes[proxy.Type] {
 			continue
 		}
 		sub.Proxies = append(sub.Proxies, proxy)
-		haveProxyGroup := false
-		countryName := GetContryName(proxy.Name)
-		for i := range sub.ProxyGroups {
-			group := &sub.ProxyGroups[i]
 
-			if group.Name == countryName {
-				group.Proxies = append(group.Proxies, proxy.Name)
-				group.Size++
-				haveProxyGroup = true
-			}
+		var _ = AddToGroup(sub, proxy, "手动切换")
+	}
 
-			if group.Name == "手动切换" {
-				group.Proxies = append(group.Proxies, proxy.Name)
-				group.Size++
-			}
+	// 添加新节点组
+	for _, proxy := range proxies {
+		// 跳过无效类型
+		if !proxyTypes[proxy.Type] {
+			continue
 		}
-		if !haveProxyGroup {
-			var newGroup model.ProxyGroup
-			if !autotest {
-				newGroup = model.ProxyGroup{
-					Name:          countryName,
-					Type:          "select",
-					Proxies:       []string{proxy.Name},
-					IsCountryGrop: true,
-					Size:          1,
-				}
-			} else {
-				newGroup = model.ProxyGroup{
-					Name:          countryName,
-					Type:          "url-test",
-					Proxies:       []string{proxy.Name},
-					IsCountryGrop: true,
-					Url:           "http://www.gstatic.com/generate_204",
-					Interval:      300,
-					Tolerance:     50,
-					Lazy:          lazy,
-					Size:          1,
-				}
-			}
-			sub.ProxyGroups = append(sub.ProxyGroups, newGroup)
+
+		// todo: 根据订阅链接的组标记添加组
+		/**
+		例如：https://sub2.download-hiccup.xyz/api/v1/client/subscribe?token=ae13e6d&groups=便宜节点,一元机场,...
+		将会将此订阅链接的所有节点添加groups标记，用于后面整合到一起
+		将会把多个有相同group类型的节点拼到一个组中
+		*/
+
+		// 根据国家新增节点组
+		// 给每个国家的代理节点都添加一个group，如果已经存在，则跳过新增，但需要添加到节点列表
+		countryName := GetContryName(proxy.Name)
+
+		// 遍历节点组，看是否有当前国家的组，如果没有，则新增，同时将
+		var insertSuccess = AddToGroup(sub, proxy, countryName)
+
+		// 如果不存在此节点组，需要新增
+		if !insertSuccess {
+			AddNewGroup(sub, countryName, autotest, lazy)
+			// 同时将新节点插入到组中
+			var _ = AddToGroup(sub, proxy, countryName)
 		}
 	}
+
 }
 
 func ParseProxy(proxies ...string) []model.Proxy {
