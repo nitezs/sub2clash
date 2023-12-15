@@ -9,7 +9,7 @@ proxy-groups:
     type: url-test
     url: https://www.gstatic.com/generate_204
     interval: 30
-    tolerance: 10
+    tolerance: 50
     proxies:
       - <all>
   - name: 手动切换
@@ -212,6 +212,7 @@ proxy-groups:
       - REJECT
 rules:
   - DOMAIN-SUFFIX,ondemandchina.com,欧美限定服务
+  - DOMAIN-SUFFIX,meta.com,中国限制服务
   - DOMAIN-SUFFIX,ai.com,中国限制服务
   - DOMAIN-SUFFIX,openaicom.imgix.net,中国限制服务
   - DOMAIN-SUFFIX,openaicomproductionae4b.blob.core.windows.net,中国限制服务
