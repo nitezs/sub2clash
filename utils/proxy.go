@@ -103,6 +103,8 @@ func AddAllNewProxies(
 			continue
 		}
 		sub.Proxies = append(sub.Proxies, proxy)
+
+		var _ = AddToGroup(sub, proxy, "手动切换")
 	}
 
 	// 添加新节点组
