@@ -13,6 +13,7 @@ type ShadowSocks struct {
 	UDPOverTCP        bool           `yaml:"udp-over-tcp,omitempty"`
 	UDPOverTCPVersion int            `yaml:"udp-over-tcp-version,omitempty"`
 	ClientFingerprint string         `yaml:"client-fingerprint,omitempty"`
+	Tfo               bool           `yaml:"tfo,omitempty"`
 }
 
 func ProxyToShadowSocks(p Proxy) ShadowSocks {

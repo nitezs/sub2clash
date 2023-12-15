@@ -113,6 +113,12 @@ func ParseProxy(proxies ...string) []model.Proxy {
 				proxyItem, err = parser.ParseShadowsocksR(proxy)
 			}
 			if err == nil {
+				// todo: 解析plugin字段，包括plugin和opt 填充到model.Proxy结构中，并与proxyItem合并
+				pluginProxyItem, err := parser.ParsePlugin(proxy)
+				if err == nil {
+					proxyItem.Plugin = pluginProxyItem.Plugin
+					proxyItem.PluginOpts = pluginProxyItem.PluginOpts
+				}
 				result = append(result, proxyItem)
 			} else {
 				logger.Logger.Debug(
