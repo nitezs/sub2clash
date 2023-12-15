@@ -487,6 +487,15 @@ func AddToGroup(sub *model.Subscription, proxy model.Proxy, insertGroup string) 
 	return false
 }
 
+// 新增一个函数用于解析别名和语法
+func parseAlias(input string) (string, string) {
+	parts := strings.SplitN(input, ":", 2)
+	if len(parts) == 2 {
+		return parts[0], parts[1]
+	}
+	return "", input
+}
+
 func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription, lazy bool) {
 	// 只合并节点、策略组
 	// 统计所有国家策略组名称
@@ -521,11 +530,19 @@ func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription, lazy
 		for j := range temp.ProxyGroups[i].Proxies {
 			proxyName := temp.ProxyGroups[i].Proxies[j]
 			if strings.HasPrefix(proxyName, "<") && strings.HasSuffix(proxyName, ">") {
+				trimmedName := strings.Trim(proxyName, "<>")
+				alias, value := parseAlias(trimmedName)
+
+				// 根据别名处理
+				if alias != "" {
+					proxyName = alias
+				}
+
 				if proxyName == "<>" {
 					proxyNames, _ := parseSyntaxA("{}", sub)
 					newProxies = append(newProxies, proxyNames...)
 				} else {
-					syntax := strings.Trim(proxyName, "<>")
+					syntax := value
 					proxyNames, proxies := parseSyntaxA(syntax, sub)
 
 					// 如果不存在此组，则把proxies放到一个新组中 proxyName

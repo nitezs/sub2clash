@@ -19,7 +19,7 @@ proxy-groups:
   - name: 电报消息
     type: select
     proxies:
-      - <{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
+      - <Bywave:{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
       - 自动测速
       - 手动切换
       - DIRECT
@@ -27,7 +27,7 @@ proxy-groups:
   - name: 油管视频
     type: select
     proxies:
-      - <{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}}>
+      - <一元机场:{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}}>
       - 手动切换
       - 自动测速
       - DIRECT
@@ -49,7 +49,7 @@ proxy-groups:
   - name: 国外媒体
     type: select
     proxies:
-      - <{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}}>
+      - <一元机场:{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}}>
       - DIRECT
       - 手动切换
       - 自动测速
@@ -64,7 +64,7 @@ proxy-groups:
   - name: 谷歌FCM
     type: select
     proxies:
-      - <{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
+      - <Bywave:{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
       - 自动测速
       - 手动切换
       - DIRECT
@@ -73,7 +73,7 @@ proxy-groups:
     type: select
     proxies:
       - DIRECT
-      - <{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}}>
+      - <一元机场:{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}}>
       - 手动切换
       - 自动测速
       - REJECT
@@ -88,7 +88,7 @@ proxy-groups:
     type: select
     proxies:
       - DIRECT
-      - <{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
+      - <Bywave:{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
       - 手动切换
       - 自动测速
       - REJECT
@@ -96,7 +96,7 @@ proxy-groups:
     type: select
     proxies:
       - DIRECT
-      - <{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
+      - <Bywave:{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
       - 自动测速
       - 手动切换
       - REJECT
@@ -110,7 +110,7 @@ proxy-groups:
   - name: 欧美限定服务
     type: select
     proxies:
-      - <{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}, "Country":{"$regex":"US|EN|CA|AU"}>
+      - <欧美节点:{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}, "Country":{"$regex":"US|EN|CA|AU"}}>
       - 手动切换
       - 自动测速
       - DIRECT
@@ -118,8 +118,8 @@ proxy-groups:
   - name: 中国限制服务
     type: select
     proxies:
-      - <{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}, "Country":{"$regex":"^(?!.*CN)(?!.*HK)(?!.*MO).+$"}>
-      - <{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}, "Country":{"$regex":"^(?!.*CN)(?!.*HK)(?!.*MO).+$"}>
+      - <排除中国 By Bywave:{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}, "Country":{"$regex":"^(?!.*CN)(?!.*HK)(?!.*MO).+$"}}>
+      - <排除中国 By 一元机场:{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}, "Country":{"$regex":"^(?!.*CN)(?!.*HK)(?!.*MO).+$"}}>
       - 手动切换
       - 自动测速
       - DIRECT
@@ -127,7 +127,7 @@ proxy-groups:
   - name: 大流量连接
     type: select
     proxies:
-      - <{"SubTags":{"$elemMatch":{"$regex":"一元机场|便宜机场"}}}>
+      - <垃圾节点:{"SubTags":{"$elemMatch":{"$regex":"一元机场|便宜机场"}}}>
       - 手动切换
       - DIRECT
       - 自动测速
