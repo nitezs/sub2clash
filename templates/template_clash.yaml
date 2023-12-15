@@ -19,7 +19,7 @@ proxy-groups:
   - name: 电报消息
     type: select
     proxies:
-      - <{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}, "Country":{"$regex":"^(?!.*TW).+$"}}>
+      - <{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
       - 自动测速
       - 手动切换
       - DIRECT
@@ -27,12 +27,9 @@ proxy-groups:
   - name: 油管视频
     type: select
     proxies:
-      - 大流量连接
-      - <cheaps>
-      - <expensives>
+      - <{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}}>
       - 手动切换
       - 自动测速
-      - <countries>
       - DIRECT
       - REJECT
   - name: 巴哈姆特
@@ -41,9 +38,6 @@ proxy-groups:
       - 自动测速
       - 手动切换
       - DIRECT
-      - <countries>
-      - <cheaps>
-      - <expensives>
       - REJECT
   - name: 哔哩哔哩
     type: select
@@ -51,49 +45,35 @@ proxy-groups:
       - DIRECT
       - 手动切换
       - 自动测速
-      - <countries>
-      - <cheaps>
-      - <expensives>
       - REJECT
   - name: 国外媒体
     type: select
     proxies:
-      - 大流量连接
-      - <cheaps>
-      - <expensives>
+      - <{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}}>
       - DIRECT
       - 手动切换
       - 自动测速
-      - <countries>
       - REJECT
   - name: 国内媒体
     type: select
     proxies:
       - DIRECT
-      - <cheaps>
-      - <expensives>
       - 手动切换
       - 自动测速
-      - <countries>
       - REJECT
   - name: 谷歌FCM
     type: select
     proxies:
+      - <{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
       - 自动测速
-      - <countries>
       - 手动切换
-      - <cheaps>
-      - <expensives>
       - DIRECT
       - REJECT
   - name: 微软云盘
     type: select
     proxies:
       - DIRECT
-      - 大流量连接
-      - <cheaps>
-      - <expensives>
-      - <countries>
+      - <{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}}>
       - 手动切换
       - 自动测速
       - REJECT
@@ -101,49 +81,36 @@ proxy-groups:
     type: select
     proxies:
       - DIRECT
-      - <countries>
       - 手动切换
       - 自动测速
-      - <cheaps>
-      - <expensives>
       - REJECT
   - name: 苹果服务
     type: select
     proxies:
       - DIRECT
-      - <countries>
+      - <{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
       - 手动切换
       - 自动测速
-      - <cheaps>
-      - <expensives>
       - REJECT
   - name: 游戏平台
     type: select
     proxies:
       - DIRECT
-      - <countries>
+      - <{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
       - 自动测速
       - 手动切换
-      - <cheaps>
-      - <expensives>
       - REJECT
   - name: 网易音乐
     type: select
     proxies:
       - DIRECT
-      - <cheaps>
-      - <expensives>
       - 手动切换
       - 自动测速
-      - <countries>
       - REJECT
   - name: 欧美限定服务
     type: select
     proxies:
-      # 只要欧美国家
-      - <countries_UA>
-      - <cheaps_UA>
-      - <expensives>
+      - <{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}, "Country":{"$regex":"US|EN|CA|AU"}>
       - 手动切换
       - 自动测速
       - DIRECT
@@ -151,9 +118,8 @@ proxy-groups:
   - name: 中国限制服务
     type: select
     proxies:
-      - <countries_N_CN>
-      - <cheaps>
-      - <expensives>
+      - <{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}, "Country":{"$regex":"^(?!.*CN)(?!.*HK)(?!.*MO).+$"}>
+      - <{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}, "Country":{"$regex":"^(?!.*CN)(?!.*HK)(?!.*MO).+$"}>
       - 手动切换
       - 自动测速
       - DIRECT
@@ -161,52 +127,38 @@ proxy-groups:
   - name: 大流量连接
     type: select
     proxies:
-      - <cheaps>
-      - <expensives>
+      - <{"SubTags":{"$elemMatch":{"$regex":"一元机场|便宜机场"}}}>
       - 手动切换
       - DIRECT
       - 自动测速
-      - <countries>
       - REJECT
   - name: 全球直连
     type: select
     proxies:
       - DIRECT
-      - <cheaps>
-      - <expensives>
       - 手动切换
       - 自动测速
-      - <countries>
       - REJECT
   - name: 广告拦截
     type: select
     proxies:
       - REJECT
-      - <cheaps>
-      - <expensives>
       - DIRECT
       - 手动切换
       - 自动测速
-      - <countries>
   - name: 应用净化
     type: select
     proxies:
       - REJECT
-      - <cheaps>
-      - <expensives>
       - DIRECT
       - 手动切换
       - 自动测速
-      - <countries>
   - name: 漏网之鱼
     type: select
     proxies:
-      - <cheaps>
-      - <expensives>
       - DIRECT
       - 手动切换
       - 自动测速
-      - <countries>
       - REJECT
 rules:
   - DOMAIN-SUFFIX,ondemandchina.com,欧美限定服务
