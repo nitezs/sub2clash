@@ -30,5 +30,6 @@ func ProxyToShadowSocks(p Proxy) ShadowSocks {
 		UDPOverTCP:        p.UDPOverTCP,
 		UDPOverTCPVersion: p.UDPOverTCPVersion,
 		ClientFingerprint: p.ClientFingerprint,
+		Tfo:               p.Tfo,
 	}
 }

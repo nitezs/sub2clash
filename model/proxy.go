@@ -19,6 +19,7 @@ type Proxy struct {
 	ClientFingerprint   string         `yaml:"client-fingerprint,omitempty"`
 	Plugin              string         `yaml:"plugin,omitempty"`
 	PluginOpts          map[string]any `yaml:"plugin-opts,omitempty"`
+	Tfo                 bool           `yaml:"tfo,omitempty"`
 	Smux                SmuxStruct     `yaml:"smux,omitempty"`
 	Sni                 string         `yaml:"sni,omitempty"`
 	AllowInsecure       bool           `yaml:"allow-insecure,omitempty"`

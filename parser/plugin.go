@@ -21,11 +21,25 @@ func ParsePlugin(proxyURL string) (*model.Proxy, error) {
 	if plugin, ok := queryParams["plugin"]; ok && len(plugin) > 0 {
 		pluginOpts := make(map[string]any)
 		pluginParts := strings.Split(plugin[0], ";")
-		for _, part := range pluginParts {
-			opt := strings.SplitN(part, "=", 2)
-			if len(opt) == 2 {
-				proxy.Plugin = opt[0]
-				pluginOpts[opt[0]] = opt[1]
+		if len(pluginParts) > 0 {
+			// 第一个部分是插件名称，我们需要特别处理
+			for i, part := range pluginParts {
+				if i == 0 {
+					if part == "obfs-local" {
+						proxy.Plugin = "obfs"
+					}
+				} else {
+					opt := strings.SplitN(part, "=", 2)
+					if len(opt) == 2 {
+						if opt[0] == "obfs" {
+							pluginOpts["mode"] = opt[1]
+						} else if opt[0] == "obfs-host" {
+							pluginOpts["host"] = opt[1]
+						} else if opt[0] == "tfo" && opt[1] == "1" {
+							proxy.Tfo = true
+						}
+					}
+				}
 			}
 		}
 		proxy.PluginOpts = pluginOpts
