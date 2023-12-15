@@ -16,6 +16,7 @@ proxy-groups:
     type: select
     proxies:
       - <>
+      - <欧美节点 By 垃圾节点:{"SubTags":{"$elemMatch":{"$regex":"一元机场|便宜机场"}}, "Country":{"$regex":"US|EN|CA|AU"}}>
       - <Bywave:{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
       - <便宜机场:{"SubTags":{"$elemMatch":{"$eq":"便宜机场"}}}>
       - <夜煞云:{"SubTags":{"$elemMatch":{"$eq":"夜煞云"}}}>

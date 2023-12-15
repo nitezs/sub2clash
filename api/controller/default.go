@@ -375,8 +375,8 @@ func matchMapCondition(proxy model.Proxy, condition map[string]interface{}) bool
 				fieldValues := getProxyFieldArray(proxy, field)
 				// 检查数组中是否有任何元素符合条件
 				for _, fieldValue := range fieldValues {
-					if matchProxyFieldValue(fieldValue, elemMatchCond.(map[string]interface{})) {
-						return true
+					if !matchProxyFieldValue(fieldValue, elemMatchCond.(map[string]interface{})) {
+						return false
 					}
 				}
 				return false
