@@ -18,6 +18,56 @@ import (
 	"sub2clash/validator"
 )
 
+func WalkSubsForProxyList(sub *model.Subscription, query validator.SubValidator, proxyList []model.Proxy) (
+	bool, error,
+) {
+	for i := range query.Subs {
+		data, err := utils.LoadSubscription(query.Subs[i], query.Refresh)
+		subName := ""
+		if strings.Contains(query.Subs[i], "#") {
+			subName = query.Subs[i][strings.LastIndex(query.Subs[i], "#")+1:]
+		}
+		if err != nil {
+			logger.Logger.Debug(
+				"load subscription failed", zap.String("url", query.Subs[i]), zap.Error(err),
+			)
+			return false, errors.New("加载订阅失败: " + err.Error())
+		}
+		// 解析订阅
+		err = yaml.Unmarshal(data, &sub)
+		newProxies := make([]model.Proxy, 0)
+		if err != nil {
+			reg, _ := regexp.Compile("(ssr|ss|vmess|trojan|vless)://")
+			if reg.Match(data) {
+				p := utils.ParseProxy(strings.Split(string(data), "\n")...)
+				newProxies = p
+			} else {
+				// 如果无法直接解析，尝试Base64解码
+				base64, err := parser.DecodeBase64(string(data))
+				if err != nil {
+					logger.Logger.Debug(
+						"parse subscription failed", zap.String("url", query.Subs[i]),
+						zap.String("data", string(data)),
+						zap.Error(err),
+					)
+					return false, errors.New("加载订阅失败: " + err.Error())
+				}
+				p := utils.ParseProxy(strings.Split(base64, "\n")...)
+				newProxies = p
+			}
+		} else {
+			newProxies = sub.Proxies
+		}
+		if subName != "" {
+			for i := range newProxies {
+				newProxies[i].SubName = subName
+			}
+		}
+		proxyList = append(proxyList, newProxies...)
+	}
+	return true, nil
+}
+
 func BuildSub(clashType model.ClashType, query validator.SubValidator, template string) (
 	*model.Subscription, error,
 ) {
@@ -55,50 +105,10 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 		return nil, errors.New("解析模板失败: " + err.Error())
 	}
 	var proxyList []model.Proxy
-	// 加载订阅
-	for i := range query.Subs {
-		data, err := utils.LoadSubscription(query.Subs[i], query.Refresh)
-		subName := ""
-		if strings.Contains(query.Subs[i], "#") {
-			subName = query.Subs[i][strings.LastIndex(query.Subs[i], "#")+1:]
-		}
-		if err != nil {
-			logger.Logger.Debug(
-				"load subscription failed", zap.String("url", query.Subs[i]), zap.Error(err),
-			)
-			return nil, errors.New("加载订阅失败: " + err.Error())
-		}
-		// 解析订阅
-		err = yaml.Unmarshal(data, &sub)
-		newProxies := make([]model.Proxy, 0)
-		if err != nil {
-			reg, _ := regexp.Compile("(ssr|ss|vmess|trojan|vless)://")
-			if reg.Match(data) {
-				p := utils.ParseProxy(strings.Split(string(data), "\n")...)
-				newProxies = p
-			} else {
-				// 如果无法直接解析，尝试Base64解码
-				base64, err := parser.DecodeBase64(string(data))
-				if err != nil {
-					logger.Logger.Debug(
-						"parse subscription failed", zap.String("url", query.Subs[i]),
-						zap.String("data", string(data)),
-						zap.Error(err),
-					)
-					return nil, errors.New("加载订阅失败: " + err.Error())
-				}
-				p := utils.ParseProxy(strings.Split(base64, "\n")...)
-				newProxies = p
-			}
-		} else {
-			newProxies = sub.Proxies
-		}
-		if subName != "" {
-			for i := range newProxies {
-				newProxies[i].SubName = subName
-			}
-		}
-		proxyList = append(proxyList, newProxies...)
+	// 遍历订阅链接 获取 proxyList
+	success, err := WalkSubsForProxyList(sub, query, proxyList)
+	if !success {
+		return nil, err
 	}
 	// 添加自定义节点
 	if len(query.Proxies) != 0 {
