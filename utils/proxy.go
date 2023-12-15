@@ -75,47 +75,6 @@ func GetContryName(countryKey string) string {
 	return "其他地区"
 }
 
-// 添加到某个节点组
-func AddNewGroup(sub *model.Subscription, insertGroup string, autotest bool, lazy bool) {
-	var newGroup model.ProxyGroup
-	if !autotest {
-		newGroup = model.ProxyGroup{
-			Name:          insertGroup,
-			Type:          "select",
-			Proxies:       []string{},
-			IsCountryGrop: true,
-			Size:          1,
-		}
-	} else {
-		newGroup = model.ProxyGroup{
-			Name:          insertGroup,
-			Type:          "url-test",
-			Proxies:       []string{},
-			IsCountryGrop: true,
-			Url:           "https://www.gstatic.com/generate_204",
-			Interval:      300,
-			Tolerance:     50,
-			Lazy:          lazy,
-			Size:          1,
-		}
-	}
-	sub.ProxyGroups = append(sub.ProxyGroups, newGroup)
-}
-
-// 添加到某个节点组
-func AddToGroup(sub *model.Subscription, proxy model.Proxy, insertGroup string) bool {
-	for i := range sub.ProxyGroups {
-		group := &sub.ProxyGroups[i]
-
-		if group.Name == insertGroup {
-			group.Proxies = append(group.Proxies, proxy.Name)
-			group.Size++
-			return true
-		}
-	}
-	return false
-}
-
 func AddAllNewProxies(
 	sub *model.Subscription, autotest bool,
 	lazy bool, clashType model.ClashType, proxies ...model.Proxy,

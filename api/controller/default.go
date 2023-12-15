@@ -235,7 +235,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	var t = &model.Subscription{}
 	utils.AddAllNewProxies(t, query.AutoTest, query.Lazy, clashType, proxyList...)
 	// 合并新节点和模板
-	MergeSubAndTemplate(temp, t)
+	MergeSubAndTemplate(temp, t, query.AutoTest, query.Lazy)
 	// 处理自定义规则
 	for _, v := range query.Rules {
 		if v.Prepend {
@@ -418,7 +418,7 @@ func getProxyFieldValue(proxy model.Proxy, field string) string {
 	}
 }
 
-func parseSyntaxA(syntax string, sub *model.Subscription) []string {
+func parseSyntaxA(syntax string, sub *model.Subscription) ([]string, []model.Proxy) {
 	// 这里应该实现语法A的解析逻辑
 	// 根据语法A的规则，过滤并返回匹配的代理名称列表
 	// 示例代码仅作为逻辑框架，并非完整实现
@@ -428,16 +428,59 @@ func parseSyntaxA(syntax string, sub *model.Subscription) []string {
 	query, _ := parseQuery(syntax)
 
 	// 过滤并返回匹配的代理名称
-	matchedProxies := make([]string, 0)
+	matchedProxyNames := make([]string, 0)
+	matchedProxies := make([]model.Proxy, 0)
 	for _, proxy := range sub.Proxies {
 		if matchProxy(proxy, query) {
-			matchedProxies = append(matchedProxies, proxy.Name)
+			matchedProxyNames = append(matchedProxyNames, proxy.Name)
+			matchedProxies = append(matchedProxies, proxy)
 		}
 	}
-	return matchedProxies
+	return matchedProxyNames, matchedProxies
 }
 
-func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription) {
+// 添加到某个节点组
+func AddNewGroup(sub *model.Subscription, insertGroup string, autotest bool, lazy bool) {
+	var newGroup model.ProxyGroup
+	if !autotest {
+		newGroup = model.ProxyGroup{
+			Name:          insertGroup,
+			Type:          "select",
+			Proxies:       []string{},
+			IsCountryGrop: true,
+			Size:          1,
+		}
+	} else {
+		newGroup = model.ProxyGroup{
+			Name:          insertGroup,
+			Type:          "url-test",
+			Proxies:       []string{},
+			IsCountryGrop: true,
+			Url:           "https://www.gstatic.com/generate_204",
+			Interval:      300,
+			Tolerance:     50,
+			Lazy:          lazy,
+			Size:          1,
+		}
+	}
+	sub.ProxyGroups = append(sub.ProxyGroups, newGroup)
+}
+
+// 添加到某个节点组
+func AddToGroup(sub *model.Subscription, proxy model.Proxy, insertGroup string) bool {
+	for i := range sub.ProxyGroups {
+		group := &sub.ProxyGroups[i]
+
+		if group.Name == insertGroup {
+			group.Proxies = append(group.Proxies, proxy.Name)
+			group.Size++
+			return true
+		}
+	}
+	return false
+}
+
+func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription, autotest bool, lazy bool) {
 	// 只合并节点、策略组
 	// 统计所有国家策略组名称
 	var countryGroupNames []string
@@ -467,13 +510,28 @@ func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription) {
 			}
 		}
 		for j := range temp.ProxyGroups[i].Proxies {
-			proxy := temp.ProxyGroups[i].Proxies[j]
-			if strings.HasPrefix(proxy, "<") && strings.HasSuffix(proxy, ">") {
+			proxyName := temp.ProxyGroups[i].Proxies[j]
+			if strings.HasPrefix(proxyName, "<") && strings.HasSuffix(proxyName, ">") {
 				// 解析语法A
-				syntax := strings.Trim(proxy, "<>")
-				newProxies = append(newProxies, parseSyntaxA(syntax, sub)...)
+				syntax := strings.Trim(proxyName, "<>")
+				proxyNames, proxies := parseSyntaxA(syntax, sub)
+
+				// 把proxies放到一个新组中 L
+				for index, _ := range proxyNames {
+					// 遍历节点组，看是否有当前国家的组，如果没有，则新增，同时将
+					var insertSuccess = AddToGroup(sub, proxies[index], proxyName)
+
+					// 如果不存在此节点组，需要新增
+					if !insertSuccess {
+						AddNewGroup(sub, proxyName, autotest, lazy)
+						// 同时将新节点插入到组中
+						var _ = AddToGroup(sub, proxies[index], proxyName)
+					}
+				}
+
+				newProxies = append(newProxies, proxyName)
 			} else {
-				newProxies = append(newProxies, proxy)
+				newProxies = append(newProxies, proxyName)
 			}
 		}
 		temp.ProxyGroups[i].Proxies = newProxies
