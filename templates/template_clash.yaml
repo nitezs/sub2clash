@@ -11,17 +11,17 @@ proxy-groups:
     interval: 30
     tolerance: 50
     proxies:
-      - <all>
+      - <{}>
   - name: 手动切换
     type: select
     proxies:
-      - <all>
+      - <{}>
   - name: 电报消息
     type: select
     proxies:
       - 自动测速
       - 手动切换
-      - <countries>
+      - <{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}, "Country":{"$regex":"TW"}}>
       - <cheaps>
       - <expensives>
       - DIRECT

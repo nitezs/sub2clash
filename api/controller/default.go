@@ -3,7 +3,9 @@ package controller
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 	"net/url"
@@ -266,6 +268,175 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	return temp, nil
 }
 
+type Condition interface{}
+
+type LogicCondition struct {
+	And []Condition `json:"$and,omitempty"`
+	Or  []Condition `json:"$or,omitempty"`
+	Not []Condition `json:"$not,omitempty"`
+}
+
+type ComparisonCondition struct {
+	Eq    string `json:"$eq,omitempty"`
+	Regex string `json:"$regex,omitempty"`
+}
+
+type FieldCondition map[string]ComparisonCondition
+
+func parseQuery(syntax string) (Condition, error) {
+	if syntax == "{}" {
+		return "{}", nil
+	}
+	var condition Condition
+	err := json.Unmarshal([]byte(syntax), &condition)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing query: %v", err)
+	}
+	return condition, nil
+}
+
+func matchProxy(proxy model.Proxy, condition Condition) bool {
+	// 检查是否为匹配所有节点的特殊条件
+	if cond, ok := condition.(string); ok && cond == "{}" {
+		return true
+	}
+	switch cond := condition.(type) {
+	case map[string]interface{}:
+		return matchMapCondition(proxy, cond)
+	default:
+		return false
+	}
+}
+
+// 新增一个辅助函数，用于从代理模型中提取数组类型的字段
+func getProxyFieldArray(proxy model.Proxy, field string) []string {
+	// 根据field的名称，从proxy对象中提取数组类型的字段值
+	// 示例: 这里假设model.Proxy有某个字段是字符串数组
+	switch field {
+	case "SubTags":
+		return proxy.SubTags
+	// ... 其他可能的数组字段
+	default:
+		return nil
+	}
+}
+
+func matchMapCondition(proxy model.Proxy, condition map[string]interface{}) bool {
+	// Handle logic conditions ($and, $or, $not)
+	if andConditions, ok := condition["$and"].([]interface{}); ok {
+		for _, andCond := range andConditions {
+			if !matchProxy(proxy, andCond) {
+				return false
+			}
+		}
+		return true
+	}
+
+	if orConditions, ok := condition["$or"].([]interface{}); ok {
+		for _, orCond := range orConditions {
+			if matchProxy(proxy, orCond) {
+				return true
+			}
+		}
+		return false
+	}
+
+	if notConditions, ok := condition["$not"].([]interface{}); ok {
+		for _, notCond := range notConditions {
+			if matchProxy(proxy, notCond) {
+				return false
+			}
+		}
+		return true
+	}
+
+	// Handle field conditions ($eq, $regex)
+	for field, compCond := range condition {
+		if compCondMap, ok := compCond.(map[string]interface{}); ok {
+			if eqValue, ok := compCondMap["$eq"]; ok {
+				if getProxyFieldValue(proxy, field) != eqValue {
+					return false
+				}
+			}
+			if regexValue, ok := compCondMap["$regex"]; ok {
+				matched, _ := regexp.MatchString(regexValue.(string), getProxyFieldValue(proxy, field))
+				if !matched {
+					return false
+				}
+			}
+		}
+	}
+
+	for field, compCond := range condition {
+		if elemMatchMap, ok := compCond.(map[string]interface{}); ok {
+			if elemMatchCond, ok := elemMatchMap["$elemMatch"]; ok {
+				// 提取数组字段
+				fieldValues := getProxyFieldArray(proxy, field)
+				// 检查数组中是否有任何元素符合条件
+				for _, fieldValue := range fieldValues {
+					if matchProxyFieldValue(fieldValue, elemMatchCond.(map[string]interface{})) {
+						return true
+					}
+				}
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
+// 专门用于检查单个字段值是否符合条件的函数
+func matchProxyFieldValue(fieldValue string, condition map[string]interface{}) bool {
+	for key, value := range condition {
+		switch key {
+		case "$eq":
+			if fieldValue != value {
+				return false
+			}
+		case "$regex":
+			matched, _ := regexp.MatchString(value.(string), fieldValue)
+			if !matched {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func getProxyFieldValue(proxy model.Proxy, field string) string {
+	// 根据field的名称，从proxy对象中提取相应的值
+	// 示例: 这里假设model.Proxy有Name和Country等字段
+	switch field {
+	case "Name":
+		return proxy.Name
+	case "Country":
+		return proxy.Country
+	// ... 其他字段
+	default:
+		return ""
+	}
+}
+
+func parseSyntaxA(syntax string, sub *model.Subscription) []string {
+	// 这里应该实现语法A的解析逻辑
+	// 根据语法A的规则，过滤并返回匹配的代理名称列表
+	// 示例代码仅作为逻辑框架，并非完整实现
+	// 例如，你可能需要实现函数parseQuery, matchProxy等来处理复杂的查询逻辑
+
+	// 假设解析后的查询结构体
+	query, _ := parseQuery(syntax)
+
+	// 过滤并返回匹配的代理名称
+	matchedProxies := make([]string, 0)
+	for _, proxy := range sub.Proxies {
+		if matchProxy(proxy, query) {
+			matchedProxies = append(matchedProxies, proxy.Name)
+		}
+	}
+	return matchedProxies
+}
+
 func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription) {
 	// 只合并节点、策略组
 	// 统计所有国家策略组名称
@@ -296,23 +467,13 @@ func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription) {
 			}
 		}
 		for j := range temp.ProxyGroups[i].Proxies {
-			reg := regexp.MustCompile("<(.*?)>")
-			if reg.Match([]byte(temp.ProxyGroups[i].Proxies[j])) {
-				key := reg.FindStringSubmatch(temp.ProxyGroups[i].Proxies[j])[1]
-				switch key {
-				case "all":
-					newProxies = append(newProxies, proxyNames...)
-				case "countries":
-					newProxies = append(newProxies, countryGroupNames...)
-				default:
-					if len(key) == 2 {
-						newProxies = append(
-							newProxies, countryGroupMap[utils.GetContryName(key)].Proxies...,
-						)
-					}
-				}
+			proxy := temp.ProxyGroups[i].Proxies[j]
+			if strings.HasPrefix(proxy, "<") && strings.HasSuffix(proxy, ">") {
+				// 解析语法A
+				syntax := strings.Trim(proxy, "<>")
+				newProxies = append(newProxies, parseSyntaxA(syntax, sub)...)
 			} else {
-				newProxies = append(newProxies, temp.ProxyGroups[i].Proxies[j])
+				newProxies = append(newProxies, proxy)
 			}
 		}
 		temp.ProxyGroups[i].Proxies = newProxies

@@ -17,6 +17,7 @@ func GetContryName(countryKey string) string {
 		model.CountryEnglishName,
 	}
 
+	checkForTW := false
 	// 对每一个映射进行检查
 	for i, countryMap := range countryMaps {
 		if i == 2 {
@@ -36,15 +37,40 @@ func GetContryName(countryKey string) string {
 			for _, v := range key {
 				// 如果匹配到了国家
 				if country, ok := countryMap[strings.ToUpper(v)]; ok {
-					return country
+					v := country
+
+					if v == "中国(CN)" {
+						checkForTW = true
+						continue
+					}
+					if checkForTW && v == "台湾(TW)" {
+						// 如果正在检测是否是台湾
+						return v
+					}
+
+					// 台湾可能误判成CN了，先不返回，等待之后确认不是台湾
+					return v
 				}
 			}
 		}
 		for k, v := range countryMap {
 			if strings.Contains(countryKey, k) {
+				if v == "中国(CN)" {
+					checkForTW = true
+					continue
+				}
+				if checkForTW && v == "台湾(TW)" {
+					// 如果正在检测是否是台湾
+					return v
+				}
+
+				// 台湾可能误判成CN了，先不返回，等待之后确认不是台湾
 				return v
 			}
 		}
+	}
+	if checkForTW {
+		return "中国(CN)"
 	}
 	return "其他地区"
 }
