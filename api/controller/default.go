@@ -18,6 +18,23 @@ import (
 	"sub2clash/validator"
 )
 
+func ParseGroupTags(subURL string, newProxies []model.Proxy) {
+	parsedURL, _ := url.Parse(subURL)
+	// 提取groups参数
+	groupsParam := parsedURL.Query().Get("groups")
+
+	// 分割字符串并创建map, 并插入每个proxy结构中
+	if groupsParam != "" {
+		groups := strings.Split(groupsParam, ",")
+		for i := range newProxies {
+			newProxies[i].GroupTags = make(map[string]bool)
+			for _, group := range groups {
+				newProxies[i].GroupTags[group] = true
+			}
+		}
+	}
+}
+
 func WalkSubsForProxyList(sub *model.Subscription, query validator.SubValidator, proxyList []model.Proxy) (
 	bool, error,
 ) {
@@ -63,6 +80,23 @@ func WalkSubsForProxyList(sub *model.Subscription, query validator.SubValidator,
 				newProxies[i].SubName = subName
 			}
 		}
+
+		// 给每个节点添加订阅属性，从url中的groups寻找
+		// 解析url变量query.Subs[i]，获取groups属性，groups属性使用,分割，建立一个go的map[string, true]结构放置这些groupName
+		// newProxies:
+		//  ...
+		//	UDPOverTCPVersion   int            `yaml:"udp-over-tcp-version,omitempty"`
+		//	SubName             string         `yaml:"-"`
+		//	GroupTags           map[string]bool
+		//  ...
+		// 参考代码：
+		//	if subName != "" {
+		//	for i := range newProxies {
+		//		newProxies[i].SubName = subName
+		//	}
+		//}
+		ParseGroupTags(query.Subs[i], newProxies)
+
 		proxyList = append(proxyList, newProxies...)
 	}
 	return true, nil
