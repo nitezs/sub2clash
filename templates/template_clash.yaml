@@ -19,11 +19,9 @@ proxy-groups:
   - name: 电报消息
     type: select
     proxies:
+      - <{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}, "Country":{"$regex":"^(?!.*TW).+$"}}>
       - 自动测速
       - 手动切换
-      - <{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}, "Country":{"$regex":"TW"}}>
-      - <cheaps>
-      - <expensives>
       - DIRECT
       - REJECT
   - name: 油管视频

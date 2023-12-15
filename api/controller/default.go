@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/dlclark/regexp2"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 	"net/url"
@@ -359,7 +360,13 @@ func matchMapCondition(proxy model.Proxy, condition map[string]interface{}) bool
 				}
 			}
 			if regexValue, ok := compCondMap["$regex"]; ok {
-				matched, _ := regexp.MatchString(regexValue.(string), getProxyFieldValue(proxy, field))
+				re := regexp2.MustCompile(regexValue.(string), regexp2.None)
+				matched, err := re.MatchString(getProxyFieldValue(proxy, field))
+				if err != nil {
+					fmt.Println("Error: ", err)
+					// 可能还需要处理错误，例如返回或继续
+				}
+				fmt.Println("Matched: ", matched)
 				if !matched {
 					return false
 				}
