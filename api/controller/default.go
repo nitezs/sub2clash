@@ -379,7 +379,6 @@ func matchMapCondition(proxy model.Proxy, condition map[string]interface{}) bool
 						return false
 					}
 				}
-				return false
 			}
 		}
 	}
