@@ -516,20 +516,23 @@ func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription, lazy
 				syntax := strings.Trim(proxyName, "<>")
 				proxyNames, proxies := parseSyntaxA(syntax, sub)
 
-				// 把proxies放到一个新组中 L
-				for index, _ := range proxyNames {
-					// 遍历节点组，看是否有当前国家的组，如果没有，则新增，同时将
-					var insertSuccess = AddToGroup(sub, proxies[index], proxyName)
+				if proxyName == "<>" {
+					newProxies = append(newProxies, proxyNames...)
+				} else {
+					// 把proxies放到一个新组中 proxyName
+					for index, _ := range proxyNames {
+						// 遍历节点组，看是否有当前国家的组，如果没有，则新增，同时将
+						var insertSuccess = AddToGroup(sub, proxies[index], proxyName)
 
-					// 如果不存在此节点组，需要新增
-					if !insertSuccess {
-						AddNewGroup(sub, proxyName, true, lazy)
-						// 同时将新节点插入到组中
-						var _ = AddToGroup(sub, proxies[index], proxyName)
+						// 如果不存在此节点组，需要新增
+						if !insertSuccess {
+							AddNewGroup(sub, proxyName, true, lazy)
+							// 同时将新节点插入到组中
+							var _ = AddToGroup(sub, proxies[index], proxyName)
+						}
 					}
+					newProxies = append(newProxies, proxyName)
 				}
-
-				newProxies = append(newProxies, proxyName)
 			} else {
 				newProxies = append(newProxies, proxyName)
 			}

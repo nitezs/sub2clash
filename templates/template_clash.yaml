@@ -11,11 +11,11 @@ proxy-groups:
     interval: 30
     tolerance: 50
     proxies:
-      - <{}>
+      - <>
   - name: 手动切换
     type: select
     proxies:
-      - <{}>
+      - <>
   - name: 电报消息
     type: select
     proxies:
