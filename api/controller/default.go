@@ -504,6 +504,8 @@ func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription, lazy
 	}
 	// 将订阅中的节点添加到模板中
 	temp.Proxies = append(temp.Proxies, sub.Proxies...)
+
+	existProxyName := map[string]bool{}
 	// 将订阅中的策略组添加到模板中
 	for i := range temp.ProxyGroups {
 		if temp.ProxyGroups[i].IsCountryGrop {
@@ -519,26 +521,31 @@ func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription, lazy
 		for j := range temp.ProxyGroups[i].Proxies {
 			proxyName := temp.ProxyGroups[i].Proxies[j]
 			if strings.HasPrefix(proxyName, "<") && strings.HasSuffix(proxyName, ">") {
-				// 解析语法A
-				syntax := strings.Trim(proxyName, "<>")
-				proxyNames, proxies := parseSyntaxA(syntax, sub)
-
 				if proxyName == "<>" {
+					proxyNames, _ := parseSyntaxA("{}", sub)
 					newProxies = append(newProxies, proxyNames...)
 				} else {
-					// 把proxies放到一个新组中 proxyName
-					for index, _ := range proxyNames {
-						// 遍历节点组，看是否有当前国家的组，如果没有，则新增，同时将
-						var insertSuccess = AddToGroup(sub, proxies[index], proxyName)
+					syntax := strings.Trim(proxyName, "<>")
+					proxyNames, proxies := parseSyntaxA(syntax, sub)
 
-						// 如果不存在此节点组，需要新增
-						if !insertSuccess {
-							AddNewGroup(sub, proxyName, true, lazy)
-							// 同时将新节点插入到组中
-							var _ = AddToGroup(sub, proxies[index], proxyName)
+					// 如果不存在此组，则把proxies放到一个新组中 proxyName
+					if !existProxyName[proxyName] {
+						existProxyName[proxyName] = true
+						for index, _ := range proxyNames {
+							// 遍历节点组，看是否有当前国家的组，如果没有，则新增，同时将
+							var insertSuccess = AddToGroup(sub, proxies[index], proxyName)
+
+							// 如果不存在此节点组，需要新增
+							if !insertSuccess {
+								AddNewGroup(sub, proxyName, true, lazy)
+								// 同时将新节点插入到组中
+								var _ = AddToGroup(sub, proxies[index], proxyName)
+							}
 						}
 					}
-					newProxies = append(newProxies, proxyName)
+					if len(proxyNames) > 0 {
+						newProxies = append(newProxies, proxyName)
+					}
 				}
 			} else {
 				newProxies = append(newProxies, proxyName)
