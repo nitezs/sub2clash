@@ -8,7 +8,6 @@ import (
 	"gopkg.in/yaml.v3"
 	"net/url"
 	"regexp"
-	"sort"
 	"strconv"
 	"strings"
 	"sub2clash/logger"
@@ -224,19 +223,6 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	// 将新增节点都添加到临时变量 t 中，防止策略组排序错乱
 	var t = &model.Subscription{}
 	utils.AddAllNewProxies(t, query.AutoTest, query.Lazy, clashType, proxyList...)
-	// 排序策略组
-	switch query.Sort {
-	case "sizeasc":
-		sort.Sort(model.ProxyGroupsSortBySize(t.ProxyGroups))
-	case "sizedesc":
-		sort.Sort(sort.Reverse(model.ProxyGroupsSortBySize(t.ProxyGroups)))
-	case "nameasc":
-		sort.Sort(model.ProxyGroupsSortByName(t.ProxyGroups))
-	case "namedesc":
-		sort.Sort(sort.Reverse(model.ProxyGroupsSortByName(t.ProxyGroups)))
-	default:
-		sort.Sort(model.ProxyGroupsSortByName(t.ProxyGroups))
-	}
 	// 合并新节点和模板
 	MergeSubAndTemplate(temp, t)
 	// 处理自定义规则
