@@ -35,7 +35,7 @@ func ParseGroupTags(subURL string, newProxies []model.Proxy) {
 	}
 }
 
-func WalkSubsForProxyList(sub *model.Subscription, query validator.SubValidator, proxyList []model.Proxy) (
+func WalkSubsForProxyList(sub *model.Subscription, query validator.SubValidator, proxyList *[]model.Proxy) (
 	bool, error,
 ) {
 	for i := range query.Subs {
@@ -97,7 +97,7 @@ func WalkSubsForProxyList(sub *model.Subscription, query validator.SubValidator,
 		//}
 		ParseGroupTags(query.Subs[i], newProxies)
 
-		proxyList = append(proxyList, newProxies...)
+		*proxyList = append(*proxyList, newProxies...)
 	}
 	return true, nil
 }
@@ -140,7 +140,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	}
 	var proxyList []model.Proxy
 	// 遍历订阅链接 获取 proxyList
-	success, err := WalkSubsForProxyList(sub, query, proxyList)
+	success, err := WalkSubsForProxyList(sub, query, &proxyList)
 	if !success {
 		return nil, err
 	}
