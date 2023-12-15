@@ -76,8 +76,7 @@ func GetContryName(countryKey string) string {
 }
 
 func AddAllNewProxies(
-	sub *model.Subscription, autotest bool,
-	lazy bool, clashType model.ClashType, proxies ...model.Proxy,
+	sub *model.Subscription, lazy bool, clashType model.ClashType, proxies ...model.Proxy,
 ) {
 	proxyTypes := model.GetSupportProxyTypes(clashType)
 

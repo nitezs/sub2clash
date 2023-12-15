@@ -233,9 +233,9 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	}
 	// 将新增节点都添加到临时变量 t 中，防止策略组排序错乱
 	var t = &model.Subscription{}
-	utils.AddAllNewProxies(t, query.AutoTest, query.Lazy, clashType, proxyList...)
+	utils.AddAllNewProxies(t, query.Lazy, clashType, proxyList...)
 	// 合并新节点和模板
-	MergeSubAndTemplate(temp, t, query.AutoTest, query.Lazy)
+	MergeSubAndTemplate(temp, t, query.Lazy)
 	// 处理自定义规则
 	for _, v := range query.Rules {
 		if v.Prepend {
@@ -480,7 +480,7 @@ func AddToGroup(sub *model.Subscription, proxy model.Proxy, insertGroup string) 
 	return false
 }
 
-func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription, autotest bool, lazy bool) {
+func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription, lazy bool) {
 	// 只合并节点、策略组
 	// 统计所有国家策略组名称
 	var countryGroupNames []string
@@ -523,7 +523,7 @@ func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription, auto
 
 					// 如果不存在此节点组，需要新增
 					if !insertSuccess {
-						AddNewGroup(sub, proxyName, autotest, lazy)
+						AddNewGroup(sub, proxyName, true, lazy)
 						// 同时将新节点插入到组中
 						var _ = AddToGroup(sub, proxies[index], proxyName)
 					}
