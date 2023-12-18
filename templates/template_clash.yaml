@@ -19,6 +19,11 @@ proxy-groups:
       - 3️⃣自定义
       - 4️⃣自定义
       - 5️⃣自定义
+      - 6️⃣⃣自定义
+      - 7️自定义
+      - 8️⃣自定义
+      - 9️⃣自定义
+      - 🔟⃣自定义
       - DIRECT
       - REJECT
   - name: 🌐国外媒体
@@ -33,6 +38,11 @@ proxy-groups:
       - 3️⃣自定义
       - 4️⃣自定义
       - 5️⃣自定义
+      - 6️⃣⃣自定义
+      - 7️自定义
+      - 8️⃣自定义
+      - 9️⃣自定义
+      - 🔟⃣自定义
       - REJECT
   - name: 🌐欧美服务
     type: select
@@ -45,6 +55,11 @@ proxy-groups:
       - 3️⃣自定义
       - 4️⃣自定义
       - 5️⃣自定义
+      - 6️⃣⃣自定义
+      - 7️自定义
+      - 8️⃣自定义
+      - 9️⃣自定义
+      - 🔟⃣自定义
       - DIRECT
       - REJECT
   - name: 🌐排华服务
@@ -58,6 +73,11 @@ proxy-groups:
       - 3️⃣自定义
       - 4️⃣自定义
       - 5️⃣自定义
+      - 6️⃣⃣自定义
+      - 7️自定义
+      - 8️⃣自定义
+      - 9️⃣自定义
+      - 🔟⃣自定义
       - DIRECT
       - REJECT
   - name: 🌐下载服务
@@ -70,6 +90,11 @@ proxy-groups:
       - 3️⃣自定义
       - 4️⃣自定义
       - 5️⃣自定义
+      - 6️⃣⃣自定义
+      - 7️自定义
+      - 8️⃣自定义
+      - 9️⃣自定义
+      - 🔟⃣自定义
       - DIRECT
       - REJECT
   - name: 🌏全球直连
@@ -82,6 +107,11 @@ proxy-groups:
       - 3️⃣自定义
       - 4️⃣自定义
       - 5️⃣自定义
+      - 6️⃣⃣自定义
+      - 7️自定义
+      - 8️⃣自定义
+      - 9️⃣自定义
+      - 🔟⃣自定义
       - REJECT
   - name: 🚧拦截流量
     type: select
@@ -94,6 +124,11 @@ proxy-groups:
       - 3️⃣自定义
       - 4️⃣自定义
       - 5️⃣自定义
+      - 6️⃣⃣自定义
+      - 7️自定义
+      - 8️⃣自定义
+      - 9️⃣自定义
+      - 🔟⃣自定义
   - name: 🐟漏网之鱼
     type: select
     proxies:
@@ -104,6 +139,11 @@ proxy-groups:
       - 3️⃣自定义
       - 4️⃣自定义
       - 5️⃣自定义
+      - 6️⃣⃣自定义
+      - 7️自定义
+      - 8️⃣自定义
+      - 9️⃣自定义
+      - 🔟⃣自定义
       - REJECT
   - name: 0️⃣自定义
     type: select
@@ -116,6 +156,8 @@ proxy-groups:
       - <TG机场2x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"香港Gcore|香港Hkisl|香港Dmit|香港Vmiss"}}>
       - <TG机场3x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"日本•DMIT"}}>
       - <TG机场20x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"Verizon动态"}}>
+      - <欧美节点 By 垃圾代理:{"SubTags":{"$elemMatch":{"$regex":"一元机场|便宜机场|二元机场"}}, "Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
+      - <欧美节点:{"Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
       - <>
   - name: 1️⃣自定义
     type: select
@@ -128,6 +170,8 @@ proxy-groups:
       - <TG机场2x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"香港Gcore|香港Hkisl|香港Dmit|香港Vmiss"}}>
       - <TG机场3x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"日本•DMIT"}}>
       - <TG机场20x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"Verizon动态"}}>
+      - <欧美节点 By 垃圾代理:{"SubTags":{"$elemMatch":{"$regex":"一元机场|便宜机场|二元机场"}}, "Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
+      - <欧美节点:{"Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
       - <>
   - name: 2️⃣自定义
     type: select
@@ -140,6 +184,8 @@ proxy-groups:
       - <TG机场2x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"香港Gcore|香港Hkisl|香港Dmit|香港Vmiss"}}>
       - <TG机场3x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"日本•DMIT"}}>
       - <TG机场20x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"Verizon动态"}}>
+      - <欧美节点 By 垃圾代理:{"SubTags":{"$elemMatch":{"$regex":"一元机场|便宜机场|二元机场"}}, "Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
+      - <欧美节点:{"Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
       - <>
   - name: 3️⃣自定义
     type: select
@@ -152,6 +198,8 @@ proxy-groups:
       - <TG机场2x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"香港Gcore|香港Hkisl|香港Dmit|香港Vmiss"}}>
       - <TG机场3x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"日本•DMIT"}}>
       - <TG机场20x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"Verizon动态"}}>
+      - <欧美节点 By 垃圾代理:{"SubTags":{"$elemMatch":{"$regex":"一元机场|便宜机场|二元机场"}}, "Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
+      - <欧美节点:{"Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
       - <>
   - name: 4️⃣自定义
     type: select
@@ -164,6 +212,8 @@ proxy-groups:
       - <TG机场2x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"香港Gcore|香港Hkisl|香港Dmit|香港Vmiss"}}>
       - <TG机场3x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"日本•DMIT"}}>
       - <TG机场20x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"Verizon动态"}}>
+      - <欧美节点 By 垃圾代理:{"SubTags":{"$elemMatch":{"$regex":"一元机场|便宜机场|二元机场"}}, "Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
+      - <欧美节点:{"Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
       - <>
   - name: 5️⃣自定义
     type: select
@@ -176,6 +226,78 @@ proxy-groups:
       - <TG机场2x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"香港Gcore|香港Hkisl|香港Dmit|香港Vmiss"}}>
       - <TG机场3x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"日本•DMIT"}}>
       - <TG机场20x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"Verizon动态"}}>
+      - <欧美节点 By 垃圾代理:{"SubTags":{"$elemMatch":{"$regex":"一元机场|便宜机场|二元机场"}}, "Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
+      - <欧美节点:{"Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
+      - <>
+  - name: 6️⃣⃣自定义
+    type: select
+    proxies:
+      - <🚀Bywave:{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
+      - <🚀一元机场:{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}}>
+      - <🚀便宜机场:{"SubTags":{"$elemMatch":{"$eq":"便宜机场"}}}>
+      - <🚀夜煞云:{"SubTags":{"$elemMatch":{"$eq":"夜煞云"}}}>
+      - <🚀TG机场(1x):{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"^(?!.*香港Gcore)(?!.*香港Hkisl)(?!.*香港Dmit)(?!.*香港Vmiss)(?!.*日本•DMIT)(?!.*Verizon动态).+$"}}>
+      - <TG机场2x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"香港Gcore|香港Hkisl|香港Dmit|香港Vmiss"}}>
+      - <TG机场3x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"日本•DMIT"}}>
+      - <TG机场20x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"Verizon动态"}}>
+      - <欧美节点 By 垃圾代理:{"SubTags":{"$elemMatch":{"$regex":"一元机场|便宜机场|二元机场"}}, "Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
+      - <欧美节点:{"Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
+      - <>
+  - name: 7️自定义
+    type: select
+    proxies:
+      - <🚀Bywave:{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
+      - <🚀一元机场:{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}}>
+      - <🚀便宜机场:{"SubTags":{"$elemMatch":{"$eq":"便宜机场"}}}>
+      - <🚀夜煞云:{"SubTags":{"$elemMatch":{"$eq":"夜煞云"}}}>
+      - <🚀TG机场(1x):{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"^(?!.*香港Gcore)(?!.*香港Hkisl)(?!.*香港Dmit)(?!.*香港Vmiss)(?!.*日本•DMIT)(?!.*Verizon动态).+$"}}>
+      - <TG机场2x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"香港Gcore|香港Hkisl|香港Dmit|香港Vmiss"}}>
+      - <TG机场3x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"日本•DMIT"}}>
+      - <TG机场20x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"Verizon动态"}}>
+      - <欧美节点 By 垃圾代理:{"SubTags":{"$elemMatch":{"$regex":"一元机场|便宜机场|二元机场"}}, "Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
+      - <欧美节点:{"Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
+      - <>
+  - name: 8️⃣自定义
+    type: select
+    proxies:
+      - <🚀Bywave:{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
+      - <🚀一元机场:{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}}>
+      - <🚀便宜机场:{"SubTags":{"$elemMatch":{"$eq":"便宜机场"}}}>
+      - <🚀夜煞云:{"SubTags":{"$elemMatch":{"$eq":"夜煞云"}}}>
+      - <🚀TG机场(1x):{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"^(?!.*香港Gcore)(?!.*香港Hkisl)(?!.*香港Dmit)(?!.*香港Vmiss)(?!.*日本•DMIT)(?!.*Verizon动态).+$"}}>
+      - <TG机场2x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"香港Gcore|香港Hkisl|香港Dmit|香港Vmiss"}}>
+      - <TG机场3x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"日本•DMIT"}}>
+      - <TG机场20x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"Verizon动态"}}>
+      - <欧美节点 By 垃圾代理:{"SubTags":{"$elemMatch":{"$regex":"一元机场|便宜机场|二元机场"}}, "Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
+      - <欧美节点:{"Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
+      - <>
+  - name: 9️⃣自定义
+    type: select
+    proxies:
+      - <🚀Bywave:{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
+      - <🚀一元机场:{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}}>
+      - <🚀便宜机场:{"SubTags":{"$elemMatch":{"$eq":"便宜机场"}}}>
+      - <🚀夜煞云:{"SubTags":{"$elemMatch":{"$eq":"夜煞云"}}}>
+      - <🚀TG机场(1x):{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"^(?!.*香港Gcore)(?!.*香港Hkisl)(?!.*香港Dmit)(?!.*香港Vmiss)(?!.*日本•DMIT)(?!.*Verizon动态).+$"}}>
+      - <TG机场2x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"香港Gcore|香港Hkisl|香港Dmit|香港Vmiss"}}>
+      - <TG机场3x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"日本•DMIT"}}>
+      - <TG机场20x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"Verizon动态"}}>
+      - <欧美节点 By 垃圾代理:{"SubTags":{"$elemMatch":{"$regex":"一元机场|便宜机场|二元机场"}}, "Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
+      - <欧美节点:{"Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
+      - <>
+  - name: 🔟⃣自定义
+    type: select
+    proxies:
+      - <🚀Bywave:{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
+      - <🚀一元机场:{"SubTags":{"$elemMatch":{"$eq":"一元机场"}}}>
+      - <🚀便宜机场:{"SubTags":{"$elemMatch":{"$eq":"便宜机场"}}}>
+      - <🚀夜煞云:{"SubTags":{"$elemMatch":{"$eq":"夜煞云"}}}>
+      - <🚀TG机场(1x):{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"^(?!.*香港Gcore)(?!.*香港Hkisl)(?!.*香港Dmit)(?!.*香港Vmiss)(?!.*日本•DMIT)(?!.*Verizon动态).+$"}}>
+      - <TG机场2x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"香港Gcore|香港Hkisl|香港Dmit|香港Vmiss"}}>
+      - <TG机场3x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"日本•DMIT"}}>
+      - <TG机场20x:{"SubTags":{"$elemMatch":{"$eq":"TG机场"}}, "Name":{"$regex":"Verizon动态"}}>
+      - <欧美节点 By 垃圾代理:{"SubTags":{"$elemMatch":{"$regex":"一元机场|便宜机场|二元机场"}}, "Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
+      - <欧美节点:{"Country":{"$regex":"US|UK|CA|AU|FR|DE"}}>
       - <>
 rules:
   - DOMAIN-SUFFIX,ondemandchina.com,🌐欧美服务
