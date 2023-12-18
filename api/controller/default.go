@@ -379,6 +379,10 @@ func matchMapCondition(proxy model.Proxy, condition map[string]interface{}) bool
 						return false
 					}
 				}
+				// 如果需要匹配的字段不存在，则匹配失败
+				if fieldValues == nil {
+					return false
+				}
 			}
 		}
 	}
