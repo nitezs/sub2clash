@@ -37,11 +37,18 @@ func ParseSS(proxy string) (model.Proxy, error) {
 	if len(serverAndPort) != 2 {
 		return model.Proxy{}, errors.New("invalid ss Url")
 	}
+
+	// 只获取端口号部分
+	portString := serverAndPort[1]
+	portParts := strings.SplitN(portString, "/", 2)
+	portString = portParts[0]
+
 	// 转换端口字符串为数字
-	port, err := strconv.Atoi(strings.TrimSpace(serverAndPort[1]))
+	port, err := strconv.Atoi(strings.TrimSpace(portString))
 	if err != nil {
 		return model.Proxy{}, errors.New("invalid ss Url" + err.Error())
 	}
+
 	// 返回结果
 	result := model.Proxy{
 		Type:     "ss",
