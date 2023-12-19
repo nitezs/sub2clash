@@ -19,9 +19,6 @@ import (
 	"sub2clash/parser"
 	"sub2clash/utils"
 	"sub2clash/validator"
-
-	"go.uber.org/zap"
-	"gopkg.in/yaml.v3"
 )
 
 func ParseGroupTags(subURL string, newProxies []model.Proxy) {
