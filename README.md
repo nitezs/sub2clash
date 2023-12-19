@@ -42,12 +42,26 @@
 
 ### 模板
 
-可以通过变量自定义模板中的策略组代理节点  
-解释的不太清楚，可以参考下方默认模板
+通过自定义查询语法(类mongodb)自动添加自动测速策略组和策略组相互引用
 
-- `<all>` 为添加所有节点
-- `<countries>` 为添加所有国家策略组
-- `<地区二位字母代码>` 为添加指定地区所有节点，例如 `<hk>` 将添加所有香港节点
+##### 例如
+```yaml
+proxy-groups:
+  - name: 🌐默认翻墙
+    type: select
+    proxies:
+      - <🚀Bywave:{"SubTags":{"$elemMatch":{"$eq":"Bywave"}}}>
+```
+- 表示名称为🚀Bywave的策略组
+- 筛选条件为SubTags参数数组中有等于Bywave的节点集合生成一个新的自动测速策略组
+- 将🚀Bywave的策略组添加到🌐默认翻墙策略组中
+- 案例：
+  - ![img.png](img.png)
+  - ![img_1.png](img_1.png)
+- 目前查询语法支持：
+  - 属性：'SubTags', 'Name', 'Country'
+  - 语法：'$elemMatch', '$eq', '$regex', '$not', '$or', '$and'
+- 具体案例请移步模板文件
 
 #### 默认模板
 
