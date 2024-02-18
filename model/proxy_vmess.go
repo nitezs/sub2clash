@@ -16,8 +16,8 @@ type GrpcOptions struct {
 }
 
 type RealityOptions struct {
-	PublicKey string `proxy:"public-key"`
-	ShortID   string `proxy:"short-id"`
+	PublicKey string `yaml:"public-key"`
+	ShortID   string `yaml:"short-id,omitempty"`
 }
 
 type WSOptions struct {

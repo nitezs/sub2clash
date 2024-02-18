@@ -36,17 +36,17 @@ func ParseVless(proxy string) (model.Proxy, error) {
 	}
 	// 返回结果
 	result := model.Proxy{
-		Type:        "vless",
-		Server:      strings.TrimSpace(serverAndPort[0]),
-		Port:        port,
-		UUID:        strings.TrimSpace(parts[0]),
-		UDP:         true,
-		Sni:         params.Get("sni"),
-		Network:     params.Get("type"),
-		TLS:         params.Get("security") == "tls",
-		Flow:        params.Get("flow"),
-		Fingerprint: params.Get("fp"),
-		Servername:  params.Get("sni"),
+		Type:              "vless",
+		Server:            strings.TrimSpace(serverAndPort[0]),
+		Port:              port,
+		UUID:              strings.TrimSpace(parts[0]),
+		UDP:               true,
+		Sni:               params.Get("sni"),
+		Network:           params.Get("type"),
+		TLS:               params.Get("security") == "reality",
+		Flow:              params.Get("flow"),
+		ClientFingerprint: params.Get("fp"),
+		Servername:        params.Get("sni"),
 		RealityOpts: model.RealityOptions{
 			PublicKey: params.Get("pbk"),
 		},
