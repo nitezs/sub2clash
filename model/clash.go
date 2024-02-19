@@ -18,11 +18,12 @@ func GetSupportProxyTypes(clashType ClashType) map[string]bool {
 	}
 	if clashType == ClashMeta {
 		return map[string]bool{
-			"ss":     true,
-			"ssr":    true,
-			"vmess":  true,
-			"trojan": true,
-			"vless":  true,
+			"ss":        true,
+			"ssr":       true,
+			"vmess":     true,
+			"trojan":    true,
+			"vless":     true,
+			"hysteria2": true,
 		}
 	}
 	return nil

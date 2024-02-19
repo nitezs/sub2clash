@@ -1,13 +1,14 @@
 package database
 
 import (
-	"github.com/glebarez/sqlite"
-	"go.uber.org/zap"
-	"gorm.io/gorm"
 	"path/filepath"
 	"sub2clash/logger"
 	"sub2clash/model"
 	"sub2clash/utils"
+
+	"github.com/glebarez/sqlite"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 var DB *gorm.DB

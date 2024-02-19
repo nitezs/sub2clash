@@ -1,11 +1,12 @@
 package middleware
 
 import (
-	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 	"strconv"
 	"sub2clash/logger"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 func ZapLogger() gin.HandlerFunc {

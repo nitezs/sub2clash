@@ -1,11 +1,12 @@
 package utils
 
 import (
-	"go.uber.org/zap"
 	"strings"
 	"sub2clash/logger"
 	"sub2clash/model"
 	"sub2clash/parser"
+
+	"go.uber.org/zap"
 )
 
 func GetContryName(countryKey string) string {
@@ -125,6 +126,9 @@ func ParseProxy(proxies ...string) []model.Proxy {
 			}
 			if strings.HasPrefix(proxy, "ssr://") {
 				proxyItem, err = parser.ParseShadowsocksR(proxy)
+			}
+			if strings.HasPrefix(proxy, "hysteria2://") {
+				proxyItem, err = parser.ParseHysteria2(proxy)
 			}
 			if err == nil {
 				result = append(result, proxyItem)

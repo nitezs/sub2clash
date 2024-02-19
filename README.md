@@ -1,18 +1,21 @@
 # sub2clash
 
-将订阅链接转换为 Clash、Clash.Meta 配置
+将订阅链接转换为 Clash、Clash.Meta 配置  
+[预览](https://www.nite07.com/sub)
 
 ## 特性
 
 - 开箱即用的规则、策略组配置
 - 自动根据节点名称按国家划分策略组
 - 支持多订阅合并
+- 支持添加自定义 Rule Provider、Rule
 - 支持多种协议
     - Shadowsocks
     - ShadowsocksR
     - Vmess
-    - Vless
+    - Vless （Clash.Meta）
     - Trojan
+    - Hysteria2 （Clash.Meta）
 
 ## 使用
 
@@ -25,20 +28,20 @@
 
 可以通过编辑 .env 文件来修改默认配置，docker 直接添加环境变量
 
-| 变量名                   | 说明                                                        | 默认值                   |
-|-----------------------|-----------------------------------------------------------|-----------------------|
-| PORT                  | 端口                                                        | `8011`                |
-| META_TEMPLATE         | meta 模板文件名                                                | `template_meta.yaml`  |
-| CLASH_TEMPLATE        | clash 模板文件名                                               | `template_clash.yaml` |
-| REQUEST_RETRY_TIMES   | Get 请求重试次数                                                | `3`                   |
-| REQUEST_MAX_FILE_SIZE | Get 请求订阅文件最大大小（byte）                                      | `1048576`             |
-| CACHE_EXPIRE          | 订阅缓存时间（秒）                                                 | `300`                 |
-| LOG_LEVEL             | 日志等级，可选值 `debug`,`info`,`warn`,`error`                    | `info`                |
-| SHORT_LINK_LENGTH     | 短链长度                                                      | `6`                   |
+| 变量名                   | 说明                                     | 默认值                   |
+|-----------------------|----------------------------------------|-----------------------|
+| PORT                  | 端口                                     | `8011`                |
+| META_TEMPLATE         | 默认 meta 模板文件名                          | `template_meta.yaml`  |
+| CLASH_TEMPLATE        | 默认 clash 模板文件名                         | `template_clash.yaml` |
+| REQUEST_RETRY_TIMES   | Get 请求重试次数                             | `3`                   |
+| REQUEST_MAX_FILE_SIZE | Get 请求订阅文件最大大小（byte）                   | `1048576`             |
+| CACHE_EXPIRE          | 订阅缓存时间（秒）                              | `300`                 |
+| LOG_LEVEL             | 日志等级，可选值 `debug`,`info`,`warn`,`error` | `info`                |
+| SHORT_LINK_LENGTH     | 短链长度                                   | `6`                   |
 
-### API                                       
+### API
 
-[API文档](./API_README.md)
+[API 文档](./API_README.md)
 
 ### 模板
 

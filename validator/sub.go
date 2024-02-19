@@ -4,11 +4,11 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
-	"github.com/gin-gonic/gin"
 	"net/url"
-	"os"
 	"regexp"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 type SubValidator struct {
@@ -72,13 +72,13 @@ func ParseQuery(c *gin.Context) (SubValidator, error) {
 		query.Proxies = nil
 	}
 	if query.Template != "" {
-		uri, err := url.ParseRequestURI(query.Template)
-		if err != nil {
-			if strings.Contains(query.Template, string(os.PathSeparator)) {
+		if strings.HasPrefix(query.Template, "http") {
+			uri, err := url.ParseRequestURI(query.Template)
+			if err != nil {
 				return SubValidator{}, err
 			}
+			query.Template = uri.String()
 		}
-		query.Template = uri.String()
 	}
 	if query.RuleProvider != "" {
 		reg := regexp.MustCompile(`\[(.*?)\]`)

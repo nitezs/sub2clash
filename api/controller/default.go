@@ -4,8 +4,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
-	"go.uber.org/zap"
-	"gopkg.in/yaml.v3"
 	"net/url"
 	"regexp"
 	"sort"
@@ -16,6 +14,9 @@ import (
 	"sub2clash/parser"
 	"sub2clash/utils"
 	"sub2clash/validator"
+
+	"go.uber.org/zap"
+	"gopkg.in/yaml.v3"
 )
 
 func BuildSub(clashType model.ClashType, query validator.SubValidator, template string) (
@@ -30,9 +31,8 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	if query.Template != "" {
 		template = query.Template
 	}
-	_, err = url.ParseRequestURI(template)
-	if err != nil {
-		templateBytes, err = utils.LoadTemplate(template)
+	if strings.HasPrefix(template, "http") {
+		templateBytes, err = utils.LoadSubscription(template, query.Refresh)
 		if err != nil {
 			logger.Logger.Debug(
 				"load template failed", zap.String("template", template), zap.Error(err),
@@ -40,7 +40,11 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 			return nil, errors.New("加载模板失败: " + err.Error())
 		}
 	} else {
-		templateBytes, err = utils.LoadSubscription(template, query.Refresh)
+		unescape, err := url.QueryUnescape(template)
+		if err != nil {
+			return nil, errors.New("加载模板失败: " + err.Error())
+		}
+		templateBytes, err = utils.LoadTemplate(unescape)
 		if err != nil {
 			logger.Logger.Debug(
 				"load template failed", zap.String("template", template), zap.Error(err),
@@ -72,7 +76,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 		err = yaml.Unmarshal(data, &sub)
 		newProxies := make([]model.Proxy, 0)
 		if err != nil {
-			reg, _ := regexp.Compile("(ssr|ss|vmess|trojan|vless)://")
+			reg, _ := regexp.Compile("(ssr|ss|vmess|trojan|vless|hysteria)://")
 			if reg.Match(data) {
 				p := utils.ParseProxy(strings.Split(string(data), "\n")...)
 				newProxies = p

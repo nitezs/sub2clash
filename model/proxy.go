@@ -45,6 +45,11 @@ type Proxy struct {
 	UDPOverTCP          bool           `yaml:"udp-over-tcp,omitempty"`
 	UDPOverTCPVersion   int            `yaml:"udp-over-tcp-version,omitempty"`
 	SubName             string         `yaml:"-"`
+	Up                  string         `yaml:"up,omitempty"`
+	Down                string         `yaml:"down,omitempty"`
+	CustomCA            string         `yaml:"ca,omitempty"`
+	CustomCAString      string         `yaml:"ca-str,omitempty"`
+	CWND                int            `yaml:"cwnd,omitempty"`
 }
 
 func (p Proxy) MarshalYAML() (interface{}, error) {
@@ -59,6 +64,8 @@ func (p Proxy) MarshalYAML() (interface{}, error) {
 		return ProxyToVless(p), nil
 	case "trojan":
 		return ProxyToTrojan(p), nil
+	case "hysteria2":
+		return ProxyToHysteria2(p), nil
 	}
 	return nil, nil
 }
