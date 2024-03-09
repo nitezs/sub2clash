@@ -3,6 +3,7 @@ package parser
 import (
 	"encoding/json"
 	"errors"
+	"net/url"
 	"strconv"
 	"strings"
 	"sub2clash/model"
@@ -56,9 +57,13 @@ func ParseVmess(proxy string) (model.Proxy, error) {
 	if vmess.Net == "ws" && vmess.Host == "" {
 		vmess.Host = vmess.Add
 	}
+	name, err := url.QueryUnescape(vmess.Ps)
+	if err != nil {
+		name = vmess.Ps
+	}
 	// 返回结果
 	result := model.Proxy{
-		Name:              vmess.Ps,
+		Name:              name,
 		Type:              "vmess",
 		Server:            vmess.Add,
 		Port:              port,

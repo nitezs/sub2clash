@@ -173,9 +173,11 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	names := make(map[string]int)
 	for i := range proxyList {
 		if _, exist := names[proxyList[i].Name]; exist {
+			names[proxyList[i].Name] = names[proxyList[i].Name] + 1
 			proxyList[i].Name = proxyList[i].Name + " " + strconv.Itoa(names[proxyList[i].Name])
+		} else {
+			names[proxyList[i].Name] = 0
 		}
-		names[proxyList[i].Name] = names[proxyList[i].Name] + 1
 	}
 	// trim
 	for i := range proxyList {

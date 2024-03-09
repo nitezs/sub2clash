@@ -72,10 +72,16 @@ func ParseVless(proxy string) (model.Proxy, error) {
 		if strings.Contains(serverInfo[1], "|") {
 			result.Name = strings.SplitN(serverInfo[1], "|", 2)[1]
 		} else {
-			result.Name = serverInfo[1]
+			result.Name, err = url.QueryUnescape(serverInfo[1])
+			if err != nil {
+				return model.Proxy{}, err
+			}
 		}
 	} else {
-		result.Name = serverAndPort[0]
+		result.Name, err = url.QueryUnescape(serverAndPort[0])
+		if err != nil {
+			return model.Proxy{}, err
+		}
 	}
 	return result, nil
 }

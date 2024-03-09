@@ -15,6 +15,7 @@
     - Vmess
     - Vless （Clash.Meta）
     - Trojan
+    - Hysteria （Clash.Meta）
     - Hysteria2 （Clash.Meta）
 
 ## 使用

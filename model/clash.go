@@ -23,6 +23,7 @@ func GetSupportProxyTypes(clashType ClashType) map[string]bool {
 			"vmess":     true,
 			"trojan":    true,
 			"vless":     true,
+			"hysteria":  true,
 			"hysteria2": true,
 		}
 	}
