@@ -70,6 +70,8 @@ func (p Proxy) MarshalYAML() (interface{}, error) {
 		return ProxyToVless(p), nil
 	case "trojan":
 		return ProxyToTrojan(p), nil
+	case "hysteria":
+		return ProxyToHysteria(p), nil
 	case "hysteria2":
 		return ProxyToHysteria2(p), nil
 	}
