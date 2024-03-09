@@ -1,18 +1,18 @@
 package model
 
 type HTTPOptions struct {
-	Method  string              `proxy:"method,omitempty"`
-	Path    []string            `proxy:"path,omitempty"`
-	Headers map[string][]string `proxy:"headers,omitempty"`
+	Method  string              `yaml:"method,omitempty"`
+	Path    []string            `yaml:"path,omitempty"`
+	Headers map[string][]string `yaml:"headers,omitempty"`
 }
 
 type HTTP2Options struct {
-	Host []string `proxy:"host,omitempty"`
-	Path string   `proxy:"path,omitempty"`
+	Host []string `yaml:"host,omitempty"`
+	Path string   `yaml:"path,omitempty"`
 }
 
 type GrpcOptions struct {
-	GrpcServiceName string `proxy:"grpc-service-name,omitempty"`
+	GrpcServiceName string `yaml:"grpc-service-name,omitempty"`
 }
 
 type RealityOptions struct {
@@ -21,10 +21,10 @@ type RealityOptions struct {
 }
 
 type WSOptions struct {
-	Path                string            `proxy:"path,omitempty"`
-	Headers             map[string]string `proxy:"headers,omitempty"`
-	MaxEarlyData        int               `proxy:"max-early-data,omitempty"`
-	EarlyDataHeaderName string            `proxy:"early-data-header-name,omitempty"`
+	Path                string            `yaml:"path,omitempty"`
+	Headers             map[string]string `yaml:"headers,omitempty"`
+	MaxEarlyData        int               `yaml:"max-early-data,omitempty"`
+	EarlyDataHeaderName string            `yaml:"early-data-header-name,omitempty"`
 }
 
 type VmessJson struct {
