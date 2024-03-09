@@ -50,6 +50,12 @@ type Proxy struct {
 	CustomCA            string         `yaml:"ca,omitempty"`
 	CustomCAString      string         `yaml:"ca-str,omitempty"`
 	CWND                int            `yaml:"cwnd,omitempty"`
+	Auth                string         `yaml:"auth,omitempty"`
+	ReceiveWindowConn   int            `yaml:"recv-window-conn,omitempty"`
+	ReceiveWindow       int            `yaml:"recv-window,omitempty"`
+	DisableMTUDiscovery bool           `yaml:"disable-mtu-discovery,omitempty"`
+	FastOpen            bool           `yaml:"fast-open,omitempty"`
+	HopInterval         int            `yaml:"hop-interval,omitempty"`
 }
 
 func (p Proxy) MarshalYAML() (interface{}, error) {

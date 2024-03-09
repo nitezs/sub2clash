@@ -8,16 +8,15 @@ import (
 	"sub2clash/model"
 )
 
+// hysteria2://letmein@example.com/?insecure=1&obfs=salamander&obfs-password=gawrgura&pinSHA256=deadbeef&sni=real.example.com
+
 func ParseHysteria2(proxy string) (model.Proxy, error) {
 	// 判断是否以 hysteria2:// 开头
-	if !strings.HasPrefix(proxy, "hysteria2://") {
+	if !strings.HasPrefix(proxy, "hysteria2://") && !strings.HasPrefix(proxy, "hy2://") {
 		return model.Proxy{}, errors.New("invalid hysteria2 Url")
 	}
 	// 分割
 	parts := strings.SplitN(strings.TrimPrefix(proxy, "hysteria2://"), "@", 2)
-	if len(parts) != 2 {
-		return model.Proxy{}, errors.New("invalid hysteria2 Url")
-	}
 	// 分割
 	serverInfo := strings.SplitN(parts[1], "/?", 2)
 	serverAndPort := strings.SplitN(serverInfo[0], ":", 2)
