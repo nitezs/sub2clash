@@ -6,6 +6,7 @@ function clearExistingValues() {
     document.getElementById("refresh").checked = false;
     document.getElementById("autoTest").checked = false;
     document.getElementById("lazy").checked = false;
+    document.getElementById("igcg").checked = false;
     document.getElementById("template").value = "";
     document.getElementById("sort").value = "nameasc";
     document.getElementById("remove").value = "";
@@ -74,6 +75,8 @@ function generateURI() {
     queryParams.push(`lazy=${lazy ? "true" : "false"}`);
     const nodeList = document.getElementById("nodeList").checked;
     queryParams.push(`nodeList=${nodeList ? "true" : "false"}`);
+    const igcg = document.getElementById("igcg").checked;
+    queryParams.push(`ignoreCountryGroup=${igcg ? "true" : "false"}`);
 
     // 获取模板链接或名称（如果存在）
     const template = document.getElementById("template").value;

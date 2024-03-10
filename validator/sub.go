@@ -12,24 +12,25 @@ import (
 )
 
 type SubValidator struct {
-	Sub           string               `form:"sub" binding:""`
-	Subs          []string             `form:"-" binding:""`
-	Proxy         string               `form:"proxy" binding:""`
-	Proxies       []string             `form:"-" binding:""`
-	Refresh       bool                 `form:"refresh,default=false" binding:""`
-	Template      string               `form:"template" binding:""`
-	RuleProvider  string               `form:"ruleProvider" binding:""`
-	RuleProviders []RuleProviderStruct `form:"-" binding:""`
-	Rule          string               `form:"rule" binding:""`
-	Rules         []RuleStruct         `form:"-" binding:""`
-	AutoTest      bool                 `form:"autoTest,default=false" binding:""`
-	Lazy          bool                 `form:"lazy,default=false" binding:""`
-	Sort          string               `form:"sort" binding:""`
-	Remove        string               `form:"remove" binding:""`
-	Replace       string               `form:"replace" binding:""`
-	ReplaceKeys   []string             `form:"-" binding:""`
-	ReplaceTo     []string             `form:"-" binding:""`
-	NodeListMode  bool                 `form:"nodeList,default=false" binding:""`
+	Sub                 string               `form:"sub" binding:""`
+	Subs                []string             `form:"-" binding:""`
+	Proxy               string               `form:"proxy" binding:""`
+	Proxies             []string             `form:"-" binding:""`
+	Refresh             bool                 `form:"refresh,default=false" binding:""`
+	Template            string               `form:"template" binding:""`
+	RuleProvider        string               `form:"ruleProvider" binding:""`
+	RuleProviders       []RuleProviderStruct `form:"-" binding:""`
+	Rule                string               `form:"rule" binding:""`
+	Rules               []RuleStruct         `form:"-" binding:""`
+	AutoTest            bool                 `form:"autoTest,default=false" binding:""`
+	Lazy                bool                 `form:"lazy,default=false" binding:""`
+	Sort                string               `form:"sort" binding:""`
+	Remove              string               `form:"remove" binding:""`
+	Replace             string               `form:"replace" binding:""`
+	ReplaceKeys         []string             `form:"-" binding:""`
+	ReplaceTo           []string             `form:"-" binding:""`
+	NodeListMode        bool                 `form:"nodeList,default=false" binding:""`
+	IgnoreCountryGrooup bool                 `form:"ignoreCountryGroup,default=false" binding:""`
 }
 
 type RuleProviderStruct struct {

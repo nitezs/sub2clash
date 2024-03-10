@@ -74,7 +74,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 		}
 		// 解析订阅
 		err = yaml.Unmarshal(data, &sub)
-		newProxies := make([]model.Proxy, 0)
+		var newProxies []model.Proxy
 		if err != nil {
 			reg, _ := regexp.Compile("(ssr|ss|vmess|trojan|vless|hysteria)://")
 			if reg.Match(data) {
@@ -157,10 +157,6 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 		for i := range proxyList {
 			// 重命名匹配到的节点
 			for j, v := range replaceRegs {
-				if err != nil {
-					logger.Logger.Debug("replace regexp compile failed", zap.Error(err))
-					return nil, errors.New("replaceName 参数非法: " + err.Error())
-				}
 				if v.MatchString(proxyList[i].Name) {
 					proxyList[i].Name = v.ReplaceAllString(
 						proxyList[i].Name, query.ReplaceTo[j],
@@ -200,7 +196,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 		sort.Sort(model.ProxyGroupsSortByName(t.ProxyGroups))
 	}
 	// 合并新节点和模板
-	MergeSubAndTemplate(temp, t)
+	MergeSubAndTemplate(temp, t, query.IgnoreCountryGrooup)
 	// 处理自定义规则
 	for _, v := range query.Rules {
 		if v.Prepend {
@@ -233,7 +229,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	return temp, nil
 }
 
-func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription) {
+func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription, igcg bool) {
 	// 只合并节点、策略组
 	// 统计所有国家策略组名称
 	var countryGroupNames []string
@@ -284,5 +280,7 @@ func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription) {
 		}
 		temp.ProxyGroups[i].Proxies = newProxies
 	}
-	temp.ProxyGroups = append(temp.ProxyGroups, sub.ProxyGroups...)
+	if !igcg {
+		temp.ProxyGroups = append(temp.ProxyGroups, sub.ProxyGroups...)
+	}
 }
