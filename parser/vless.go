@@ -49,6 +49,7 @@ func ParseVless(proxy string) (model.Proxy, error) {
 		Servername:        params.Get("sni"),
 		RealityOpts: model.RealityOptions{
 			PublicKey: params.Get("pbk"),
+			ShortID:   params.Get("sid"),
 		},
 	}
 	if params.Get("alpn") != "" {

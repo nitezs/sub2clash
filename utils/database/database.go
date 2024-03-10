@@ -27,9 +27,6 @@ func ConnectDB() error {
 	if err != nil {
 		return err
 	}
-	if err != nil {
-		return err
-	}
 	DB = db
 	err = db.AutoMigrate(&model.ShortLink{})
 	if err != nil {

@@ -5,123 +5,123 @@ mode: Rule
 log-level: info
 proxies:
 proxy-groups:
-    - name: 节点选择
-      type: select
-      proxies:
-          - <countries>
-          - 手动切换
-          - DIRECT
-    - name: 手动切换
-      type: select
-      proxies:
-          - <all>
-    - name: 游戏平台（中国）
-      type: select
-      proxies:
-          - 节点选择
-          - <countries>
-          - 手动切换
-          - DIRECT
-    - name: 游戏平台（全球）
-      type: select
-      proxies:
-          - 节点选择
-          - <countries>
-          - 手动切换
-          - DIRECT
-    - name: 巴哈姆特
-      type: select
-      proxies:
-          - 节点选择
-          - <countries>
-          - 手动切换
-          - DIRECT
-    - name: 哔哩哔哩
-      type: select
-      proxies:
-          - 节点选择
-          - <countries>
-          - 手动切换
-          - DIRECT
-    - name: Telegram
-      type: select
-      proxies:
-          - 节点选择
-          - <countries>
-          - 手动切换
-          - DIRECT
-    - name: OpenAI
-      type: select
-      proxies:
-          - 节点选择
-          - <countries>
-          - 手动切换
-          - DIRECT
-    - name: Youtube
-      type: select
-      proxies:
-          - 节点选择
-          - <countries>
-          - 手动切换
-          - DIRECT
-    - name: Microsoft
-      type: select
-      proxies:
-          - 节点选择
-          - <countries>
-          - 手动切换
-          - DIRECT
-    - name: Onedrive
-      type: select
-      proxies:
-          - 节点选择
-          - <countries>
-          - 手动切换
-          - DIRECT
-    - name: Apple
-      type: select
-      proxies:
-          - 节点选择
-          - <countries>
-          - 手动切换
-          - DIRECT
-    - name: Netflix
-      type: select
-      proxies:
-          - 节点选择
-          - <countries>
-          - 手动切换
-          - DIRECT
-    - name: 广告拦截
-      type: select
-      proxies:
-          - REJECT
-          - DIRECT
-    - name: 漏网之鱼
-      type: select
-      proxies:
-          - 节点选择
-          - <countries>
-          - 手动切换
-          - DIRECT
+  - name: 节点选择
+    type: select
+    proxies:
+      - <countries>
+      - 手动切换
+      - DIRECT
+  - name: 手动切换
+    type: select
+    proxies:
+      - <all>
+  - name: 游戏平台（中国）
+    type: select
+    proxies:
+      - 节点选择
+      - <countries>
+      - 手动切换
+      - DIRECT
+  - name: 游戏平台（全球）
+    type: select
+    proxies:
+      - 节点选择
+      - <countries>
+      - 手动切换
+      - DIRECT
+  - name: 巴哈姆特
+    type: select
+    proxies:
+      - 节点选择
+      - <countries>
+      - 手动切换
+      - DIRECT
+  - name: 哔哩哔哩
+    type: select
+    proxies:
+      - 节点选择
+      - <countries>
+      - 手动切换
+      - DIRECT
+  - name: Telegram
+    type: select
+    proxies:
+      - 节点选择
+      - <countries>
+      - 手动切换
+      - DIRECT
+  - name: OpenAI
+    type: select
+    proxies:
+      - 节点选择
+      - <countries>
+      - 手动切换
+      - DIRECT
+  - name: Youtube
+    type: select
+    proxies:
+      - 节点选择
+      - <countries>
+      - 手动切换
+      - DIRECT
+  - name: Microsoft
+    type: select
+    proxies:
+      - 节点选择
+      - <countries>
+      - 手动切换
+      - DIRECT
+  - name: Onedrive
+    type: select
+    proxies:
+      - 节点选择
+      - <countries>
+      - 手动切换
+      - DIRECT
+  - name: Apple
+    type: select
+    proxies:
+      - 节点选择
+      - <countries>
+      - 手动切换
+      - DIRECT
+  - name: Netflix
+    type: select
+    proxies:
+      - 节点选择
+      - <countries>
+      - 手动切换
+      - DIRECT
+  - name: 广告拦截
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+  - name: 漏网之鱼
+    type: select
+    proxies:
+      - 节点选择
+      - <countries>
+      - 手动切换
+      - DIRECT
 rules:
-    - GEOSITE,private,DIRECT,no-resolve
-    - GEOIP,private,DIRECT
-    - GEOSITE,category-ads-all,广告拦截
-    - GEOSITE,microsoft,Microsoft
-    - GEOSITE,apple,Apple
-    - GEOSITE,netflix,Netflix
-    - GEOIP,netflix,Netflix
-    - GEOSITE,onedrive,Onedrive
-    - GEOSITE,youtube,Youtube
-    - GEOSITE,telegram,Telegram
-    - GEOIP,telegram,Telegram
-    - GEOSITE,openai,OpenAI
-    - GEOSITE,bilibili,哔哩哔哩
-    - GEOSITE,bahamut,巴哈姆特
-    - GEOSITE,category-games@cn,游戏平台（中国）
-    - GEOSITE,category-games,游戏平台（全球）
-    - GEOSITE,geolocation-!cn,节点选择
-    - GEOSITE,CN,DIRECT
-    - GEOIP,CN,DIRECT
-    - MATCH,漏网之鱼
+  - GEOSITE,private,DIRECT,no-resolve
+  - GEOIP,private,DIRECT
+  - GEOSITE,category-ads-all,广告拦截
+  - GEOSITE,microsoft,Microsoft
+  - GEOSITE,apple,Apple
+  - GEOSITE,netflix,Netflix
+  - GEOIP,netflix,Netflix
+  - GEOSITE,onedrive,Onedrive
+  - GEOSITE,youtube,Youtube
+  - GEOSITE,telegram,Telegram
+  - GEOIP,telegram,Telegram
+  - GEOSITE,openai,OpenAI
+  - GEOSITE,bilibili,哔哩哔哩
+  - GEOSITE,bahamut,巴哈姆特
+  - GEOSITE,category-games@cn,游戏平台（中国）
+  - GEOSITE,category-games,游戏平台（全球）
+  - GEOSITE,geolocation-!cn,节点选择
+  - GEOSITE,CN,DIRECT
+  - GEOIP,CN,DIRECT
+  - MATCH,漏网之鱼
