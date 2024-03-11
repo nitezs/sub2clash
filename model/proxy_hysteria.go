@@ -40,7 +40,7 @@ func ProxyToHysteria(p Proxy) Hysteria {
 		Up:                  p.Up,
 		Down:                p.Down,
 		Auth:                p.Auth,
-		AuthStringOLD        p.AuthStringOLD,
+		AuthStringOLD:       p.AuthStringOLD,
 		AuthString:          p.AuthString,
 		Obfs:                p.Obfs,
 		SNI:                 p.Sni,
