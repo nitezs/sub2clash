@@ -13,6 +13,7 @@ type Hysteria struct {
 	Down                string   `yaml:"down"`
 	DownSpeed           int      `yaml:"down-speed,omitempty"` // compatible with Stash
 	Auth                string   `yaml:"auth,omitempty"`
+	AuthStringOLD       string   `yaml:"auth_str,omitempty"`
 	AuthString          string   `yaml:"auth-str,omitempty"`
 	Obfs                string   `yaml:"obfs,omitempty"`
 	SNI                 string   `yaml:"sni,omitempty"`
@@ -34,9 +35,13 @@ func ProxyToHysteria(p Proxy) Hysteria {
 		Name:                p.Name,
 		Server:              p.Server,
 		Port:                p.Port,
+		Ports:               p.Ports,
+		Protocol:            p.Protocol,
 		Up:                  p.Up,
 		Down:                p.Down,
 		Auth:                p.Auth,
+		AuthStringOLD        p.AuthStringOLD,
+		AuthString:          p.AuthString,
 		Obfs:                p.Obfs,
 		SNI:                 p.Sni,
 		SkipCertVerify:      p.SkipCertVerify,
