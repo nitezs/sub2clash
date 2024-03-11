@@ -17,6 +17,7 @@ type ProxyGroup struct {
 	Size          int      `yaml:"-"`
 	DisableUDP    bool     `yaml:"disable-udp,omitempty"`
 	Strategy      string   `yaml:"strategy,omitempty"`
+	Icon          string   `yaml:"icon,omitempty"`
 }
 
 type SelectProxyGroup struct {
@@ -24,6 +25,7 @@ type SelectProxyGroup struct {
 	Type       string   `yaml:"type,omitempty"`
 	Proxies    []string `yaml:"proxies,omitempty"`
 	DisableUDP bool     `yaml:"disable-udp,omitempty"`
+	Icon       string   `yaml:"icon,omitempty"`
 }
 
 type UrlTestProxyGroup struct {
@@ -35,6 +37,7 @@ type UrlTestProxyGroup struct {
 	Tolerance  int      `yaml:"tolerance,omitempty"`
 	Lazy       bool     `yaml:"lazy"`
 	DisableUDP bool     `yaml:"disable-udp,omitempty"`
+	Icon       string   `yaml:"icon,omitempty"`
 }
 
 type LoadBalanceProxyGroup struct {
@@ -46,12 +49,14 @@ type LoadBalanceProxyGroup struct {
 	Interval   int      `yaml:"interval,omitempty"`
 	Lazy       bool     `yaml:"lazy"`
 	Strategy   string   `yaml:"strategy,omitempty"`
+	Icon       string   `yaml:"icon,omitempty"`
 }
 
 type RelayProxyGroup struct {
 	Name    string   `yaml:"name,omitempty"`
 	Type    string   `yaml:"type,omitempty"`
 	Proxies []string `yaml:"proxies,omitempty"`
+	Icon    string   `yaml:"icon,omitempty"`
 }
 
 func (p ProxyGroup) MarshalYAML() (interface{}, error) {
@@ -62,6 +67,7 @@ func (p ProxyGroup) MarshalYAML() (interface{}, error) {
 			Type:       p.Type,
 			Proxies:    p.Proxies,
 			DisableUDP: p.DisableUDP,
+			Icon:       p.Icon,
 		}, nil
 	case "url-test", "fallback":
 		return UrlTestProxyGroup{
@@ -73,6 +79,7 @@ func (p ProxyGroup) MarshalYAML() (interface{}, error) {
 			Tolerance:  p.Tolerance,
 			Lazy:       p.Lazy,
 			DisableUDP: p.DisableUDP,
+			Icon:       p.Icon,
 		}, nil
 	case "load-balance":
 		return LoadBalanceProxyGroup{
@@ -84,18 +91,21 @@ func (p ProxyGroup) MarshalYAML() (interface{}, error) {
 			Interval:   p.Interval,
 			Lazy:       p.Lazy,
 			Strategy:   p.Strategy,
+			Icon:       p.Icon,
 		}, nil
 	case "relay":
 		return RelayProxyGroup{
 			Name:    p.Name,
 			Type:    p.Type,
 			Proxies: p.Proxies,
+			Icon:    p.Icon,
 		}, nil
 	default:
 		return SelectProxyGroup{
 			Name:    p.Name,
 			Type:    p.Type,
 			Proxies: p.Proxies,
+			Icon:    p.Icon,
 		}, nil
 	}
 }
