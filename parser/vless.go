@@ -43,19 +43,22 @@ func ParseVless(proxy string) (model.Proxy, error) {
 		UDP:               true,
 		Sni:               params.Get("sni"),
 		Network:           params.Get("type"),
-		TLS:               params.Get("security") == "reality",
 		Flow:              params.Get("flow"),
 		ClientFingerprint: params.Get("fp"),
 		Servername:        params.Get("sni"),
-		RealityOpts: model.RealityOptions{
-			PublicKey: params.Get("pbk"),
-			ShortID:   params.Get("sid"),
-		},
 	}
 	if params.Get("alpn") != "" {
 		result.Alpn = strings.Split(params.Get("alpn"), ",")
 	}
+	if params.Get("security") == "reality" {
+		result.TLS = true
+		result.RealityOpts = model.RealityOptions{
+			PublicKey: params.Get("pbk"),
+			ShortID:   params.Get("sid"),
+		}
+	}
 	if params.Get("type") == "ws" {
+		result.TLS = true
 		result.WSOpts = model.WSOptions{
 			Path: params.Get("path"),
 			Headers: map[string]string{
@@ -64,6 +67,7 @@ func ParseVless(proxy string) (model.Proxy, error) {
 		}
 	}
 	if params.Get("type") == "grpc" {
+		result.TLS = true
 		result.GrpcOpts = model.GrpcOptions{
 			GrpcServiceName: params.Get("serviceName"),
 		}
