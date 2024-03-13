@@ -11,10 +11,9 @@ RUN go mod download
 
 # 获取参数
 ARG version
-ARG dev
 
 # 使用 -ldflags 参数进行编译
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X sub2clash/config.Version=${version} -X sub2clash/config.Dev=${dev}" -o sub2clash main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X sub2clash/config.Version=${version}" -o sub2clash main.go
 
 FROM alpine:latest
 

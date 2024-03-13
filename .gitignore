@@ -5,3 +5,4 @@ test
 logs
 sub2clash.db
 .env
+.vscode/settings.json

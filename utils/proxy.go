@@ -65,16 +65,10 @@ func AddProxy(
 		countryName := GetContryName(proxy.Name)
 		for i := range sub.ProxyGroups {
 			group := &sub.ProxyGroups[i]
-
 			if group.Name == countryName {
 				group.Proxies = append(group.Proxies, proxy.Name)
 				group.Size++
 				haveProxyGroup = true
-			}
-
-			if group.Name == "手动切换" {
-				group.Proxies = append(group.Proxies, proxy.Name)
-				group.Size++
 			}
 		}
 		if !haveProxyGroup {

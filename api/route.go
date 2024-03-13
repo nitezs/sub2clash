@@ -5,7 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"sub2clash/api/controller"
+	"sub2clash/api/handler"
 	"sub2clash/config"
 	"sub2clash/middleware"
 
@@ -45,22 +45,31 @@ func SetRoute(r *gin.Engine) {
 	)
 	r.GET(
 		"/clash", func(c *gin.Context) {
-			controller.SubmodHandler(c)
+			handler.SubmodHandler(c)
 		},
 	)
 	r.GET(
 		"/meta", func(c *gin.Context) {
-			controller.SubHandler(c)
-		},
-	)
-	r.POST(
-		"/short", func(c *gin.Context) {
-			controller.ShortLinkGenHandler(c)
+			handler.SubHandler(c)
 		},
 	)
 	r.GET(
 		"/s/:hash", func(c *gin.Context) {
-			controller.ShortLinkGetHandler(c)
+			handler.ShortLinkGetConfigHandler(c)
+		},
+	)
+	r.GET(
+		"/short", func(c *gin.Context) {
+			handler.ShortLinkGetUrlHandler(c)
+		})
+	r.POST(
+		"/short", func(c *gin.Context) {
+			handler.ShortLinkGenHandler(c)
+		},
+	)
+	r.PUT(
+		"/short", func(c *gin.Context) {
+			handler.ShortLinkUpdateHandler(c)
 		},
 	)
 }

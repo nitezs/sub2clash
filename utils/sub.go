@@ -81,8 +81,5 @@ func FetchSubscriptionFromAPI(url string) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to write to sub.yaml: %w", err)
 	}
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal yaml: %w", err)
-	}
 	return data, nil
 }

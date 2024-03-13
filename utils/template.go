@@ -25,9 +25,6 @@ func LoadTemplate(template string) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		if err != nil {
-			return nil, err
-		}
 		return result, nil
 	}
 	return nil, errors.New("模板文件不存在")

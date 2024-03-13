@@ -46,6 +46,10 @@ func ParseShadowsocksR(proxy string) (model.Proxy, error) {
 		remarks, err = DecodeBase64(params.Get("remarks"))
 	}
 
+	if err != nil {
+		return model.Proxy{}, err
+	}
+
 	result := model.Proxy{
 		Name:          remarks,
 		Type:          "ssr",

@@ -56,6 +56,9 @@ type Proxy struct {
 	DisableMTUDiscovery bool           `yaml:"disable-mtu-discovery,omitempty"`
 	FastOpen            bool           `yaml:"fast-open,omitempty"`
 	HopInterval         int            `yaml:"hop-interval,omitempty"`
+	Ports               string         `yaml:"ports,omitempty"`
+	AuthStringOLD       string         `yaml:"auth_str,omitempty"`
+	AuthString          string         `yaml:"auth-str,omitempty"`
 }
 
 func (p Proxy) MarshalYAML() (interface{}, error) {
