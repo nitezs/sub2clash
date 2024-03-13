@@ -142,7 +142,7 @@
         <div class="form-group mb-5">
             <label for="apiLink">配置链接:</label>
             <div class="input-group mb-2">
-                <input class="form-control" id="apiLink" readonly type="text" />
+                <input class="form-control" id="apiLink" type="text" />
                 <button class="btn btn-primary" onclick="generateURL()" type="button">
                     生成链接
                 </button>
@@ -151,10 +151,13 @@
                 </button>
             </div>
             <div class="input-group">
-                <input class="form-control" id="apiShortLink" readonly type="text" />
+                <input class="form-control" id="apiShortLink" type="text" />
                 <input class="form-control" id="password" type="text" placeholder="密码" />
                 <button class="btn btn-primary" onclick="generateShortLink()" type="button">
                     生成短链
+                </button>
+                <button class="btn btn-primary" onclick="updateShortLink()" type="button">
+                    更新短链
                 </button>
                 <button class="btn btn-primary" onclick="copyToClipboard('apiShortLink',this)" type="button">
                     复制短链

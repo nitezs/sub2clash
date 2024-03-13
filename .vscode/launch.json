@@ -7,7 +7,7 @@
             "mode": "debug",
             "program": "${workspaceFolder}/main.go",
             "output": "${workspaceFolder}/dist/main.exe",
-            "buildFlags": "-ldflags '-X sub2clash/config.Dev=true -X sub2clash/config.Version=dev'"
+            "buildFlags": "-ldflags '-X sub2clash/config.Version=dev'"
         }
     ]
 }
