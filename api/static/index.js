@@ -157,10 +157,8 @@ function generateURI() {
 async function parseInputURL() {
   // 获取输入框中的 URL
   const inputURL = document.getElementById("urlInput").value;
-  const urlshortLinkPasswdInput = document.getElementById(
-    "urlshortLinkPasswdInput"
-  ).value;
-
+  // 清除现有的输入框值
+  clearExistingValues();
   if (!inputURL) {
     alert("请输入有效的链接！");
     return;
@@ -176,19 +174,20 @@ async function parseInputURL() {
   if (url.pathname.includes("/s/")) {
     let hash = url.pathname.substring(url.pathname.lastIndexOf("/s/") + 3);
     let q = new URLSearchParams();
+    let password = url.searchParams.get("password");
     q.append("hash", hash);
-    q.append("password", urlshortLinkPasswdInput);
+    q.append("password", password);
     try {
       const response = await axios.get("./short?" + q.toString());
       url = new URL(window.location.href + response.data);
+      document.querySelector("#apiShortLink").value = inputURL;
+      document.querySelector("#password").value = password;
     } catch (error) {
       console.log(error);
       alert("获取短链失败，请检查密码！");
     }
   }
   let params = new URLSearchParams(url.search);
-  // 清除现有的输入框值
-  clearExistingValues();
 
   // 分配值到对应的输入框
   const pathSections = url.pathname.split("/");
