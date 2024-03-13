@@ -53,14 +53,18 @@ func SetRoute(r *gin.Engine) {
 			handler.SubHandler(c)
 		},
 	)
-	r.POST(
-		"/short", func(c *gin.Context) {
-			handler.ShortLinkGenHandler(c)
+	r.GET(
+		"/s/:hash", func(c *gin.Context) {
+			handler.ShortLinkGetConfigHandler(c)
 		},
 	)
 	r.GET(
-		"/s/:hash", func(c *gin.Context) {
-			handler.ShortLinkGetHandler(c)
+		"/short", func(c *gin.Context) {
+			handler.ShortLinkGetUrlHandler(c)
+		})
+	r.POST(
+		"/short", func(c *gin.Context) {
+			handler.ShortLinkGenHandler(c)
 		},
 	)
 	r.PUT(

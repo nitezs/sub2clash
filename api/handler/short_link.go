@@ -70,7 +70,30 @@ func ShortLinkGenHandler(c *gin.Context) {
 	c.String(200, hash)
 }
 
-func ShortLinkGetHandler(c *gin.Context) {
+func ShortLinkGetUrlHandler(c *gin.Context) {
+	var params validator.ShortLinkGetValidator
+	if err := c.ShouldBindQuery(&params); err != nil {
+		c.String(400, "参数错误: "+err.Error())
+		return
+	}
+	if strings.TrimSpace(params.Hash) == "" {
+		c.String(400, "参数错误")
+		return
+	}
+	var shortLink model.ShortLink
+	result := database.FindShortLinkByHash(params.Hash, &shortLink)
+	if result.Error != nil {
+		c.String(404, "未找到短链接")
+		return
+	}
+	if shortLink.Password != "" && shortLink.Password != params.Password {
+		c.String(403, "密码错误")
+		return
+	}
+	c.String(200, shortLink.Url)
+}
+
+func ShortLinkGetConfigHandler(c *gin.Context) {
 	// 获取动态路由
 	hash := c.Param("hash")
 	password := c.Query("password")

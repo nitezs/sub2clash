@@ -63,7 +63,7 @@ function generateURI() {
     noProxy = true;
   }
   if (noSub && noProxy) {
-    alert("订阅链接和节点分享链接不能同时为空！");
+    // alert("订阅链接和节点分享链接不能同时为空！");
     return "";
   }
   // 获取复选框的值
@@ -103,7 +103,7 @@ function generateURI() {
       prepend.trim() === "" ||
       name.trim() === ""
     ) {
-      alert("Rule Provider 中存在空值，请检查后重试！");
+      // alert("Rule Provider 中存在空值，请检查后重试！");
       return "";
     }
     providers.push(`[${behavior},${url},${group},${prepend},${name}]`);
@@ -118,7 +118,7 @@ function generateURI() {
       let group = rules[i * 3 + 2].value;
       // 是否存在空值
       if (rule.trim() === "" || prepend.trim() === "" || group.trim() === "") {
-        alert("Rule 中存在空值，请检查后重试！");
+        // alert("Rule 中存在空值，请检查后重试！");
         return "";
       }
       ruleList.push(`[${rule},${prepend},${group}]`);
@@ -143,7 +143,7 @@ function generateURI() {
     let replaceStr = `<${replaces[i * 2].value}>`;
     let replaceTo = `<${replaces[i * 2 + 1].value}>`;
     if (replaceStr.trim() === "") {
-      alert("重命名设置中存在空值，请检查后重试！");
+      // alert("重命名设置中存在空值，请检查后重试！");
       return "";
     }
     replaceList.push(`[${replaceStr},${replaceTo}]`);
@@ -154,9 +154,12 @@ function generateURI() {
 }
 
 // 将输入框中的 URL 解析为参数
-function parseInputURL() {
+async function parseInputURL() {
   // 获取输入框中的 URL
   const inputURL = document.getElementById("urlInput").value;
+  const urlshortLinkPasswdInput = document.getElementById(
+    "urlshortLinkPasswdInput"
+  ).value;
 
   if (!inputURL) {
     alert("请输入有效的链接！");
@@ -170,12 +173,22 @@ function parseInputURL() {
     alert("无效的链接！");
     return;
   }
-
+  if (url.pathname.includes("/s/")) {
+    let hash = url.pathname.substring(url.pathname.lastIndexOf("/s/") + 3);
+    let q = new URLSearchParams();
+    q.append("hash", hash);
+    q.append("password", urlshortLinkPasswdInput);
+    try {
+      const response = await axios.get("./short?" + q.toString());
+      url = new URL(window.location.href + response.data);
+    } catch (error) {
+      console.log(error);
+      alert("获取短链失败，请检查密码！");
+    }
+  }
+  let params = new URLSearchParams(url.search);
   // 清除现有的输入框值
   clearExistingValues();
-
-  // 获取查询参数
-  const params = new URLSearchParams(url.search);
 
   // 分配值到对应的输入框
   const pathSections = url.pathname.split("/");
@@ -360,19 +373,43 @@ function createRule() {
   return div;
 }
 
+function listenInput() {
+  let selectElements = document.querySelectorAll("select");
+  let inputElements = document.querySelectorAll("input");
+  let textAreaElements = document.querySelectorAll("textarea");
+  inputElements.forEach(function (element) {
+    element.addEventListener("input", function () {
+      generateURL();
+    });
+  });
+  textAreaElements.forEach(function (element) {
+    element.addEventListener("input", function () {
+      generateURL();
+    });
+  });
+  selectElements.forEach(function (element) {
+    element.addEventListener("change", function () {
+      generateURL();
+    });
+  });
+}
+
 function addRuleProvider() {
   const div = createRuleProvider();
   document.getElementById("ruleProviderGroup").appendChild(div);
+  listenInput();
 }
 
 function addRule() {
   const div = createRule();
   document.getElementById("ruleGroup").appendChild(div);
+  listenInput();
 }
 
 function addReplace() {
   const div = createReplace();
   document.getElementById("replaceGroup").appendChild(div);
+  listenInput();
 }
 
 function removeElement(button) {
@@ -423,7 +460,7 @@ function updateShortLink() {
   let hash = apiShortLink.value;
   if (hash.startsWith("http")) {
     let u = new URL(hash);
-    hash = u.pathname.replace("/s/", "");
+    hash = u.pathname.substring(u.pathname.lastIndexOf("/s/") + 3);
   }
   if (password.value.trim() === "") {
     alert("请输入密码！");
@@ -455,3 +492,5 @@ function updateShortLink() {
       alert(error.response.data);
     });
 }
+
+listenInput();
