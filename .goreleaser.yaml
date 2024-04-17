@@ -15,7 +15,6 @@ builds:
           - -s -w -X sub2clash/config.Version={{ .Version }}
       flags:
           - -trimpath
-      no_unique_dist_dir: true
 archives:
     - format: tar.gz
       format_overrides:
