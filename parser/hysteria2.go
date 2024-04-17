@@ -8,7 +8,7 @@ import (
 	"sub2clash/model"
 )
 
-// hysteria2://letmein@example.com/?insecure=1&obfs=salamander&obfs-password=gawrgura&pinSHA256=deadbeef&sni=real.example.com
+// hysteria2://letmein@example.com/?insecure=1&obfs=salamander&obfs-password=gawrgura&pinSHA256=deadbeef&sni=real.example.com#name
 
 func ParseHysteria2(proxy string) (model.Proxy, error) {
 	// 判断是否以 hysteria2:// 开头
@@ -34,10 +34,15 @@ func ParseHysteria2(proxy string) (model.Proxy, error) {
 	if err != nil {
 		return model.Proxy{}, errors.New("invalid hysteria2 Url")
 	}
+	name := ""
+	if strings.Contains(proxy, "#") {
+		splitResult := strings.Split(proxy, "#")
+		name, _ = url.QueryUnescape(splitResult[len(splitResult)-1])
+	}
 	// 返回结果
 	result := model.Proxy{
 		Type:           "hysteria2",
-		Name:           params.Get("name"),
+		Name:           name,
 		Server:         serverAndPort[0],
 		Port:           port,
 		Password:       parts[0],

@@ -118,7 +118,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	proxies := make(map[string]*model.Proxy)
 	newProxies := make([]model.Proxy, 0, len(proxyList))
 	for i := range proxyList {
-		key := proxyList[i].Server + ":" + strconv.Itoa(proxyList[i].Port) + ":" + proxyList[i].Type
+		key := proxyList[i].Server + strconv.Itoa(proxyList[i].Port) + proxyList[i].Type + proxyList[i].UUID + proxyList[i].Password
 		if _, exist := proxies[key]; !exist {
 			proxies[key] = &proxyList[i]
 			newProxies = append(newProxies, proxyList[i])
@@ -266,12 +266,16 @@ func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription, igcg
 				case "all":
 					newProxies = append(newProxies, proxyNames...)
 				case "countries":
-					newProxies = append(newProxies, countryGroupNames...)
+					if !igcg {
+						newProxies = append(newProxies, countryGroupNames...)
+					}
 				default:
-					if len(key) == 2 {
-						newProxies = append(
-							newProxies, countryGroupMap[utils.GetContryName(key)].Proxies...,
-						)
+					if !igcg {
+						if len(key) == 2 {
+							newProxies = append(
+								newProxies, countryGroupMap[utils.GetContryName(key)].Proxies...,
+							)
+						}
 					}
 				}
 			} else {

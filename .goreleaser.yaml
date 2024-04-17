@@ -9,9 +9,20 @@ builds:
       goarch:
           - amd64
           - arm64
+          - arm
+          - "386"
       ldflags:
           - -s -w -X sub2clash/config.Version={{ .Version }}
+      flags:
+          - -trimpath
       no_unique_dist_dir: true
-      binary: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
 archives:
-    - format: binary
+    - format: tar.gz
+      format_overrides:
+          - format: zip
+            goos: windows
+      wrap_in_directory: true
+      files:
+          - LICENSE
+          - README.md
+          - templates

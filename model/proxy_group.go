@@ -6,108 +6,29 @@ import (
 )
 
 type ProxyGroup struct {
-	Name          string   `yaml:"name,omitempty"`
-	Type          string   `yaml:"type,omitempty"`
-	Proxies       []string `yaml:"proxies,omitempty"`
-	IsCountryGrop bool     `yaml:"-"`
-	Url           string   `yaml:"url,omitempty"`
-	Interval      int      `yaml:"interval,omitempty"`
-	Tolerance     int      `yaml:"tolerance,omitempty"`
-	Lazy          bool     `yaml:"lazy"`
-	Size          int      `yaml:"-"`
-	DisableUDP    bool     `yaml:"disable-udp,omitempty"`
-	Strategy      string   `yaml:"strategy,omitempty"`
-	Icon          string   `yaml:"icon,omitempty"`
-}
-
-type SelectProxyGroup struct {
-	Name       string   `yaml:"name,omitempty"`
-	Type       string   `yaml:"type,omitempty"`
-	Proxies    []string `yaml:"proxies,omitempty"`
-	DisableUDP bool     `yaml:"disable-udp,omitempty"`
-	Icon       string   `yaml:"icon,omitempty"`
-}
-
-type UrlTestProxyGroup struct {
-	Name       string   `yaml:"name,omitempty"`
-	Type       string   `yaml:"type,omitempty"`
-	Proxies    []string `yaml:"proxies,omitempty"`
-	Url        string   `yaml:"url,omitempty"`
-	Interval   int      `yaml:"interval,omitempty"`
-	Tolerance  int      `yaml:"tolerance,omitempty"`
-	Lazy       bool     `yaml:"lazy"`
-	DisableUDP bool     `yaml:"disable-udp,omitempty"`
-	Icon       string   `yaml:"icon,omitempty"`
-}
-
-type LoadBalanceProxyGroup struct {
-	Name       string   `yaml:"name,omitempty"`
-	Type       string   `yaml:"type,omitempty"`
-	Proxies    []string `yaml:"proxies,omitempty"`
-	DisableUDP bool     `yaml:"disable-udp,omitempty"`
-	Url        string   `yaml:"url,omitempty"`
-	Interval   int      `yaml:"interval,omitempty"`
-	Lazy       bool     `yaml:"lazy"`
-	Strategy   string   `yaml:"strategy,omitempty"`
-	Icon       string   `yaml:"icon,omitempty"`
-}
-
-type RelayProxyGroup struct {
-	Name    string   `yaml:"name,omitempty"`
-	Type    string   `yaml:"type,omitempty"`
-	Proxies []string `yaml:"proxies,omitempty"`
-	Icon    string   `yaml:"icon,omitempty"`
-}
-
-func (p ProxyGroup) MarshalYAML() (interface{}, error) {
-	switch p.Type {
-	case "select":
-		return SelectProxyGroup{
-			Name:       p.Name,
-			Type:       p.Type,
-			Proxies:    p.Proxies,
-			DisableUDP: p.DisableUDP,
-			Icon:       p.Icon,
-		}, nil
-	case "url-test", "fallback":
-		return UrlTestProxyGroup{
-			Name:       p.Name,
-			Type:       p.Type,
-			Proxies:    p.Proxies,
-			Url:        p.Url,
-			Interval:   p.Interval,
-			Tolerance:  p.Tolerance,
-			Lazy:       p.Lazy,
-			DisableUDP: p.DisableUDP,
-			Icon:       p.Icon,
-		}, nil
-	case "load-balance":
-		return LoadBalanceProxyGroup{
-			Name:       p.Name,
-			Type:       p.Type,
-			Proxies:    p.Proxies,
-			DisableUDP: p.DisableUDP,
-			Url:        p.Url,
-			Interval:   p.Interval,
-			Lazy:       p.Lazy,
-			Strategy:   p.Strategy,
-			Icon:       p.Icon,
-		}, nil
-	case "relay":
-		return RelayProxyGroup{
-			Name:    p.Name,
-			Type:    p.Type,
-			Proxies: p.Proxies,
-			Icon:    p.Icon,
-		}, nil
-	default:
-		return SelectProxyGroup{
-			Name:    p.Name,
-			Type:    p.Type,
-			Proxies: p.Proxies,
-			Icon:    p.Icon,
-		}, nil
-	}
+	Type                string   `yaml:"type,omitempty"`
+	Name                string   `yaml:"name,omitempty"`
+	Proxies             []string `yaml:"proxies,omitempty"`
+	IsCountryGrop       bool     `yaml:"-"` // 是否是国家分组
+	Url                 string   `yaml:"url,omitempty"`
+	Interval            int      `yaml:"interval,omitempty"`
+	Tolerance           int      `yaml:"tolerance,omitempty"`
+	Lazy                bool     `yaml:"lazy"`
+	Size                int      `yaml:"-"` // 代理数量
+	DisableUDP          bool     `yaml:"disable-udp,omitempty"`
+	Strategy            string   `yaml:"strategy,omitempty"`
+	Icon                string   `yaml:"icon,omitempty"`
+	Timeout             int      `yaml:"timeout,omitempty"`
+	Use                 []string `yaml:"use,omitempty"`
+	InterfaceName       string   `yaml:"interface-name,omitempty"`
+	RoutingMark         int      `yaml:"routing-mark,omitempty"`
+	IncludeAll          bool     `yaml:"include-all,omitempty"`
+	IncludeAllProxies   bool     `yaml:"include-all-proxies,omitempty"`
+	IncludeAllProviders bool     `yaml:"include-all-providers,omitempty"`
+	Filter              string   `yaml:"filter,omitempty"`
+	ExcludeFilter       string   `yaml:"exclude-filter,omitempty"`
+	ExpectedStatus      int      `yaml:"expected-status,omitempty"`
+	Hidden              bool     `yaml:"hidden,omitempty"`
 }
 
 type ProxyGroupsSortByName []ProxyGroup

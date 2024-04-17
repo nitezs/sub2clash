@@ -1,0 +1,10 @@
+steps:
+  - name: build
+    image: woodpeckerci/plugin-docker-buildx
+    settings:
+      platforms: linux/amd64,linux/arm64/v8,linux/arm/v7,linux/386,linux/ppc64le,linux/s390x
+      repo: nite07/sub2clash
+      tag: nightly
+      username: nite07
+      password:
+        from_secret: docker_password
