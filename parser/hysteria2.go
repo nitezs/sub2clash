@@ -38,6 +38,8 @@ func ParseHysteria2(proxy string) (model.Proxy, error) {
 	if strings.Contains(proxy, "#") {
 		splitResult := strings.Split(proxy, "#")
 		name, _ = url.QueryUnescape(splitResult[len(splitResult)-1])
+	} else {
+		name = strings.Join(serverAndPort, ":")
 	}
 	// 返回结果
 	result := model.Proxy{
