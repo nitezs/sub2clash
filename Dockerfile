@@ -4,7 +4,7 @@ WORKDIR /app
 COPY . .
 RUN go mod download
 ARG version
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w -X sub2clash/config.Version=${version}" -o sub2clash .
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w -X sub2clash/constant.Version=${version}" -o sub2clash .
 
 FROM alpine:latest
 WORKDIR /app
