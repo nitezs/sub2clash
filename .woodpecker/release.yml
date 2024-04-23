@@ -1,5 +1,6 @@
 when:
-  event: tag
+  - event: tag
+    ref: refs/tags/v*
 
 steps:
   - name: build
@@ -14,5 +15,6 @@ steps:
     settings:
       files: release/*
       api_key:
-        from_secret: gitea_key
+        from_secret: forgejo_token
       base-url: https://git.nite07.com
+      draft: true
