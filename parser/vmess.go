@@ -2,83 +2,96 @@ package parser
 
 import (
 	"encoding/json"
-	"errors"
 	"net/url"
 	"strconv"
 	"strings"
+	"sub2clash/constant"
 	"sub2clash/model"
 )
 
 func ParseVmess(proxy string) (model.Proxy, error) {
-	// 判断是否以 vmess:// 开头
-	if !strings.HasPrefix(proxy, "vmess://") {
-		return model.Proxy{}, errors.New("invalid vmess url")
+	if !strings.HasPrefix(proxy, constant.VMessPrefix) {
+		return model.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
 	}
-	// 解码
-	base64, err := DecodeBase64(strings.TrimPrefix(proxy, "vmess://"))
+
+	proxy = strings.TrimPrefix(proxy, constant.VMessPrefix)
+	base64, err := DecodeBase64(proxy)
 	if err != nil {
-		return model.Proxy{}, errors.New("invalid vmess url" + err.Error())
+		return model.Proxy{}, &ParseError{Type: ErrInvalidBase64, Raw: proxy, Message: err.Error()}
 	}
-	// 解析
+
 	var vmess model.VmessJson
 	err = json.Unmarshal([]byte(base64), &vmess)
 	if err != nil {
-		return model.Proxy{}, errors.New("invalid vmess url" + err.Error())
+		return model.Proxy{}, &ParseError{Type: ErrInvalidStruct, Raw: proxy, Message: err.Error()}
 	}
-	// 解析端口
-	port := 0
+
+	var port int
 	switch vmess.Port.(type) {
 	case string:
-		port, err = strconv.Atoi(vmess.Port.(string))
+		port, err = ParsePort(vmess.Port.(string))
 		if err != nil {
-			return model.Proxy{}, errors.New("invalid vmess url" + err.Error())
+			return model.Proxy{}, &ParseError{
+				Type:    ErrInvalidPort,
+				Message: err.Error(),
+				Raw:     proxy,
+			}
 		}
 	case float64:
 		port = int(vmess.Port.(float64))
 	}
-	// 解析Aid
+
 	aid := 0
 	switch vmess.Aid.(type) {
 	case string:
 		aid, err = strconv.Atoi(vmess.Aid.(string))
 		if err != nil {
-			return model.Proxy{}, errors.New("invalid vmess url" + err.Error())
+			return model.Proxy{}, &ParseError{Type: ErrInvalidStruct, Raw: proxy, Message: err.Error()}
 		}
 	case float64:
 		aid = int(vmess.Aid.(float64))
 	}
-	// 设置默认值
+
 	if vmess.Scy == "" {
 		vmess.Scy = "auto"
 	}
-	if vmess.Net == "ws" && vmess.Path == "" {
-		vmess.Path = "/"
-	}
-	if vmess.Net == "ws" && vmess.Host == "" {
-		vmess.Host = vmess.Add
-	}
+
 	name, err := url.QueryUnescape(vmess.Ps)
 	if err != nil {
 		name = vmess.Ps
 	}
-	// 返回结果
+
 	result := model.Proxy{
-		Name:              name,
-		Type:              "vmess",
-		Server:            vmess.Add,
-		Port:              port,
-		UUID:              vmess.Id,
-		AlterID:           aid,
-		Cipher:            vmess.Scy,
-		UDP:               true,
-		TLS:               vmess.Tls == "tls",
-		Fingerprint:       vmess.Fp,
-		ClientFingerprint: "chrome",
-		SkipCertVerify:    true,
-		Servername:        vmess.Add,
-		Network:           vmess.Net,
+		Name:    name,
+		Type:    "vmess",
+		Server:  vmess.Add,
+		Port:    port,
+		UUID:    vmess.Id,
+		AlterID: aid,
+		Cipher:  vmess.Scy,
 	}
+
+	if vmess.Tls == "tls" {
+		var alpn []string
+		if strings.Contains(vmess.Alpn, ",") {
+			alpn = strings.Split(vmess.Alpn, ",")
+		} else {
+			alpn = nil
+		}
+		result.TLS = true
+		result.Fingerprint = vmess.Fp
+		result.Alpn = alpn
+		result.Servername = vmess.Sni
+	}
+
 	if vmess.Net == "ws" {
+		if vmess.Path == "" {
+			vmess.Path = "/"
+		}
+		if vmess.Host == "" {
+			vmess.Host = vmess.Add
+		}
+		result.Network = "ws"
 		result.WSOpts = model.WSOptions{
 			Path: vmess.Path,
 			Headers: map[string]string{
@@ -86,5 +99,25 @@ func ParseVmess(proxy string) (model.Proxy, error) {
 			},
 		}
 	}
+
+	// if vmess.Net == "quic" {
+	// 	// 未查到相关支持文档
+	// }
+
+	if vmess.Net == "grpc" {
+		result.GrpcOpts = model.GrpcOptions{
+			GrpcServiceName: vmess.Path,
+		}
+		result.Network = "grpc"
+	}
+
+	if vmess.Net == "h2" {
+		result.HTTP2Opts = model.HTTP2Options{
+			Host: strings.Split(vmess.Host, ","),
+			Path: vmess.Path,
+		}
+		result.Network = "h2"
+	}
+
 	return result, nil
 }

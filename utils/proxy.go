@@ -2,6 +2,7 @@ package utils
 
 import (
 	"strings"
+	"sub2clash/constant"
 	"sub2clash/logger"
 	"sub2clash/model"
 	"sub2clash/parser"
@@ -106,25 +107,25 @@ func ParseProxy(proxies ...string) []model.Proxy {
 			var proxyItem model.Proxy
 			var err error
 			// 解析节点
-			if strings.HasPrefix(proxy, "ss://") {
-				proxyItem, err = parser.ParseSS(proxy)
+			if strings.HasPrefix(proxy, constant.ShadowsocksPrefix) {
+				proxyItem, err = parser.ParseShadowsocks(proxy)
 			}
-			if strings.HasPrefix(proxy, "trojan://") {
+			if strings.HasPrefix(proxy, constant.TrojanPrefix) {
 				proxyItem, err = parser.ParseTrojan(proxy)
 			}
-			if strings.HasPrefix(proxy, "vmess://") {
+			if strings.HasPrefix(proxy, constant.VMessPrefix) {
 				proxyItem, err = parser.ParseVmess(proxy)
 			}
-			if strings.HasPrefix(proxy, "vless://") {
+			if strings.HasPrefix(proxy, constant.VLESSPrefix) {
 				proxyItem, err = parser.ParseVless(proxy)
 			}
-			if strings.HasPrefix(proxy, "ssr://") {
+			if strings.HasPrefix(proxy, constant.ShadowsocksRPrefix) {
 				proxyItem, err = parser.ParseShadowsocksR(proxy)
 			}
-			if strings.HasPrefix(proxy, "hysteria2://") || strings.HasPrefix(proxy, "hy2://") {
+			if strings.HasPrefix(proxy, constant.Hysteria2Prefix1) || strings.HasPrefix(proxy, constant.Hysteria2Prefix2) {
 				proxyItem, err = parser.ParseHysteria2(proxy)
 			}
-			if strings.HasPrefix(proxy, "hysteria://") {
+			if strings.HasPrefix(proxy, constant.HysteriaPrefix) {
 				proxyItem, err = parser.ParseHysteria(proxy)
 			}
 			if err == nil {

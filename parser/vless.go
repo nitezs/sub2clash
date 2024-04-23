@@ -1,92 +1,156 @@
 package parser
 
 import (
-	"fmt"
 	"net/url"
-	"strconv"
 	"strings"
+	"sub2clash/constant"
 	"sub2clash/model"
 )
 
 func ParseVless(proxy string) (model.Proxy, error) {
-	// 判断是否以 vless:// 开头
-	if !strings.HasPrefix(proxy, "vless://") {
-		return model.Proxy{}, fmt.Errorf("invalid vless Url")
+	if !strings.HasPrefix(proxy, constant.VLESSPrefix) {
+		return model.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
 	}
-	// 分割
-	parts := strings.SplitN(strings.TrimPrefix(proxy, "vless://"), "@", 2)
-	if len(parts) != 2 {
-		return model.Proxy{}, fmt.Errorf("invalid vless Url")
+
+	urlParts := strings.SplitN(strings.TrimPrefix(proxy, constant.VLESSPrefix), "@", 2)
+	if len(urlParts) != 2 {
+		return model.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
+			Message: "missing character '@' in url",
+			Raw:     proxy,
+		}
 	}
-	// 分割
-	serverInfo := strings.SplitN(parts[1], "#", 2)
+
+	serverInfo := strings.SplitN(urlParts[1], "#", 2)
 	serverAndPortAndParams := strings.SplitN(serverInfo[0], "?", 2)
+	if len(serverAndPortAndParams) != 2 {
+		return model.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
+			Message: "missing character '?' in url",
+			Raw:     proxy,
+		}
+	}
+
 	serverAndPort := strings.SplitN(serverAndPortAndParams[0], ":", 2)
+	if len(serverAndPort) != 2 {
+		return model.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
+			Message: "missing server host or port",
+			Raw:     proxy,
+		}
+	}
+	server, portStr := serverAndPort[0], serverAndPort[1]
+	port, err := ParsePort(portStr)
+	if err != nil {
+		return model.Proxy{}, &ParseError{
+			Type:    ErrInvalidPort,
+			Message: err.Error(),
+			Raw:     proxy,
+		}
+	}
+
 	params, err := url.ParseQuery(serverAndPortAndParams[1])
 	if err != nil {
-		return model.Proxy{}, err
-	}
-	if len(serverAndPort) != 2 {
-		return model.Proxy{}, fmt.Errorf("invalid vless")
-	}
-	// 处理端口
-	port, err := strconv.Atoi(strings.TrimSpace(serverAndPort[1]))
-	if err != nil {
-		return model.Proxy{}, err
-	}
-	// 返回结果
-	result := model.Proxy{
-		Type:              "vless",
-		Server:            strings.TrimSpace(serverAndPort[0]),
-		Port:              port,
-		UUID:              strings.TrimSpace(parts[0]),
-		UDP:               true,
-		Sni:               params.Get("sni"),
-		Network:           params.Get("type"),
-		Flow:              params.Get("flow"),
-		ClientFingerprint: params.Get("fp"),
-		Servername:        params.Get("sni"),
-	}
-	if params.Get("alpn") != "" {
-		result.Alpn = strings.Split(params.Get("alpn"), ",")
-	}
-	if params.Get("security") == "reality" {
-		result.TLS = true
-		result.RealityOpts = model.RealityOptions{
-			PublicKey: params.Get("pbk"),
-			ShortID:   params.Get("sid"),
+		return model.Proxy{}, &ParseError{
+			Type:    ErrCannotParseParams,
+			Raw:     proxy,
+			Message: err.Error(),
 		}
 	}
-	if params.Get("type") == "ws" {
-		result.TLS = true
-		result.WSOpts = model.WSOptions{
-			Path: params.Get("path"),
-			Headers: map[string]string{
-				"Host": params.Get("host"),
-			},
-		}
-	}
-	if params.Get("type") == "grpc" {
-		result.TLS = true
-		result.GrpcOpts = model.GrpcOptions{
-			GrpcServiceName: params.Get("serviceName"),
-		}
-	}
-	// 如果有节点名称
+
+	remarks := ""
 	if len(serverInfo) == 2 {
 		if strings.Contains(serverInfo[1], "|") {
-			result.Name = strings.SplitN(serverInfo[1], "|", 2)[1]
+			remarks = strings.SplitN(serverInfo[1], "|", 2)[1]
 		} else {
-			result.Name, err = url.QueryUnescape(serverInfo[1])
+			remarks, err = url.QueryUnescape(serverInfo[1])
 			if err != nil {
-				return model.Proxy{}, err
+				return model.Proxy{}, &ParseError{
+					Type:    ErrCannotParseParams,
+					Raw:     proxy,
+					Message: err.Error(),
+				}
 			}
 		}
 	} else {
-		result.Name, err = url.QueryUnescape(serverAndPort[0])
+		remarks, err = url.QueryUnescape(server)
 		if err != nil {
 			return model.Proxy{}, err
 		}
 	}
+
+	uuid := strings.TrimSpace(urlParts[0])
+	flow, security, alpnStr, sni, insecure, fp, pbk, sid, path, host, serviceName, _type := params.Get("flow"), params.Get("security"), params.Get("alpn"), params.Get("sni"), params.Get("allowInsecure"), params.Get("fp"), params.Get("pbk"), params.Get("sid"), params.Get("path"), params.Get("host"), params.Get("serviceName"), params.Get("type")
+
+	// enableUTLS := fp != ""
+	insecureBool := insecure == "1"
+	var alpn []string
+	if strings.Contains(alpnStr, ",") {
+		alpn = strings.Split(alpnStr, ",")
+	} else {
+		alpn = nil
+	}
+
+	result := model.Proxy{
+		Type:   "vless",
+		Server: server,
+		Name:   remarks,
+		Port:   port,
+		UUID:   uuid,
+		Flow:   flow,
+	}
+
+	if security == "tls" {
+		result.TLS = true
+		result.Alpn = alpn
+		result.Sni = sni
+		result.AllowInsecure = insecureBool
+		result.Fingerprint = fp
+	}
+
+	if security == "reality" {
+		result.TLS = true
+		result.RealityOpts = model.RealityOptions{
+			PublicKey: pbk,
+			ShortID:   sid,
+		}
+	}
+
+	if _type == "ws" {
+		result.Network = "ws"
+		result.WSOpts = model.WSOptions{
+			Path: path,
+		}
+		if host != "" {
+			result.WSOpts.Headers = make(map[string]string)
+			result.WSOpts.Headers["Host"] = host
+		}
+	}
+
+	// if _type == "quic" {
+	// 	// 未查到相关支持文档
+	// }
+
+	if _type == "grpc" {
+		result.Network = "grpc"
+		result.Servername = serviceName
+	}
+
+	if _type == "http" {
+		hosts, err := url.QueryUnescape(host)
+		if err != nil {
+			return model.Proxy{}, &ParseError{
+				Type:    ErrCannotParseParams,
+				Raw:     proxy,
+				Message: err.Error(),
+			}
+		}
+		result.Network = "http"
+		result.HTTPOpts = model.HTTPOptions{
+			Headers: map[string][]string{"Host": strings.Split(hosts, ",")},
+		}
+
+	}
+
 	return result, nil
 }

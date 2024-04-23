@@ -76,7 +76,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 		err = yaml.Unmarshal(data, &sub)
 		var newProxies []model.Proxy
 		if err != nil {
-			reg, _ := regexp.Compile("(ssr|ss|vmess|trojan|vless|hysteria)://")
+			reg, _ := regexp.Compile("(ssr|ss|vmess|trojan|vless|hysteria|hy2|hysteria2)://")
 			if reg.Match(data) {
 				p := utils.ParseProxy(strings.Split(string(data), "\n")...)
 				newProxies = p

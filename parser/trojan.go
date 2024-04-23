@@ -55,7 +55,11 @@ func ParseTrojan(proxy string) (model.Proxy, error) {
 
 	port, err := ParsePort(portStr)
 	if err != nil {
-		return model.Proxy{}, err
+		return model.Proxy{}, &ParseError{
+			Type:    ErrInvalidPort,
+			Message: err.Error(),
+			Raw:     proxy,
+		}
 	}
 
 	remarks := ""
@@ -112,16 +116,13 @@ func ParseTrojan(proxy string) (model.Proxy, error) {
 		}
 	}
 
-	if network == "http" {
-		result.HTTP2Opts = model.HTTP2Options{
-			Host: []string{host},
-			Path: path,
-		}
-	}
+	// if network == "http" {
+	// 	// 未查到相关支持文档
+	// }
 
-	if network == "quic" {
-		// 未查到相关支持文档
-	}
+	// if network == "quic" {
+	// 	// 未查到相关支持文档
+	// }
 
 	if network == "grpc" {
 		result.GrpcOpts = model.GrpcOptions{
