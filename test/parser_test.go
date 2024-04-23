@@ -8,7 +8,7 @@ import (
 )
 
 func TestHy2Parser(t *testing.T) {
-	res, err := parser.ParseHysteria2("hysteria2://letmein@example.com/?insecure=1&obfs=salamander&obfs-password=gawrgura&pinSHA256=deadbeef&sni=real.example.com")
+	res, err := parser.ParseTrojan("trojan://Abse64hhjewrs@test.com:8443?type=ws&path=%2Fx&host=test.com&security=tls&fp=&alpn=http%2F1.1&sni=test.com#test")
 	if err != nil {
 		t.Log(err.Error())
 		t.Fail()
