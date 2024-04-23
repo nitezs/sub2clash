@@ -4,7 +4,7 @@ services:
     sub2clash:
         container_name: sub2clash
         restart: unless-stopped
-        image: ghcr.io/nitezs/sub2clash:latest
+        image: nite07/sub2clash:latest
         ports:
             - "8011:8011"
         volumes:
