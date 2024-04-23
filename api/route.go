@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 	"sub2clash/api/handler"
-	"sub2clash/config"
+	"sub2clash/constant"
 	"sub2clash/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -32,9 +32,9 @@ func SetRoute(r *gin.Engine) {
 	)
 	r.GET(
 		"/", func(c *gin.Context) {
-			version := config.Version
-			if len(config.Version) > 7 {
-				version = config.Version[:7]
+			version := constant.Version
+			if len(constant.Version) > 7 {
+				version = constant.Version[:7]
 			}
 			c.HTML(
 				200, "index.html", gin.H{

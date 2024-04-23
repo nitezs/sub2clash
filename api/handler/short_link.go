@@ -6,11 +6,11 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sub2clash/common"
+	"sub2clash/common/database"
 	"sub2clash/config"
 	"sub2clash/logger"
 	"sub2clash/model"
-	"sub2clash/utils"
-	"sub2clash/utils/database"
 	"sub2clash/validator"
 	"time"
 
@@ -30,7 +30,7 @@ func ShortLinkGenHandler(c *gin.Context) {
 		return
 	}
 	// 生成hash
-	hash := utils.RandomString(config.Default.ShortLinkLength)
+	hash := common.RandomString(config.Default.ShortLinkLength)
 	var item model.ShortLink
 	result := database.FindShortLinkByUrl(params.Url, &item)
 	if result.Error == nil {
@@ -51,7 +51,7 @@ func ShortLinkGenHandler(c *gin.Context) {
 	// 如果记录存在则重新生成hash，直到记录不存在
 	result = database.FindShortLinkByHash(hash, &item)
 	for result.Error == nil {
-		hash = utils.RandomString(config.Default.ShortLinkLength)
+		hash = common.RandomString(config.Default.ShortLinkLength)
 		result = database.FindShortLinkByHash(hash, &item)
 	}
 	// 创建记录
@@ -116,7 +116,7 @@ func ShortLinkGetConfigHandler(c *gin.Context) {
 	// 更新最后访问时间
 	shortLink.LastRequestTime = time.Now().Unix()
 	database.SaveShortLink(&shortLink)
-	get, err := utils.Get("http://localhost:" + strconv.Itoa(config.Default.Port) + "/" + shortLink.Url)
+	get, err := common.Get("http://localhost:" + strconv.Itoa(config.Default.Port) + "/" + shortLink.Url)
 	if err != nil {
 		logger.Logger.Debug("get short link data failed", zap.Error(err))
 		c.String(500, "请求错误: "+err.Error())

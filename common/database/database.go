@@ -2,9 +2,9 @@ package database
 
 import (
 	"path/filepath"
+	"sub2clash/common"
 	"sub2clash/logger"
 	"sub2clash/model"
-	"sub2clash/utils"
 
 	"github.com/glebarez/sqlite"
 	"go.uber.org/zap"
@@ -15,7 +15,7 @@ var DB *gorm.DB
 
 func ConnectDB() error {
 	// 用上面的数据库连接初始化 gorm
-	err := utils.MKDir("data")
+	err := common.MKDir("data")
 	if err != nil {
 		return err
 	}

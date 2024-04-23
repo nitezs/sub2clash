@@ -3,7 +3,6 @@ package config
 import (
 	"errors"
 	"os"
-	"regexp"
 	"strconv"
 
 	"github.com/joho/godotenv"
@@ -22,17 +21,7 @@ type Config struct {
 }
 
 var Default *Config
-var Version string
 var Dev string
-
-func init() {
-	reg := regexp.MustCompile(`^v\d+\.\d+\.\d+$`)
-	if reg.MatchString(Version) {
-		Dev = "false"
-	} else {
-		Dev = "true"
-	}
-}
 
 func LoadConfig() error {
 	Default = &Config{

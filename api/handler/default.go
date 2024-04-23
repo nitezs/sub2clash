@@ -9,10 +9,10 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sub2clash/common"
 	"sub2clash/logger"
 	"sub2clash/model"
 	"sub2clash/parser"
-	"sub2clash/utils"
 	"sub2clash/validator"
 
 	"go.uber.org/zap"
@@ -32,7 +32,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 		template = query.Template
 	}
 	if strings.HasPrefix(template, "http") {
-		templateBytes, err = utils.LoadSubscription(template, query.Refresh)
+		templateBytes, err = common.LoadSubscription(template, query.Refresh)
 		if err != nil {
 			logger.Logger.Debug(
 				"load template failed", zap.String("template", template), zap.Error(err),
@@ -44,7 +44,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 		if err != nil {
 			return nil, errors.New("加载模板失败: " + err.Error())
 		}
-		templateBytes, err = utils.LoadTemplate(unescape)
+		templateBytes, err = common.LoadTemplate(unescape)
 		if err != nil {
 			logger.Logger.Debug(
 				"load template failed", zap.String("template", template), zap.Error(err),
@@ -61,7 +61,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	var proxyList []model.Proxy
 	// 加载订阅
 	for i := range query.Subs {
-		data, err := utils.LoadSubscription(query.Subs[i], query.Refresh)
+		data, err := common.LoadSubscription(query.Subs[i], query.Refresh)
 		subName := ""
 		if strings.Contains(query.Subs[i], "#") {
 			subName = query.Subs[i][strings.LastIndex(query.Subs[i], "#")+1:]
@@ -78,7 +78,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 		if err != nil {
 			reg, _ := regexp.Compile("(ssr|ss|vmess|trojan|vless|hysteria|hy2|hysteria2)://")
 			if reg.Match(data) {
-				p := utils.ParseProxy(strings.Split(string(data), "\n")...)
+				p := common.ParseProxy(strings.Split(string(data), "\n")...)
 				newProxies = p
 			} else {
 				// 如果无法直接解析，尝试Base64解码
@@ -91,7 +91,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 					)
 					return nil, errors.New("加载订阅失败: " + err.Error())
 				}
-				p := utils.ParseProxy(strings.Split(base64, "\n")...)
+				p := common.ParseProxy(strings.Split(base64, "\n")...)
 				newProxies = p
 			}
 		} else {
@@ -106,7 +106,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	}
 	// 添加自定义节点
 	if len(query.Proxies) != 0 {
-		proxyList = append(proxyList, utils.ParseProxy(query.Proxies...)...)
+		proxyList = append(proxyList, common.ParseProxy(query.Proxies...)...)
 	}
 	// 给节点添加订阅名称
 	for i := range proxyList {
@@ -181,7 +181,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	}
 	// 将新增节点都添加到临时变量 t 中，防止策略组排序错乱
 	var t = &model.Subscription{}
-	utils.AddProxy(t, query.AutoTest, query.Lazy, clashType, proxyList...)
+	common.AddProxy(t, query.AutoTest, query.Lazy, clashType, proxyList...)
 	// 排序策略组
 	switch query.Sort {
 	case "sizeasc":
@@ -200,9 +200,9 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	// 处理自定义规则
 	for _, v := range query.Rules {
 		if v.Prepend {
-			utils.PrependRules(temp, v.Rule)
+			common.PrependRules(temp, v.Rule)
 		} else {
-			utils.AppendRules(temp, v.Rule)
+			common.AppendRules(temp, v.Rule)
 		}
 	}
 	// 处理自定义 ruleProvider
@@ -217,11 +217,11 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 			Interval: 3600,
 		}
 		if v.Prepend {
-			utils.PrependRuleProvider(
+			common.PrependRuleProvider(
 				temp, v.Name, v.Group, provider,
 			)
 		} else {
-			utils.AppenddRuleProvider(
+			common.AppenddRuleProvider(
 				temp, v.Name, v.Group, provider,
 			)
 		}
@@ -273,7 +273,7 @@ func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription, igcg
 					if !igcg {
 						if len(key) == 2 {
 							newProxies = append(
-								newProxies, countryGroupMap[utils.GetContryName(key)].Proxies...,
+								newProxies, countryGroupMap[common.GetContryName(key)].Proxies...,
 							)
 						}
 					}
