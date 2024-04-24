@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"sub2clash/config"
@@ -57,11 +58,11 @@ func FetchSubscriptionFromAPI(url string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer func(Body io.ReadCloser) {
-		if Body != nil {
-			_ = Body.Close()
+	defer func(resp *http.Response) {
+		if resp != nil && resp.Body != nil {
+			_ = resp.Body.Close()
 		}
-	}(resp.Body)
+	}(resp)
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read response body: %w", err)

@@ -2,6 +2,6 @@
 dist
 subs
 logs
-sub2clash.db
+data
 .env
 .vscode/settings.json

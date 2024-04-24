@@ -1,7 +1,7 @@
 package model
 
 type ShortLink struct {
-	Hash            string `gorm:"primary_key"`
+	Hash            string
 	Url             string
 	Password        string
 	LastRequestTime int64

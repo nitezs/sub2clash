@@ -5,7 +5,7 @@ type ShortLinkGenValidator struct {
 	Password string `form:"password"`
 }
 
-type ShortLinkGetValidator struct {
+type GetUrlValidator struct {
 	Hash     string `form:"hash" binding:"required"` // Hash: 短链接
 	Password string `form:"password"`
 }

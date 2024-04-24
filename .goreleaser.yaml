@@ -1,24 +1,30 @@
 project_name: sub2clash
 builds:
-    - env:
-          - CGO_ENABLED=0
-      goos:
-          - windows
-          - linux
-          - darwin
-      goarch:
-          - amd64
-      ldflags:
-          - -s -w -X sub2clash/constant.Version={{ .Version }}
-      flags:
-          - -trimpath
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - windows
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+      - arm
+      - "386"
+    goarm:
+      - "6"
+      - "7"
+    ldflags:
+      - -s -w -X sub2clash/constant.Version={{ .Version }}
+    flags:
+      - -trimpath
 archives:
-    - format: tar.gz
-      format_overrides:
-          - format: zip
-            goos: windows
-      wrap_in_directory: true
-      files:
-          - LICENSE
-          - README.md
-          - templates
+  - format: tar.gz
+    format_overrides:
+      - format: zip
+        goos: windows
+    wrap_in_directory: true
+    files:
+      - LICENSE
+      - README.md
+      - templates
