@@ -1,70 +1,52 @@
 package logger
 
 import (
-	"path/filepath"
-	"sync"
-	"time"
+	"os"
+	"strings"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-var (
-	Logger   *zap.Logger
-	lock     sync.Mutex
-	logLevel string
-)
+var Logger *zap.Logger
 
-func InitLogger(level string) {
-	logLevel = level
-	buildLogger()
-	go rotateLogs()
+func InitLogger(logLevel string) {
+	logger := zap.New(buildZapCore(getZapLogLevel(logLevel)))
+	Logger = logger
 }
 
-func buildLogger() {
-	lock.Lock()
-	defer lock.Unlock()
-	var level zapcore.Level
-	switch logLevel {
-	case "error":
-		level = zap.ErrorLevel
+func buildZapCore(logLevel zapcore.Level) zapcore.Core {
+	fileWriter := zapcore.AddSync(&lumberjack.Logger{
+		Filename:   "logs/app.log",
+		MaxSize:    500,
+		MaxBackups: 3,
+		MaxAge:     28,
+		Compress:   true,
+	})
+	consoleWriter := zapcore.AddSync(os.Stdout)
+
+	encoderConfig := zap.NewProductionEncoderConfig()
+	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
+	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+
+	fileCore := zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), fileWriter, logLevel)
+	consoleCore := zapcore.NewCore(zapcore.NewConsoleEncoder(encoderConfig), consoleWriter, logLevel)
+	combinedCore := zapcore.NewTee(fileCore, consoleCore)
+	return combinedCore
+}
+
+func getZapLogLevel(logLevel string) zapcore.Level {
+	switch strings.ToLower(logLevel) {
 	case "debug":
-		level = zap.DebugLevel
+		return zap.DebugLevel
 	case "warn":
-		level = zap.WarnLevel
+		return zap.WarnLevel
+	case "error":
+		return zap.ErrorLevel
 	case "info":
-		level = zap.InfoLevel
+		return zap.InfoLevel
 	default:
-		level = zap.InfoLevel
-	}
-	zapConfig := zap.NewProductionConfig()
-	zapConfig.Encoding = "console"
-	zapConfig.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
-	zapConfig.EncoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
-	zapConfig.OutputPaths = []string{"stdout", getLogFileName("info")}
-	zapConfig.ErrorOutputPaths = []string{"stderr", getLogFileName("error")}
-	zapConfig.Level = zap.NewAtomicLevelAt(level)
-	var err error
-	Logger, err = zapConfig.Build()
-	if err != nil {
-		panic("log failed" + err.Error())
-	}
-}
-
-// 根据日期获得日志文件
-func getLogFileName(name string) string {
-	return filepath.Join("logs", time.Now().Format("2006-01-02")+"-"+name+".log")
-}
-
-func rotateLogs() {
-	for {
-		now := time.Now()
-		nextMidnight := time.Date(
-			now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location(),
-		).Add(24 * time.Hour)
-		durationUntilMidnight := nextMidnight.Sub(now)
-
-		time.Sleep(durationUntilMidnight)
-		buildLogger()
+		return zap.InfoLevel
 	}
 }

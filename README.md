@@ -42,12 +42,12 @@
 
 ### API
 
-[API 文档](./API_README.md)
+[API 文档](./API.md)
 
 ### 模板
 
 可以通过变量自定义模板中的策略组代理节点  
-解释的不太清楚，可以参考下方默认模板
+具体参考下方默认模板
 
 -   `<all>` 为添加所有节点
 -   `<countries>` 为添加所有国家策略组
@@ -57,7 +57,3 @@
 
 -   [Clash](./templates/template_clash.yaml)
 -   [Clash.Meta](./templates/template_meta.yaml)
-
-## 已知问题
-
-[代理链接解析](./parser)还没有经过严格测试，可能会出现解析错误的情况，如果出现问题请提交 issue
