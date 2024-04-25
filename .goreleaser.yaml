@@ -28,3 +28,5 @@ archives:
       - LICENSE
       - README.md
       - templates
+release:
+  draft: true
