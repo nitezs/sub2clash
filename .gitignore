@@ -5,3 +5,4 @@ logs
 data
 .env
 .vscode/settings.json
+test

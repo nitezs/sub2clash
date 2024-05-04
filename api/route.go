@@ -18,7 +18,6 @@ var staticFiles embed.FS
 func SetRoute(r *gin.Engine) {
 	r.Use(middleware.ZapLogger())
 
-	// 使用内嵌的模板文件
 	tpl, err := template.ParseFS(staticFiles, "static/*")
 	if err != nil {
 		log.Fatalf("Error parsing templates: %v", err)
@@ -33,9 +32,6 @@ func SetRoute(r *gin.Engine) {
 	r.GET(
 		"/", func(c *gin.Context) {
 			version := constant.Version
-			if len(constant.Version) > 7 {
-				version = constant.Version[:7]
-			}
 			c.HTML(
 				200, "index.html", gin.H{
 					"Version": version,
