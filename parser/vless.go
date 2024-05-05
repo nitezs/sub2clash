@@ -105,7 +105,7 @@ func ParseVless(proxy string) (model.Proxy, error) {
 		result.Alpn = alpn
 		result.Sni = sni
 		result.AllowInsecure = insecureBool
-		result.Fingerprint = fp
+		result.ClientFingerprint = fp
 	}
 
 	if security == "reality" {
@@ -115,6 +115,7 @@ func ParseVless(proxy string) (model.Proxy, error) {
 			PublicKey: pbk,
 			ShortID:   sid,
 		}
+		result.ClientFingerprint = fp
 	}
 
 	if _type == "ws" {
