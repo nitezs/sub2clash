@@ -110,6 +110,7 @@ func ParseVless(proxy string) (model.Proxy, error) {
 
 	if security == "reality" {
 		result.TLS = true
+		result.Servername = sni
 		result.RealityOpts = model.RealityOptions{
 			PublicKey: pbk,
 			ShortID:   sid,
@@ -133,7 +134,9 @@ func ParseVless(proxy string) (model.Proxy, error) {
 
 	if _type == "grpc" {
 		result.Network = "grpc"
-		result.Servername = serviceName
+		result.GrpcOpts = model.GrpcOptions{
+			GrpcServiceName: serviceName,
+		}
 	}
 
 	if _type == "http" {
