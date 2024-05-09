@@ -135,3 +135,29 @@ func GetRawConfHandler(c *gin.Context) {
 	// 返回响应内容
 	c.String(http.StatusOK, string(all))
 }
+
+func GetRawConfUriHandler(c *gin.Context) {
+	// 获取动态路由参数
+	hash := c.Query("hash")
+	password := c.Query("password")
+
+	if strings.TrimSpace(hash) == "" {
+		c.String(http.StatusBadRequest, "参数错误")
+		return
+	}
+
+	// 查询数据库中的短链接
+	shortLink, err := database.FindShortLinkByHash(hash)
+	if err != nil {
+		c.String(http.StatusNotFound, "未找到短链接或密码错误")
+		return
+	}
+
+	// 校验密码
+	if shortLink.Password != "" && shortLink.Password != password {
+		c.String(http.StatusNotFound, "未找到短链接或密码错误")
+		return
+	}
+
+	c.String(http.StatusOK, shortLink.Url)
+}

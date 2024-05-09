@@ -44,4 +44,5 @@ func SetRoute(r *gin.Engine) {
 	r.GET("/s/:hash", handler.GetRawConfHandler)
 	r.POST("/short", handler.GenerateLinkHandler)
 	r.PUT("/short", handler.UpdateLinkHandler)
+	r.GET("/short", handler.GetRawConfUriHandler)
 }
