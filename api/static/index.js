@@ -111,17 +111,16 @@ function generateURI() {
   queryParams.push(`ruleProvider=${encodeURIComponent(providers.join(","))}`);
 
   let ruleList = [];
-  for (let i = 0; i < rules.length / 3; i++) {
-    if (rules[i * 3].value.trim() !== "") {
-      let rule = rules[i * 3].value;
-      let prepend = rules[i * 3 + 1].value;
-      let group = rules[i * 3 + 2].value;
+  for (let i = 0; i < rules.length / 2; i++) {
+    if (rules[i * 2].value.trim() !== "") {
+      let rule = rules[i * 2].value;
+      let prepend = rules[i * 2 + 1].value;
       // 是否存在空值
-      if (rule.trim() === "" || prepend.trim() === "" || group.trim() === "") {
+      if (rule.trim() === "" || prepend.trim() === "") {
         // alert("Rule 中存在空值，请检查后重试！");
         return "";
       }
-      ruleList.push(`[${rule},${prepend},${group}]`);
+      ruleList.push(`[${rule},${prepend}]`);
     }
   }
   queryParams.push(`rule=${encodeURIComponent(ruleList.join(","))}`);
@@ -310,13 +309,12 @@ function parseAndFillRuleProviderParams(ruleProviderParams) {
 function parseAndFillRuleParams(ruleParams) {
   const ruleGroup = document.getElementById("ruleGroup");
   let matches;
-  const regex = /\[(.*?),(.*?),(.*?)\]/g;
+  const regex = /\[(.*?),(.*?)\]/g;
   const str = decodeURIComponent(ruleParams);
   while ((matches = regex.exec(str)) !== null) {
     const div = createRule();
     div.children[0].value = matches[1];
     div.children[1].value = matches[2];
-    div.children[2].value = matches[3];
     ruleGroup.appendChild(div);
   }
 }
@@ -366,7 +364,6 @@ function createRule() {
   div.innerHTML = `
             <input type="text" class="form-control" name="rule" placeholder="Rule">
             <input type="text" class="form-control" name="rule" placeholder="Prepend">
-            <input type="text" class="form-control" name="rule" placeholder="Group">
             <button type="button" class="btn btn-danger" onclick="removeElement(this)">删除</button>
         `;
   return div;
