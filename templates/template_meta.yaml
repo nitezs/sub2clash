@@ -1,6 +1,6 @@
 mixed-port: 7890
 allow-lan: true
-mode: Rule
+mode: rule
 log-level: info
 proxies:
 proxy-groups:
