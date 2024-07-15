@@ -16,9 +16,9 @@ import (
 var subsDir = "subs"
 var fileLock sync.RWMutex
 
-func LoadSubscription(url string, refresh bool) ([]byte, error) {
+func LoadSubscription(url string, refresh bool, userAgent string) ([]byte, error) {
 	if refresh {
-		return FetchSubscriptionFromAPI(url)
+		return FetchSubscriptionFromAPI(url, userAgent)
 	}
 	hash := sha256.Sum224([]byte(url))
 	fileName := filepath.Join(subsDir, hex.EncodeToString(hash[:]))
@@ -27,7 +27,7 @@ func LoadSubscription(url string, refresh bool) ([]byte, error) {
 		if !os.IsNotExist(err) {
 			return nil, err
 		}
-		return FetchSubscriptionFromAPI(url)
+		return FetchSubscriptionFromAPI(url, userAgent)
 	}
 	lastGetTime := stat.ModTime().Unix() // 单位是秒
 	if lastGetTime+config.Default.CacheExpire > time.Now().Unix() {
@@ -48,13 +48,13 @@ func LoadSubscription(url string, refresh bool) ([]byte, error) {
 		}
 		return subContent, nil
 	}
-	return FetchSubscriptionFromAPI(url)
+	return FetchSubscriptionFromAPI(url, userAgent)
 }
 
-func FetchSubscriptionFromAPI(url string) ([]byte, error) {
+func FetchSubscriptionFromAPI(url string, userAgent string) ([]byte, error) {
 	hash := sha256.Sum224([]byte(url))
 	fileName := filepath.Join(subsDir, hex.EncodeToString(hash[:]))
-	resp, err := Get(url)
+	resp, err := Get(url, WithUserAgent(userAgent))
 	if err != nil {
 		return nil, err
 	}

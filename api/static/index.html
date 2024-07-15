@@ -75,6 +75,12 @@
             <label for="proxy">节点分享链接:</label>
             <textarea class="form-control" id="proxy" name="proxy" placeholder="每行输入一个节点分享链接" rows="5"></textarea>
         </div>
+        <!-- User Agent -->
+        <div class="form-group mb-3">
+            <label for="user-agent">ua标识:</label>
+            <textarea class="form-control" id="user-agent" name="user-agent"
+                placeholder="用于获取订阅的http请求中的user-agent标识(可选)" rows="1"></textarea>
+        </div>
         <!-- Refresh -->
         <div class="form-check mb-3">
             <input class="form-check-input" id="refresh" name="refresh" type="checkbox" />
@@ -172,4 +178,5 @@
     </div>
 </body>
 <script src="./static/index.js"></script>
+
 </html>

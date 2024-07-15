@@ -7,10 +7,26 @@ import (
 	"time"
 )
 
-func Get(url string) (resp *http.Response, err error) {
+type GetConfig struct {
+	userAgent string
+}
+
+type GetOption func(*GetConfig)
+
+func WithUserAgent(userAgent string) GetOption {
+	return func(config *GetConfig) {
+		config.userAgent = userAgent
+	}
+}
+
+func Get(url string, options ...GetOption) (resp *http.Response, err error) {
 	retryTimes := config.Default.RequestRetryTimes
 	haveTried := 0
 	retryDelay := time.Second // 延迟1秒再重试
+	getConfig := GetConfig{}
+	for _, option := range options {
+		option(&getConfig)
+	}
 	for haveTried < retryTimes {
 		client := &http.Client{}
 		//client.Timeout = time.Second * 10
@@ -19,6 +35,9 @@ func Get(url string) (resp *http.Response, err error) {
 			haveTried++
 			time.Sleep(retryDelay)
 			continue
+		}
+		if getConfig.userAgent != "" {
+			req.Header.Set("User-Agent", getConfig.userAgent)
 		}
 		get, err := client.Do(req)
 		if err != nil {

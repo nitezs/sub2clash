@@ -66,6 +66,11 @@ function generateURI() {
     // alert("订阅链接和节点分享链接不能同时为空！");
     return "";
   }
+
+  // 获取订阅user-agent标识
+  const userAgent = document.getElementById("user-agent").value;
+  queryParams.push(`userAgent=${userAgent}`)
+
   // 获取复选框的值
   const refresh = document.getElementById("refresh").checked;
   queryParams.push(`refresh=${refresh ? "true" : "false"}`);
