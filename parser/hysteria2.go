@@ -72,6 +72,14 @@ func ParseHysteria2(proxy string) (model.Proxy, error) {
 	enableTLS := pinSHA256 != ""
 	insecureBool := insecure == "1"
 
+	if remarks == "" {
+		remarksIndex := strings.LastIndex(proxy, "#")
+		if remarksIndex != -1 {
+			remarks = proxy[remarksIndex:]
+			remarks, _ = url.QueryUnescape(remarks)
+		}
+	}
+
 	result := model.Proxy{
 		Type:           "hysteria2",
 		Name:           remarks,

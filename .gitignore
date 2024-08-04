@@ -6,3 +6,4 @@ data
 .env
 .vscode/settings.json
 test
+*test.go

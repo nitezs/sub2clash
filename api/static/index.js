@@ -179,6 +179,10 @@ async function parseInputURL() {
     let hash = url.pathname.substring(url.pathname.lastIndexOf("/s/") + 3);
     let q = new URLSearchParams();
     let password = url.searchParams.get("password");
+    if (password === null) {
+      alert("仅可解析加密短链");
+      return;
+    }
     q.append("hash", hash);
     q.append("password", password);
     try {
