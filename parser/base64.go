@@ -7,7 +7,7 @@ import (
 
 func DecodeBase64(s string) (string, error) {
 	s = strings.TrimSpace(s)
-	// url safe
+
 	if strings.Contains(s, "-") || strings.Contains(s, "_") {
 		s = strings.Replace(s, "-", "+", -1)
 		s = strings.Replace(s, "_", "/", -1)

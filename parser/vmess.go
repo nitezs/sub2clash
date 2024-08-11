@@ -100,10 +100,6 @@ func ParseVmess(proxy string) (model.Proxy, error) {
 		}
 	}
 
-	// if vmess.Net == "quic" {
-	// 	// 未查到相关支持文档
-	// }
-
 	if vmess.Net == "grpc" {
 		result.GrpcOpts = model.GrpcOptions{
 			GrpcServiceName: vmess.Path,

@@ -1,8 +1,5 @@
 package model
 
-// https://zh.wikipedia.org/wiki/%E5%8C%BA%E5%9F%9F%E6%8C%87%E7%A4%BA%E7%AC%A6
-// https://zh.wikipedia.org/zh-sg/ISO_3166-1%E4%BA%8C%E4%BD%8D%E5%AD%97%E6%AF%8D%E4%BB%A3%E7%A0%81
-
 var CountryEnglishName = map[string]string{
 	"Andorra":                        "安道尔(AD)",
 	"United Arab Emirates":           "阿联酋(AE)",

@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"net/url"
 	"strconv"
 	"strings"
@@ -13,25 +14,31 @@ func ParseHysteria(proxy string) (model.Proxy, error) {
 		return model.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
 	}
 
-	proxy = strings.TrimPrefix(proxy, constant.HysteriaPrefix)
-	urlParts := strings.SplitN(proxy, "?", 2)
-	if len(urlParts) != 2 {
+	link, err := url.Parse(proxy)
+	if err != nil {
 		return model.Proxy{}, &ParseError{
 			Type:    ErrInvalidStruct,
-			Message: "missing character '?' in url",
+			Message: "url parse error",
+			Raw:     proxy,
+		}
+	}
+	server := link.Hostname()
+	if server == "" {
+		return model.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
+			Message: "missing server host",
 			Raw:     proxy,
 		}
 	}
 
-	serverInfo := strings.SplitN(urlParts[0], ":", 2)
-	if len(serverInfo) != 2 {
+	portStr := link.Port()
+	if portStr == "" {
 		return model.Proxy{}, &ParseError{
 			Type:    ErrInvalidStruct,
-			Message: "missing server host or port",
+			Message: "missing server port",
 			Raw:     proxy,
 		}
 	}
-	server, portStr := serverInfo[0], serverInfo[1]
 
 	port, err := ParsePort(portStr)
 	if err != nil {
@@ -42,16 +49,9 @@ func ParseHysteria(proxy string) (model.Proxy, error) {
 		}
 	}
 
-	params, err := url.ParseQuery(urlParts[1])
-	if err != nil {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrCannotParseParams,
-			Raw:     proxy,
-			Message: err.Error(),
-		}
-	}
+	query := link.Query()
 
-	protocol, auth, insecure, upmbps, downmbps, obfs, alpnStr := params.Get("protocol"), params.Get("auth"), params.Get("insecure"), params.Get("upmbps"), params.Get("downmbps"), params.Get("obfs"), params.Get("alpn")
+	protocol, auth, insecure, upmbps, downmbps, obfs, alpnStr := query.Get("protocol"), query.Get("auth"), query.Get("insecure"), query.Get("upmbps"), query.Get("downmbps"), query.Get("obfs"), query.Get("alpn")
 	insecureBool, err := strconv.ParseBool(insecure)
 	if err != nil {
 		insecureBool = false
@@ -63,10 +63,11 @@ func ParseHysteria(proxy string) (model.Proxy, error) {
 		alpn = strings.Split(alpnStr, ",")
 	}
 
-	remarks := server + ":" + portStr
-	if params.Get("remarks") != "" {
-		remarks = params.Get("remarks")
+	remarks := link.Fragment
+	if remarks == "" {
+		remarks = fmt.Sprintf("%s:%s", server, portStr)
 	}
+	remarks = strings.TrimSpace(remarks)
 
 	result := model.Proxy{
 		Type:           "hysteria",
@@ -77,7 +78,7 @@ func ParseHysteria(proxy string) (model.Proxy, error) {
 		Down:           downmbps,
 		Auth:           auth,
 		Obfs:           obfs,
-		SkipCertVerify: insecure == "1",
+		SkipCertVerify: insecureBool,
 		Alpn:           alpn,
 		Protocol:       protocol,
 		AllowInsecure:  insecureBool,

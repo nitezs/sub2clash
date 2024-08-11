@@ -111,7 +111,7 @@ func ParseQuery(c *gin.Context) (SubValidator, error) {
 				},
 			)
 		}
-		// 校验 Rule-Provider 是否有重名
+
 		names := make(map[string]bool)
 		for _, ruleProvider := range query.RuleProviders {
 			if _, ok := names[ruleProvider.Name]; ok {

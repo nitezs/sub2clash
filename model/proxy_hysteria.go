@@ -7,11 +7,11 @@ type Hysteria struct {
 	Port                int      `yaml:"port,omitempty"`
 	Ports               string   `yaml:"ports,omitempty"`
 	Protocol            string   `yaml:"protocol,omitempty"`
-	ObfsProtocol        string   `yaml:"obfs-protocol,omitempty"` // compatible with Stash
+	ObfsProtocol        string   `yaml:"obfs-protocol,omitempty"`
 	Up                  string   `yaml:"up"`
-	UpSpeed             int      `yaml:"up-speed,omitempty"` // compatible with Stash
+	UpSpeed             int      `yaml:"up-speed,omitempty"`
 	Down                string   `yaml:"down"`
-	DownSpeed           int      `yaml:"down-speed,omitempty"` // compatible with Stash
+	DownSpeed           int      `yaml:"down-speed,omitempty"`
 	Auth                string   `yaml:"auth,omitempty"`
 	AuthStringOLD       string   `yaml:"auth_str,omitempty"`
 	AuthString          string   `yaml:"auth-str,omitempty"`

@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"net/url"
 	"strings"
 	"sub2clash/constant"
@@ -13,72 +14,53 @@ func ParseHysteria2(proxy string) (model.Proxy, error) {
 		return model.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
 	}
 
-	proxy = strings.TrimPrefix(proxy, constant.Hysteria2Prefix1)
-	proxy = strings.TrimPrefix(proxy, constant.Hysteria2Prefix2)
-	urlParts := strings.SplitN(proxy, "@", 2)
-	if len(urlParts) != 2 {
+	link, err := url.Parse(proxy)
+	if err != nil {
 		return model.Proxy{}, &ParseError{
 			Type:    ErrInvalidStruct,
-			Message: "missing character '@' in url",
-			Raw:     proxy,
-		}
-	}
-	password := urlParts[0]
-
-	serverInfo := strings.SplitN(urlParts[1], "/?", 2)
-	if len(serverInfo) != 2 {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
-			Message: "missing params in url",
-			Raw:     proxy,
-		}
-	}
-	paramStr := serverInfo[1]
-
-	serverAndPort := strings.SplitN(serverInfo[0], ":", 2)
-	var server string
-	var portStr string
-	if len(serverAndPort) == 1 {
-		portStr = "443"
-	} else if len(serverAndPort) == 2 {
-		server, portStr = serverAndPort[0], serverAndPort[1]
-	} else {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
-			Message: "missing server host or port",
+			Message: "url parse error",
 			Raw:     proxy,
 		}
 	}
 
+	username := link.User.Username()
+	password, exist := link.User.Password()
+	if !exist {
+		password = username
+	}
+
+	query := link.Query()
+	server := link.Hostname()
+	if server == "" {
+		return model.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
+			Message: "missing server host",
+			Raw:     proxy,
+		}
+	}
+	portStr := link.Port()
+	if portStr == "" {
+		return model.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
+			Message: "missing server port",
+			Raw:     proxy,
+		}
+	}
 	port, err := ParsePort(portStr)
 	if err != nil {
 		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidPort,
-			Message: err.Error(),
-			Raw:     proxy,
+			Type: ErrInvalidPort,
+			Raw:  portStr,
 		}
 	}
-
-	params, err := url.ParseQuery(paramStr)
-	if err != nil {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrCannotParseParams,
-			Raw:     proxy,
-			Message: err.Error(),
-		}
-	}
-
-	remarks, network, obfs, obfsPassword, pinSHA256, insecure, sni := params.Get("name"), params.Get("network"), params.Get("obfs"), params.Get("obfs-password"), params.Get("pinSHA256"), params.Get("insecure"), params.Get("sni")
-	enableTLS := pinSHA256 != ""
+	network, obfs, obfsPassword, pinSHA256, insecure, sni := query.Get("network"), query.Get("obfs"), query.Get("obfs-password"), query.Get("pinSHA256"), query.Get("insecure"), query.Get("sni")
+	enableTLS := pinSHA256 != "" || sni != ""
 	insecureBool := insecure == "1"
-
+	remarks := link.Fragment
 	if remarks == "" {
-		remarksIndex := strings.LastIndex(proxy, "#")
-		if remarksIndex != -1 {
-			remarks = proxy[remarksIndex:]
-			remarks, _ = url.QueryUnescape(remarks)
-		}
+		remarks = fmt.Sprintf("%s:%s", server, portStr)
 	}
+	remarks = strings.TrimSpace(remarks)
 
 	result := model.Proxy{
 		Type:           "hysteria2",

@@ -103,7 +103,6 @@ type IPTables struct {
 	DnsRedirect      bool     `yaml:"dns-redirect,omitempty" json:"dns-redirect"`
 }
 
-// EBpf config
 type EBpf struct {
 	RedirectToTun []string `yaml:"redirect-to-tun,omitempty" json:"redirect-to-tun"`
 	AutoRedir     []string `yaml:"auto-redir,omitempty" json:"auto-redir"`

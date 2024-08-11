@@ -88,7 +88,7 @@ func UpdateLinkHandler(c *gin.Context) {
 }
 
 func GetRawConfHandler(c *gin.Context) {
-	// 获取动态路由参数
+
 	hash := c.Param("hash")
 	password := c.Query("password")
 
@@ -97,27 +97,24 @@ func GetRawConfHandler(c *gin.Context) {
 		return
 	}
 
-	// 查询数据库中的短链接
 	shortLink, err := database.FindShortLinkByHash(hash)
 	if err != nil {
 		c.String(http.StatusNotFound, "未找到短链接或密码错误")
 		return
 	}
 
-	// 校验密码
 	if shortLink.Password != "" && shortLink.Password != password {
 		c.String(http.StatusNotFound, "未找到短链接或密码错误")
 		return
 	}
 
-	// 更新最后访问时间
 	shortLink.LastRequestTime = time.Now().Unix()
 	err = database.SaveShortLink(shortLink)
 	if err != nil {
 		respondWithError(c, http.StatusInternalServerError, "数据库错误")
 		return
 	}
-	// 请求短链接指向的URL
+
 	response, err := http.Get("http://localhost:" + strconv.Itoa(config.Default.Port) + "/" + shortLink.Url)
 	if err != nil {
 		respondWithError(c, http.StatusInternalServerError, "请求错误: "+err.Error())
@@ -125,19 +122,17 @@ func GetRawConfHandler(c *gin.Context) {
 	}
 	defer response.Body.Close()
 
-	// 读取响应内容
 	all, err := io.ReadAll(response.Body)
 	if err != nil {
 		respondWithError(c, http.StatusInternalServerError, "读取错误: "+err.Error())
 		return
 	}
 
-	// 返回响应内容
 	c.String(http.StatusOK, string(all))
 }
 
 func GetRawConfUriHandler(c *gin.Context) {
-	// 获取动态路由参数
+
 	hash := c.Query("hash")
 	password := c.Query("password")
 
@@ -146,14 +141,12 @@ func GetRawConfUriHandler(c *gin.Context) {
 		return
 	}
 
-	// 查询数据库中的短链接
 	shortLink, err := database.FindShortLinkByHash(hash)
 	if err != nil {
 		c.String(http.StatusNotFound, "未找到短链接或密码错误")
 		return
 	}
 
-	// 校验密码
 	if shortLink.Password != "" && shortLink.Password != password {
 		c.String(http.StatusNotFound, "未找到短链接或密码错误")
 		return

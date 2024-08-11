@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"net/url"
 	"strings"
 	"sub2clash/constant"
@@ -12,71 +13,72 @@ func ParseShadowsocks(proxy string) (model.Proxy, error) {
 		return model.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
 	}
 
-	proxy = strings.TrimPrefix(proxy, constant.ShadowsocksPrefix)
-	urlParts := strings.SplitN(proxy, "@", 2)
-	if len(urlParts) != 2 {
+	link, err := url.Parse(proxy)
+	if err != nil {
 		return model.Proxy{}, &ParseError{
 			Type:    ErrInvalidStruct,
-			Message: "missing character '@' in url",
+			Message: "url parse error",
 			Raw:     proxy,
 		}
 	}
 
-	var serverAndPort []string
-	if !strings.Contains(urlParts[0], ":") {
-		decoded, err := DecodeBase64(urlParts[0])
-		if err != nil {
-			return model.Proxy{}, &ParseError{
-				Type:    ErrInvalidStruct,
-				Message: "invalid base64 encoded",
-				Raw:     proxy,
-			}
-		}
-		urlParts[0] = decoded
-	}
-	credentials := strings.SplitN(urlParts[0], ":", 2)
-	if len(credentials) != 2 {
+	server := link.Hostname()
+	if server == "" {
 		return model.Proxy{}, &ParseError{
 			Type:    ErrInvalidStruct,
-			Message: "missing server host or port",
+			Message: "missing server host",
 			Raw:     proxy,
 		}
 	}
-	method, password := credentials[0], credentials[1]
 
-	serverInfo := strings.SplitN(urlParts[1], "#", 2)
-	serverAndPort = strings.SplitN(serverInfo[0], ":", 2)
-	server, portStr := serverAndPort[0], serverAndPort[1]
-	if len(serverInfo) != 2 {
+	portStr := link.Port()
+	if portStr == "" {
 		return model.Proxy{}, &ParseError{
 			Type:    ErrInvalidStruct,
-			Message: "missing server host or port",
+			Message: "missing server port",
 			Raw:     proxy,
 		}
 	}
 	port, err := ParsePort(portStr)
 	if err != nil {
 		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidPort,
-			Message: err.Error(),
+			Type: ErrInvalidStruct,
+			Raw:  proxy,
+		}
+	}
+
+	user, err := DecodeBase64(link.User.Username())
+	if err != nil {
+		return model.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
+			Message: "missing method and password",
 			Raw:     proxy,
 		}
 	}
 
-	var remarks string
-	if len(serverInfo) == 2 {
-		unescape, err := url.QueryUnescape(serverInfo[1])
-		if err != nil {
-			return model.Proxy{}, &ParseError{
-				Type:    ErrInvalidStruct,
-				Message: "cannot unescape remarks",
-				Raw:     proxy,
-			}
+	if user == "" {
+		return model.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
+			Message: "missing method and password",
+			Raw:     proxy,
 		}
-		remarks = strings.TrimSpace(unescape)
-	} else {
-		remarks = strings.TrimSpace(server + ":" + portStr)
 	}
+	methodAndPass := strings.SplitN(user, ":", 2)
+	if len(methodAndPass) != 2 {
+		return model.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
+			Message: "missing method and password",
+			Raw:     proxy,
+		}
+	}
+	method := methodAndPass[0]
+	password := methodAndPass[1]
+
+	remarks := link.Fragment
+	if remarks == "" {
+		remarks = fmt.Sprintf("%s:%s", server, portStr)
+	}
+	remarks = strings.TrimSpace(remarks)
 
 	result := model.Proxy{
 		Type:     "ss",

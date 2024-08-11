@@ -22,7 +22,7 @@ func WithUserAgent(userAgent string) GetOption {
 func Get(url string, options ...GetOption) (resp *http.Response, err error) {
 	retryTimes := config.Default.RequestRetryTimes
 	haveTried := 0
-	retryDelay := time.Second // 延迟1秒再重试
+	retryDelay := time.Second
 	getConfig := GetConfig{}
 	for _, option := range options {
 		option(&getConfig)
@@ -45,7 +45,7 @@ func Get(url string, options ...GetOption) (resp *http.Response, err error) {
 			time.Sleep(retryDelay)
 			continue
 		} else {
-			// 如果文件大小大于设定，直接返回错误
+
 			if get != nil && get.ContentLength > config.Default.RequestMaxFileSize {
 				return nil, errors.New("文件过大")
 			}

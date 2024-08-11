@@ -13,16 +13,14 @@ import (
 var DB *bbolt.DB
 
 func ConnectDB() error {
-	// 确保数据目录存在
 	path := filepath.Join("data", "sub2clash.db")
-	// 打开或创建数据库文件
+
 	db, err := bbolt.Open(path, 0600, nil)
 	if err != nil {
 		return err
 	}
 	DB = db
 
-	// 确保存储桶存在
 	return db.Update(func(tx *bbolt.Tx) error {
 		_, err := tx.CreateBucketIfNotExists([]byte("ShortLinks"))
 		return err

@@ -1,55 +1,42 @@
 package parser
 
 import (
+	"fmt"
 	"net/url"
 	"strings"
 	"sub2clash/constant"
 	"sub2clash/model"
 )
 
-// ParseTrojan 解析给定的Trojan代理URL并返回Proxy结构。
 func ParseTrojan(proxy string) (model.Proxy, error) {
 	if !strings.HasPrefix(proxy, constant.TrojanPrefix) {
 		return model.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
 	}
 
-	proxy = strings.TrimPrefix(proxy, constant.TrojanPrefix)
-	urlParts := strings.SplitN(proxy, "@", 2)
-	if len(urlParts) != 2 {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
-			Message: "missing character '@' in url",
-			Raw:     proxy,
-		}
-	}
-	password := strings.TrimSpace(urlParts[0])
-
-	serverInfo := strings.SplitN(urlParts[1], "#", 2)
-	serverAndPortAndParams := strings.SplitN(serverInfo[0], "?", 2)
-	if len(serverAndPortAndParams) != 2 {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
-			Message: "missing character '?' in url",
-			Raw:     proxy,
-		}
-	}
-
-	serverAndPort := strings.SplitN(serverAndPortAndParams[0], ":", 2)
-	if len(serverAndPort) != 2 {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
-			Message: "missing server host or port",
-			Raw:     proxy,
-		}
-	}
-	server, portStr := serverAndPort[0], serverAndPort[1]
-
-	params, err := url.ParseQuery(serverAndPortAndParams[1])
+	link, err := url.Parse(proxy)
 	if err != nil {
 		return model.Proxy{}, &ParseError{
-			Type:    ErrCannotParseParams,
+			Type:    ErrInvalidStruct,
+			Message: "url parse error",
 			Raw:     proxy,
-			Message: err.Error(),
+		}
+	}
+
+	password := link.User.Username()
+	server := link.Hostname()
+	if server == "" {
+		return model.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
+			Message: "missing server host",
+			Raw:     proxy,
+		}
+	}
+	portStr := link.Port()
+	if portStr == "" {
+		return model.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
+			Message: "missing server port",
+			Raw:     proxy,
 		}
 	}
 
@@ -62,14 +49,14 @@ func ParseTrojan(proxy string) (model.Proxy, error) {
 		}
 	}
 
-	remarks := ""
-	if len(serverInfo) == 2 {
-		remarks, _ = url.QueryUnescape(strings.TrimSpace(serverInfo[1]))
-	} else {
-		remarks = serverAndPort[0]
+	remarks := link.Fragment
+	if remarks == "" {
+		remarks = fmt.Sprintf("%s:%s", server, portStr)
 	}
+	remarks = strings.TrimSpace(remarks)
 
-	network, security, alpnStr, sni, pbk, sid, fp, path, host, serviceName := params.Get("type"), params.Get("security"), params.Get("alpn"), params.Get("sni"), params.Get("pbk"), params.Get("sid"), params.Get("fp"), params.Get("path"), params.Get("host"), params.Get("serviceName")
+	query := link.Query()
+	network, security, alpnStr, sni, pbk, sid, fp, path, host, serviceName := query.Get("type"), query.Get("security"), query.Get("alpn"), query.Get("sni"), query.Get("pbk"), query.Get("sid"), query.Get("fp"), query.Get("path"), query.Get("host"), query.Get("serviceName")
 
 	var alpn []string
 	if strings.Contains(alpnStr, ",") {
@@ -78,9 +65,6 @@ func ParseTrojan(proxy string) (model.Proxy, error) {
 		alpn = nil
 	}
 
-	// enableUTLS := fp != ""
-
-	// 构建Proxy结构体
 	result := model.Proxy{
 		Type:     "trojan",
 		Server:   server,
@@ -115,14 +99,6 @@ func ParseTrojan(proxy string) (model.Proxy, error) {
 			},
 		}
 	}
-
-	// if network == "http" {
-	// 	// 未查到相关支持文档
-	// }
-
-	// if network == "quic" {
-	// 	// 未查到相关支持文档
-	// }
 
 	if network == "grpc" {
 		result.GrpcOpts = model.GrpcOptions{

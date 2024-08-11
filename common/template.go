@@ -7,8 +7,6 @@ import (
 	"path/filepath"
 )
 
-// LoadTemplate 加载模板
-// templates 模板文件名
 func LoadTemplate(template string) ([]byte, error) {
 	tPath := filepath.Join("templates", template)
 	if _, err := os.Stat(tPath); err == nil {

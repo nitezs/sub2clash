@@ -12,7 +12,7 @@ import (
 )
 
 func SubHandler(c *gin.Context) {
-	// 从请求中获取参数
+
 	query, err := validator.ParseQuery(c)
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())
@@ -23,7 +23,7 @@ func SubHandler(c *gin.Context) {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	// 输出
+
 	if query.NodeListMode {
 		nodelist := model.NodeList{}
 		nodelist.Proxies = sub.Proxies

@@ -9,12 +9,12 @@ type ProxyGroup struct {
 	Type                string   `yaml:"type,omitempty"`
 	Name                string   `yaml:"name,omitempty"`
 	Proxies             []string `yaml:"proxies,omitempty"`
-	IsCountryGrop       bool     `yaml:"-"` // 是否是国家分组
+	IsCountryGrop       bool     `yaml:"-"`
 	Url                 string   `yaml:"url,omitempty"`
 	Interval            int      `yaml:"interval,omitempty"`
 	Tolerance           int      `yaml:"tolerance,omitempty"`
 	Lazy                bool     `yaml:"lazy"`
-	Size                int      `yaml:"-"` // 代理数量
+	Size                int      `yaml:"-"`
 	DisableUDP          bool     `yaml:"disable-udp,omitempty"`
 	Strategy            string   `yaml:"strategy,omitempty"`
 	Icon                string   `yaml:"icon,omitempty"`
@@ -42,16 +42,15 @@ func (p ProxyGroupsSortBySize) Len() int {
 }
 
 func (p ProxyGroupsSortByName) Less(i, j int) bool {
-	// 定义一组备选语言：首选英语，其次中文
+
 	tags := []language.Tag{
 		language.English,
 		language.Chinese,
 	}
 	matcher := language.NewMatcher(tags)
 
-	// 假设我们的请求语言是 "zh"（中文），则使用匹配器找到最佳匹配的语言
 	bestMatch, _, _ := matcher.Match(language.Make("zh"))
-	// 使用最佳匹配的语言进行排序
+
 	c := collate.New(bestMatch)
 	return c.CompareString(p[i].Name, p[j].Name) < 0
 }

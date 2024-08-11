@@ -29,7 +29,7 @@ func LoadSubscription(url string, refresh bool, userAgent string) ([]byte, error
 		}
 		return FetchSubscriptionFromAPI(url, userAgent)
 	}
-	lastGetTime := stat.ModTime().Unix() // 单位是秒
+	lastGetTime := stat.ModTime().Unix()
 	if lastGetTime+config.Default.CacheExpire > time.Now().Unix() {
 		file, err := os.Open(fileName)
 		if err != nil {
