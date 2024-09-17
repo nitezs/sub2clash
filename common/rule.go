@@ -3,7 +3,8 @@ package common
 import (
 	"fmt"
 	"strings"
-	"sub2clash/model"
+
+	"github.com/nitezs/sub2clash/model"
 )
 
 func PrependRuleProvider(

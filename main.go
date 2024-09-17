@@ -4,11 +4,12 @@ import (
 	_ "embed"
 	"io"
 	"strconv"
-	"sub2clash/api"
-	"sub2clash/common"
-	"sub2clash/common/database"
-	"sub2clash/config"
-	"sub2clash/logger"
+
+	"github.com/nitezs/sub2clash/api"
+	"github.com/nitezs/sub2clash/common"
+	"github.com/nitezs/sub2clash/common/database"
+	"github.com/nitezs/sub2clash/config"
+	"github.com/nitezs/sub2clash/logger"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"

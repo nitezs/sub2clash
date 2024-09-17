@@ -8,9 +8,10 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"sub2clash/config"
 	"sync"
 	"time"
+
+	"github.com/nitezs/sub2clash/config"
 )
 
 var subsDir = "subs"

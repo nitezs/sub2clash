@@ -2,8 +2,9 @@ package middleware
 
 import (
 	"strconv"
-	"sub2clash/logger"
 	"time"
+
+	"github.com/nitezs/sub2clash/logger"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"

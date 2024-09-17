@@ -9,11 +9,12 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"sub2clash/common"
-	"sub2clash/logger"
-	"sub2clash/model"
-	"sub2clash/parser"
-	"sub2clash/validator"
+
+	"github.com/nitezs/sub2clash/common"
+	"github.com/nitezs/sub2clash/logger"
+	"github.com/nitezs/sub2clash/model"
+	"github.com/nitezs/sub2clash/parser"
+	"github.com/nitezs/sub2clash/validator"
 
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"

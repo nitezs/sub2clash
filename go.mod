@@ -1,4 +1,4 @@
-module sub2clash
+module github.com/nitezs/sub2clash
 
 go 1.21
 

@@ -3,7 +3,8 @@ package common
 import (
 	"os"
 	"path/filepath"
-	"sub2clash/config"
+
+	"github.com/nitezs/sub2clash/config"
 )
 
 func writeTemplate(path string, template string) error {

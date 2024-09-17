@@ -3,8 +3,9 @@ package common
 import (
 	"errors"
 	"net/http"
-	"sub2clash/config"
 	"time"
+
+	"github.com/nitezs/sub2clash/config"
 )
 
 type GetConfig struct {

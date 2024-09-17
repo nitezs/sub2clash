@@ -2,9 +2,10 @@ package handler
 
 import (
 	"net/http"
-	"sub2clash/config"
-	"sub2clash/model"
-	"sub2clash/validator"
+
+	"github.com/nitezs/sub2clash/config"
+	"github.com/nitezs/sub2clash/model"
+	"github.com/nitezs/sub2clash/validator"
 
 	"github.com/gin-gonic/gin"
 	"gopkg.in/yaml.v3"

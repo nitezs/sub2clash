@@ -7,11 +7,11 @@ import (
 	"strings"
 	"time"
 
-	"sub2clash/common"
-	"sub2clash/common/database"
-	"sub2clash/config"
-	"sub2clash/model"
-	"sub2clash/validator"
+	"github.com/nitezs/sub2clash/common"
+	"github.com/nitezs/sub2clash/common/database"
+	"github.com/nitezs/sub2clash/config"
+	"github.com/nitezs/sub2clash/model"
+	"github.com/nitezs/sub2clash/validator"
 
 	"github.com/gin-gonic/gin"
 )

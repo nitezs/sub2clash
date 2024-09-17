@@ -5,9 +5,10 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"sub2clash/api/handler"
-	"sub2clash/constant"
-	"sub2clash/middleware"
+
+	"github.com/nitezs/sub2clash/api/handler"
+	"github.com/nitezs/sub2clash/constant"
+	"github.com/nitezs/sub2clash/middleware"
 
 	"github.com/gin-gonic/gin"
 )

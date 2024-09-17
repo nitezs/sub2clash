@@ -5,8 +5,9 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-	"sub2clash/constant"
-	"sub2clash/model"
+
+	"github.com/nitezs/sub2clash/constant"
+	"github.com/nitezs/sub2clash/model"
 )
 
 func ParseVmess(proxy string) (model.Proxy, error) {
