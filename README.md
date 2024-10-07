@@ -1,7 +1,5 @@
 # sub2clash
 
-> Sing-box 用户？看看另一个项目 [sub2sing-box](https://github.com/nitezs/sub2sing-box)
-
 将订阅链接转换为 Clash、Clash.Meta 配置  
 [预览](https://www.nite07.com/sub)
 
