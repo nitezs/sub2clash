@@ -119,7 +119,10 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	proxies := make(map[string]*model.Proxy)
 	newProxies := make([]model.Proxy, 0, len(proxyList))
 	for i := range proxyList {
-		key := proxyList[i].Name + proxyList[i].Server + strconv.Itoa(proxyList[i].Port) + proxyList[i].Type + proxyList[i].UUID + proxyList[i].Password
+		key := proxyList[i].Server + strconv.Itoa(proxyList[i].Port) + proxyList[i].Type + proxyList[i].UUID + proxyList[i].Password
+		if proxyList[i].Network == "ws" {
+			key += proxyList[i].WSOpts.Path + proxyList[i].WSOpts.Headers["Host"]
+		}
 		if _, exist := proxies[key]; !exist {
 			proxies[key] = &proxyList[i]
 			newProxies = append(newProxies, proxyList[i])
