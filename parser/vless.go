@@ -104,6 +104,11 @@ func ParseVless(proxy string) (model.Proxy, error) {
 	}
 
 	if _type == "http" {
+		result.HTTPOpts = model.HTTPOptions{}
+		result.HTTPOpts.Headers = map[string][]string{}
+
+		result.HTTPOpts.Path = strings.Split(path, ",")
+
 		hosts, err := url.QueryUnescape(host)
 		if err != nil {
 			return model.Proxy{}, &ParseError{
@@ -113,10 +118,9 @@ func ParseVless(proxy string) (model.Proxy, error) {
 			}
 		}
 		result.Network = "http"
-		result.HTTPOpts = model.HTTPOptions{
-			Headers: map[string][]string{"Host": strings.Split(hosts, ",")},
+		if hosts != "" {
+			result.HTTPOpts.Headers["host"] = strings.Split(host, ",")
 		}
-
 	}
 
 	return result, nil
