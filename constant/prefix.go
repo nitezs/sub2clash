@@ -9,4 +9,5 @@ const (
 	TrojanPrefix       string = "trojan://"
 	VLESSPrefix        string = "vless://"
 	VMessPrefix        string = "vmess://"
+	SocksPrefix        string = "socks"
 )

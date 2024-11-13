@@ -14,6 +14,7 @@ func GetSupportProxyTypes(clashType ClashType) map[string]bool {
 			"ssr":    true,
 			"vmess":  true,
 			"trojan": true,
+			"socks5": true,
 		}
 	}
 	if clashType == ClashMeta {
@@ -25,6 +26,7 @@ func GetSupportProxyTypes(clashType ClashType) map[string]bool {
 			"vless":     true,
 			"hysteria":  true,
 			"hysteria2": true,
+			"socks5":    true,
 		}
 	}
 	return nil
