@@ -17,6 +17,7 @@
   - Trojan
   - Hysteria （Clash.Meta）
   - Hysteria2 （Clash.Meta）
+  - Socks5
 
 ## 使用
 

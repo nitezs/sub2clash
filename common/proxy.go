@@ -127,6 +127,9 @@ func ParseProxy(proxies ...string) []model.Proxy {
 			if strings.HasPrefix(proxy, constant.HysteriaPrefix) {
 				proxyItem, err = parser.ParseHysteria(proxy)
 			}
+			if strings.HasPrefix(proxy, constant.SocksPrefix) {
+				proxyItem, err = parser.ParseSocks(proxy)
+			}
 			if err == nil {
 				result = append(result, proxyItem)
 			} else {

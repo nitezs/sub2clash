@@ -10,6 +10,7 @@ type Proxy struct {
 	Port                int                   `yaml:"port,omitempty"`
 	Type                string                `yaml:"type,omitempty"`
 	Cipher              string                `yaml:"cipher,omitempty"`
+	Username            string                `yaml:"username,omitempty"`
 	Password            string                `yaml:"password,omitempty"`
 	UDP                 bool                  `yaml:"udp,omitempty"`
 	UUID                string                `yaml:"uuid,omitempty"`
