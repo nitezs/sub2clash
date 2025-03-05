@@ -69,7 +69,7 @@ function generateURI() {
 
   // 获取订阅user-agent标识
   const userAgent = document.getElementById("user-agent").value;
-  queryParams.push(`userAgent=${userAgent}`)
+  queryParams.push(`userAgent=${encodeURIComponent(userAgent)}`);
 
   // 获取复选框的值
   const refresh = document.getElementById("refresh").checked;
