@@ -256,6 +256,17 @@ async function parseInputURL() {
     );
   }
 
+  if (params.has("userAgent")) {
+    document.getElementById("user-agent").value = decodeURIComponent(
+      params.get("userAgent")
+    );
+  }
+
+  if (params.has("ignoreCountryGroup")) {
+    document.getElementById("igcg").checked = 
+      params.get("ignoreCountryGroup") === "true";
+  }
+
   if (params.has("replace")) {
     parseAndFillReplaceParams(decodeURIComponent(params.get("replace")));
   }
