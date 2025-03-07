@@ -190,6 +190,7 @@ async function parseInputURL() {
       url = new URL(window.location.href + response.data);
       document.querySelector("#apiShortLink").value = inputURL;
       document.querySelector("#password").value = password;
+      document.querySelector("#customId").value = hash;
     } catch (error) {
       console.log(error);
       alert("获取短链失败，请检查密码！");
@@ -433,16 +434,27 @@ function generateURL() {
 function generateShortLink() {
   const apiShortLink = document.getElementById("apiShortLink");
   const password = document.getElementById("password");
+  const customId = document.getElementById("customId");
   let uri = generateURI();
   if (uri === "") {
     return;
   }
+
+  // 如果用户没有输入自定义ID和密码，自动生成
+  if (!customId.value && !password.value) {
+    const randomId = Math.random().toString(36).substring(2, 8);
+    const randomPassword = Math.random().toString(36).substring(2, 8);
+    customId.value = randomId;
+    password.value = randomPassword;
+  }
+
   axios
     .post(
       "./short",
       {
         url: uri,
         password: password.value.trim(),
+        customId: customId.value.trim()
       },
       {
         headers: {
@@ -455,7 +467,11 @@ function generateShortLink() {
     })
     .catch((error) => {
       console.log(error);
-      alert("生成短链失败，请重试！");
+      if (error.response && error.response.data) {
+        alert(error.response.data);
+      } else {
+        alert("生成短链失败，请重试！");
+      }
     });
 }
 
@@ -468,7 +484,7 @@ function updateShortLink() {
     hash = u.pathname.substring(u.pathname.lastIndexOf("/s/") + 3);
   }
   if (password.value.trim() === "") {
-    alert("请输入密码！");
+    alert("请输入原密码进行验证！");
     return;
   }
   let uri = generateURI();
@@ -494,7 +510,13 @@ function updateShortLink() {
     })
     .catch((error) => {
       console.log(error);
-      alert(error.response.data);
+      if (error.response && error.response.status === 401) {
+        alert("密码错误，请输入正确的原密码！");
+      } else if (error.response && error.response.data) {
+        alert(error.response.data);
+      } else {
+        alert("更新短链失败，请重试！");
+      }
     });
 }
 
