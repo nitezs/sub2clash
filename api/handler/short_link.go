@@ -33,6 +33,7 @@ func GenerateLinkHandler(c *gin.Context) {
 	}
 
 	var hash string
+	var password string
 	var err error
 	
 	if params.CustomID != "" {
@@ -43,22 +44,29 @@ func GenerateLinkHandler(c *gin.Context) {
 			return
 		}
 		if exists {
-			respondWithError(c, http.StatusBadRequest, "自定义ID已存在")
+			respondWithError(c, http.StatusBadRequest, "短链已存在")
 			return
 		}
 		hash = params.CustomID
+		password = params.Password
 	} else {
+		// 自动生成短链ID和密码
 		hash, err = generateUniqueHash()
 		if err != nil {
 			respondWithError(c, http.StatusInternalServerError, "生成短链接失败")
 			return
+		}
+		if params.Password == "" {
+			password = common.RandomString(8) // 生成8位随机密码
+		} else {
+			password = params.Password
 		}
 	}
 
 	shortLink := model.ShortLink{
 		Hash:     hash,
 		Url:      params.Url,
-		Password: params.Password,
+		Password: password,
 	}
 
 	if err := database.SaveShortLink(&shortLink); err != nil {
@@ -66,10 +74,12 @@ func GenerateLinkHandler(c *gin.Context) {
 		return
 	}
 
-	if params.Password != "" {
-		hash += "?password=" + params.Password
+	// 返回生成的短链ID和密码
+	response := map[string]string{
+		"hash": hash,
+		"password": password,
 	}
-	c.String(http.StatusOK, hash)
+	c.JSON(http.StatusOK, response)
 }
 
 func generateUniqueHash() (string, error) {

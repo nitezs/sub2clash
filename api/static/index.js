@@ -1,3 +1,15 @@
+function setInputReadOnly(input, readonly) {
+  if (readonly) {
+    input.readOnly = true;
+    input.classList.add('bg-light');
+    input.style.cursor = 'not-allowed';
+  } else {
+    input.readOnly = false;
+    input.classList.remove('bg-light');
+    input.style.cursor = 'auto';
+  }
+}
+
 function clearExistingValues() {
   // 清除简单输入框和复选框的值
   document.getElementById("endpoint").value = "clash";
@@ -12,7 +24,23 @@ function clearExistingValues() {
   document.getElementById("remove").value = "";
   document.getElementById("apiLink").value = "";
   document.getElementById("apiShortLink").value = "";
-  document.getElementById("password").value = "";
+  
+  // 恢复短链ID和密码输入框状态
+  const customIdInput = document.getElementById("customId");
+  const passwordInput = document.getElementById("password");
+  const generateButton = document.querySelector('button[onclick="generateShortLink()"]');
+  
+  customIdInput.value = "";
+  setInputReadOnly(customIdInput, false);
+  
+  passwordInput.value = "";
+  setInputReadOnly(passwordInput, false);
+  
+  // 恢复生成短链按钮状态
+  generateButton.disabled = false;
+  generateButton.classList.remove('btn-secondary');
+  generateButton.classList.add('btn-primary');
+  
   document.getElementById("nodeList").checked = false;
 
   // 清除由 createRuleProvider, createReplace, 和 createRule 创建的所有额外输入组
@@ -188,9 +216,32 @@ async function parseInputURL() {
     try {
       const response = await axios.get("./short?" + q.toString());
       url = new URL(window.location.href + response.data);
-      document.querySelector("#apiShortLink").value = inputURL;
-      document.querySelector("#password").value = password;
-      document.querySelector("#customId").value = hash;
+      
+      // 回显配置链接
+      const apiLinkInput = document.querySelector("#apiLink");
+      apiLinkInput.value = `${window.location.origin}${window.location.pathname}${response.data}`;
+      setInputReadOnly(apiLinkInput, true);
+      
+      // 回显短链相关信息
+      const apiShortLinkInput = document.querySelector("#apiShortLink");
+      apiShortLinkInput.value = inputURL;
+      setInputReadOnly(apiShortLinkInput, true);
+      
+      // 设置短链ID和密码，并设置为只读
+      const customIdInput = document.querySelector("#customId");
+      const passwordInput = document.querySelector("#password");
+      const generateButton = document.querySelector('button[onclick="generateShortLink()"]');
+      
+      customIdInput.value = hash;
+      setInputReadOnly(customIdInput, true);
+      
+      passwordInput.value = password;
+      setInputReadOnly(passwordInput, true);
+      
+      // 禁用生成短链按钮
+      generateButton.disabled = true;
+      generateButton.classList.add('btn-secondary');
+      generateButton.classList.remove('btn-primary');
     } catch (error) {
       console.log(error);
       alert("获取短链失败，请检查密码！");
@@ -440,6 +491,7 @@ function generateURL() {
     return;
   }
   apiLink.value = `${window.location.origin}${window.location.pathname}${uri}`;
+  setInputReadOnly(apiLink, true);
 }
 
 function generateShortLink() {
@@ -449,14 +501,6 @@ function generateShortLink() {
   let uri = generateURI();
   if (uri === "") {
     return;
-  }
-
-  // 如果用户没有输入自定义ID和密码，自动生成
-  if (!customId.value && !password.value) {
-    const randomId = Math.random().toString(36).substring(2, 8);
-    const randomPassword = Math.random().toString(36).substring(2, 8);
-    customId.value = randomId;
-    password.value = randomPassword;
   }
 
   axios
@@ -474,7 +518,12 @@ function generateShortLink() {
       }
     )
     .then((response) => {
-      apiShortLink.value = `${window.location.origin}${window.location.pathname}s/${response.data}`;
+      // 设置返回的短链ID和密码
+      customId.value = response.data.hash;
+      password.value = response.data.password;
+      // 生成完整的短链接
+      const shortLink = `${window.location.origin}${window.location.pathname}s/${response.data.hash}?password=${response.data.password}`;
+      apiShortLink.value = shortLink;
     })
     .catch((error) => {
       console.log(error);
@@ -517,7 +566,7 @@ function updateShortLink() {
       }
     )
     .then((response) => {
-      alert("更新短链成功！");
+      alert(`短链 ${hash} 更新成功！`);
     })
     .catch((error) => {
       console.log(error);
