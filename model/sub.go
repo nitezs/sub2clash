@@ -64,6 +64,8 @@ type Subscription struct {
 	RawTLS        TLS                       `yaml:"tls,omitempty"`
 	Listeners     []map[string]any          `yaml:"listeners,omitempty"`
 
+	SubscriptionName string `yaml:"-"`
+
 	ClashForAndroid RawClashForAndroid `yaml:"clash-for-android,omitempty" json:"clash-for-android"`
 }
 
