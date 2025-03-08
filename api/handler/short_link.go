@@ -32,16 +32,41 @@ func GenerateLinkHandler(c *gin.Context) {
 		return
 	}
 
-	hash, err := generateUniqueHash()
-	if err != nil {
-		respondWithError(c, http.StatusInternalServerError, "生成短链接失败")
-		return
+	var hash string
+	var password string
+	var err error
+	
+	if params.CustomID != "" {
+		// 检查自定义ID是否已存在
+		exists, err := database.CheckShortLinkHashExists(params.CustomID)
+		if err != nil {
+			respondWithError(c, http.StatusInternalServerError, "数据库错误")
+			return
+		}
+		if exists {
+			respondWithError(c, http.StatusBadRequest, "短链已存在")
+			return
+		}
+		hash = params.CustomID
+		password = params.Password
+	} else {
+		// 自动生成短链ID和密码
+		hash, err = generateUniqueHash()
+		if err != nil {
+			respondWithError(c, http.StatusInternalServerError, "生成短链接失败")
+			return
+		}
+		if params.Password == "" {
+			password = common.RandomString(8) // 生成8位随机密码
+		} else {
+			password = params.Password
+		}
 	}
 
 	shortLink := model.ShortLink{
 		Hash:     hash,
 		Url:      params.Url,
-		Password: params.Password,
+		Password: password,
 	}
 
 	if err := database.SaveShortLink(&shortLink); err != nil {
@@ -49,10 +74,12 @@ func GenerateLinkHandler(c *gin.Context) {
 		return
 	}
 
-	if params.Password != "" {
-		hash += "?password=" + params.Password
+	// 返回生成的短链ID和密码
+	response := map[string]string{
+		"hash": hash,
+		"password": password,
 	}
-	c.String(http.StatusOK, hash)
+	c.JSON(http.StatusOK, response)
 }
 
 func generateUniqueHash() (string, error) {
@@ -74,11 +101,27 @@ func UpdateLinkHandler(c *gin.Context) {
 		respondWithError(c, http.StatusBadRequest, "参数错误: "+err.Error())
 		return
 	}
+
+	// 先获取原有的短链接
+	existingLink, err := database.FindShortLinkByHash(params.Hash)
+	if err != nil {
+		respondWithError(c, http.StatusNotFound, "未找到短链接")
+		return
+	}
+
+	// 验证密码
+	if existingLink.Password != params.Password {
+		respondWithError(c, http.StatusUnauthorized, "密码错误")
+		return
+	}
+
+	// 更新URL，但保持原密码不变
 	shortLink := model.ShortLink{
 		Hash:     params.Hash,
 		Url:      params.Url,
-		Password: params.Password,
+		Password: existingLink.Password, // 保持原密码不变
 	}
+
 	if err := database.SaveShortLink(&shortLink); err != nil {
 		respondWithError(c, http.StatusInternalServerError, "数据库错误")
 		return
