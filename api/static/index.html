@@ -79,7 +79,7 @@
         <div class="form-group mb-3">
             <label for="user-agent">ua标识:</label>
             <textarea class="form-control" id="user-agent" name="user-agent"
-                placeholder="用于获取订阅的http请求中的user-agent标识(可选)" rows="1"></textarea>
+                placeholder="用于获取订阅的http请求中的user-agent标识(可选)" rows="3"></textarea>
         </div>
         <!-- Refresh -->
         <div class="form-check mb-3">
@@ -147,22 +147,25 @@
         <div class="form-group mb-5">
             <label for="apiLink">配置链接:</label>
             <div class="input-group mb-2">
-                <input class="form-control" id="apiLink" type="text" placeholder="链接" />
+                <input class="form-control bg-light" id="apiLink" type="text" placeholder="链接" readonly style="cursor: not-allowed;" />
                 <button class="btn btn-primary" onclick="copyToClipboard('apiLink',this)" type="button">
                     复制链接
                 </button>
             </div>
-            <div class="input-group">
-                <input class="form-control" id="apiShortLink" type="text" placeholder="链接" />
-                <input class="form-control" id="password" type="text" placeholder="密码" />
+            <div class="input-group mb-2">
+                <input class="form-control" id="customId" type="text" placeholder="短链ID（可选）" />
+                <input class="form-control" id="password" type="text" placeholder="密码（可选）" />
                 <button class="btn btn-primary" onclick="generateShortLink()" type="button">
                     生成短链
                 </button>
-                <button class="btn btn-primary" onclick="updateShortLink()" type="button">
-                    更新短链
-                </button>
                 <button class="btn btn-primary" onclick="copyToClipboard('apiShortLink',this)" type="button">
                     复制短链
+                </button>
+            </div>
+            <div class="input-group">
+                <input class="form-control bg-light" id="apiShortLink" type="text" placeholder="短链接" readonly style="cursor: not-allowed;" />
+                <button class="btn btn-primary" onclick="updateShortLink()" type="button">
+                    更新短链
                 </button>
             </div>
         </div>
