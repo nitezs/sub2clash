@@ -33,7 +33,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 		template = query.Template
 	}
 	if strings.HasPrefix(template, "http") {
-		templateBytes, err = common.LoadSubscription(template, query.Refresh, query.UserAgent)
+		templateBytes, err = common.LoadSubscription(&template, query.Refresh, query.UserAgent)
 		if err != nil {
 			logger.Logger.Debug(
 				"load template failed", zap.String("template", template), zap.Error(err),
@@ -62,11 +62,19 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	var proxyList []model.Proxy
 
 	for i := range query.Subs {
-		data, err := common.LoadSubscription(query.Subs[i], query.Refresh, query.UserAgent)
+		data, err := common.LoadSubscription(&query.Subs[i], query.Refresh, query.UserAgent)
 		subName := ""
 		if strings.Contains(query.Subs[i], "#") {
 			subName = query.Subs[i][strings.LastIndex(query.Subs[i], "#")+1:]
 		}
+
+		// 设置订阅名称
+		if temp.SubscriptionName == "" {
+			temp.SubscriptionName = subName
+		} else if subName != "" {
+			temp.SubscriptionName += "-" + subName
+		}
+
 		if err != nil {
 			logger.Logger.Debug(
 				"load subscription failed", zap.String("url", query.Subs[i]), zap.Error(err),

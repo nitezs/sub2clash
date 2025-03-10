@@ -25,8 +25,8 @@ var Dev string
 
 func LoadConfig() error {
 	Default = &Config{
-		MetaTemplate:       "template_meta.yaml",
-		ClashTemplate:      "template_clash.yaml",
+		MetaTemplate:       "template_meta",
+		ClashTemplate:      "template_clash",
 		RequestRetryTimes:  3,
 		RequestMaxFileSize: 1024 * 1024 * 1,
 		Port:               8011,

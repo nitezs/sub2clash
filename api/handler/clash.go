@@ -2,6 +2,8 @@ package handler
 
 import (
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/nitezs/sub2clash/config"
 	"github.com/nitezs/sub2clash/model"
@@ -18,6 +20,12 @@ func SubmodHandler(c *gin.Context) {
 		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
+
+	// 默认使用clash请求头
+	if query.UserAgent == "" {
+		query.UserAgent = "clash.meta/mihomo"
+	}
+
 	sub, err := BuildSub(model.Clash, query, config.Default.ClashTemplate)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
@@ -39,6 +47,10 @@ func SubmodHandler(c *gin.Context) {
 	if err != nil {
 		c.String(http.StatusInternalServerError, "YAML序列化失败: "+err.Error())
 		return
+	}
+	// 如果有订阅名则设置
+	if userAgent := c.GetHeader("User-Agent"); sub.SubscriptionName != "" && strings.Contains(userAgent, "clash") {
+		c.Header("Content-Disposition", "attachment; filename*=UTF-8''"+url.QueryEscape(sub.SubscriptionName))
 	}
 	c.String(http.StatusOK, string(marshal))
 }
