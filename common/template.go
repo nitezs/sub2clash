@@ -8,7 +8,7 @@ import (
 )
 
 func LoadTemplate(template string) ([]byte, error) {
-	tPath := filepath.Join("templates", template)
+	tPath := filepath.Join("templates", template+".yaml")
 	if _, err := os.Stat(tPath); err == nil {
 		file, err := os.Open(tPath)
 		if err != nil {

@@ -131,7 +131,6 @@ func UpdateLinkHandler(c *gin.Context) {
 }
 
 func GetRawConfHandler(c *gin.Context) {
-
 	hash := c.Param("hash")
 	password := c.Query("password")
 
@@ -158,17 +157,32 @@ func GetRawConfHandler(c *gin.Context) {
 		return
 	}
 
-	response, err := http.Get("http://localhost:" + strconv.Itoa(config.Default.Port) + "/" + shortLink.Url)
+	// 创建新的请求
+	req, _ := http.NewRequest("GET", "http://localhost:"+strconv.Itoa(config.Default.Port)+"/"+shortLink.Url, nil)
+	// 设置User-Agent
+	if userAgent := c.GetHeader("User-Agent"); userAgent != "" {
+		req.Header.Set("User-Agent", userAgent)
+	}
+
+	response, err := http.DefaultClient.Do(req)
 	if err != nil {
 		respondWithError(c, http.StatusInternalServerError, "请求错误: "+err.Error())
 		return
 	}
 	defer response.Body.Close()
 
+	// 读取响应体
 	all, err := io.ReadAll(response.Body)
 	if err != nil {
 		respondWithError(c, http.StatusInternalServerError, "读取错误: "+err.Error())
 		return
+	}
+
+	// 复制原始响应的header到新响应
+	for key, values := range response.Header {
+		for _, value := range values {
+			c.Header(key, value)
+		}
 	}
 
 	c.String(http.StatusOK, string(all))
