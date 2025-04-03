@@ -67,13 +67,15 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 		if strings.Contains(query.Subs[i], "#") {
 			subName = query.Subs[i][strings.LastIndex(query.Subs[i], "#")+1:]
 		}
+	
 		if err != nil {
 			logger.Logger.Debug(
 				"load subscription failed", zap.String("url", query.Subs[i]), zap.Error(err),
 			)
-			return nil, errors.New("加载订阅失败: " + err.Error())
+			// 打印错误并跳过当前订阅
+			continue
 		}
-
+	
 		err = yaml.Unmarshal(data, &sub)
 		var newProxies []model.Proxy
 		if err != nil {
@@ -82,7 +84,6 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 				p := common.ParseProxy(strings.Split(string(data), "\n")...)
 				newProxies = p
 			} else {
-
 				base64, err := parser.DecodeBase64(string(data))
 				if err != nil {
 					logger.Logger.Debug(
@@ -90,7 +91,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 						zap.String("data", string(data)),
 						zap.Error(err),
 					)
-					return nil, errors.New("加载订阅失败: " + err.Error())
+					continue // 继续下一个订阅
 				}
 				p := common.ParseProxy(strings.Split(base64, "\n")...)
 				newProxies = p
@@ -98,6 +99,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 		} else {
 			newProxies = sub.Proxies
 		}
+	
 		if subName != "" {
 			for i := range newProxies {
 				newProxies[i].SubName = subName
@@ -105,6 +107,7 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 		}
 		proxyList = append(proxyList, newProxies...)
 	}
+	
 
 	if len(query.Proxies) != 0 {
 		proxyList = append(proxyList, common.ParseProxy(query.Proxies...)...)
