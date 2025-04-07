@@ -2,6 +2,7 @@ package common
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -28,10 +29,12 @@ func Get(url string, options ...GetOption) (resp *http.Response, err error) {
 	for _, option := range options {
 		option(&getConfig)
 	}
+	var req *http.Request
+	var get *http.Response
 	for haveTried < retryTimes {
 		client := &http.Client{}
 		//client.Timeout = time.Second * 10
-		req, err := http.NewRequest("GET", url, nil)
+		req, err = http.NewRequest("GET", url, nil)
 		if err != nil {
 			haveTried++
 			time.Sleep(retryDelay)
@@ -40,13 +43,12 @@ func Get(url string, options ...GetOption) (resp *http.Response, err error) {
 		if getConfig.userAgent != "" {
 			req.Header.Set("User-Agent", getConfig.userAgent)
 		}
-		get, err := client.Do(req)
+		get, err = client.Do(req)
 		if err != nil {
 			haveTried++
 			time.Sleep(retryDelay)
 			continue
 		} else {
-
 			if get != nil && get.ContentLength > config.Default.RequestMaxFileSize {
 				return nil, errors.New("文件过大")
 			}
@@ -54,5 +56,5 @@ func Get(url string, options ...GetOption) (resp *http.Response, err error) {
 		}
 
 	}
-	return nil, err
+	return nil, fmt.Errorf("请求失败：%v", err)
 }
