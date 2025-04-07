@@ -72,6 +72,9 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 			logger.Logger.Debug(
 				"load subscription failed", zap.String("url", query.Subs[i]), zap.Error(err),
 			)
+			if !query.SkipErrors {
+				return nil, errors.New("加载订阅失败: " + err.Error())
+			}
 			// 打印错误并跳过当前订阅
 			continue
 		}
@@ -91,6 +94,9 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 						zap.String("data", string(data)),
 						zap.Error(err),
 					)
+					if !query.SkipErrors {
+						return nil, errors.New("解析订阅失败: " + err.Error())
+					}
 					continue // 继续下一个订阅
 				}
 				p := common.ParseProxy(strings.Split(base64, "\n")...)
